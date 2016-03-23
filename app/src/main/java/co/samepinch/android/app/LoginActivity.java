@@ -1,5 +1,6 @@
 package co.samepinch.android.app;
 
+import android.*;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -44,6 +45,7 @@ import co.samepinch.android.app.helpers.AppConstants;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.app.helpers.intent.FBAuthService;
 import co.samepinch.android.app.helpers.intent.SignOutService;
+import co.samepinch.android.app.helpers.misc.Permissions;
 import co.samepinch.android.app.helpers.module.DaggerStorageComponent;
 import co.samepinch.android.app.helpers.module.StorageComponent;
 import co.samepinch.android.app.helpers.pubsubs.BusProvider;
@@ -108,7 +110,12 @@ public class LoginActivity extends AppCompatActivity implements
 
     @OnClick(R.id.btn_signin_google)
     public void onClickGoogleSignIn() {
-        onSignInClicked();
+        Permissions.askPermission(new Permissions.OnActionPermitted() {
+            @Override
+            public void onPermitted() {
+                onSignInClicked();
+            }
+        }, android.Manifest.permission.GET_ACCOUNTS);
     }
 
     private void onSignInClicked() {
