@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 27
+        versionCode 29
         versionName "1.1.0"
         applicationId "co.samepinch.android.app"
 //        renderscriptTargetApi 23
@@ -108,7 +108,7 @@ dependencies {
     //BOTTOM SHEET
     compile 'com.flipboard:bottomsheet-core:1.3.0'
     compile 'com.flipboard:bottomsheet-commons:1.3.0'
-    compile('com.facebook.fresco:fresco:0.7.0')
+    compile('com.facebook.fresco:fresco:0.9.0+')
     compile 'com.aviary.android.feather.sdk:aviary-sdk:3.6.5'
     compile 'com.squareup:otto:1.3.8'
     compile 'com.google.dagger:dagger:2.0.1'
