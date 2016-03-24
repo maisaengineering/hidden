@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.karumi.dexter.Dexter;
 import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseInstallation;
@@ -24,6 +25,7 @@ public class SPApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        Dexter.initialize(this);
 
         // others
         Utils.PreferencesManager.initializeInstance(mContext);
