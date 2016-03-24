@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -77,47 +78,53 @@ public class MainActivityIn extends AppCompatActivity {
     /**
      * NAVIGATION RELATED
      */
+
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
     @Bind(R.id.nav_view)
     NavigationView mNavigationView;
 
-    @Bind(R.id.dot_wall_switch)
-    ViewSwitcher mVS;
+    NavViews nv;
 
-    @Bind(R.id.backdrop)
-    ImageView mBackdrop;
+    static class NavViews {
+        @Bind(R.id.dot_wall_switch)
+        ViewSwitcher mVS;
 
-    @Bind(R.id.dot_wall_image)
-    SIMView mDotImage;
+        @Bind(R.id.backdrop)
+        ImageView mBackdrop;
 
-    @Bind(R.id.dot_wall_image_txt)
-    TextView mDotImageText;
+        @Bind(R.id.dot_wall_image)
+        SIMView mDotImage;
 
-    @Bind(R.id.dot_wall_name)
-    TextView mDotName;
+        @Bind(R.id.dot_wall_image_txt)
+        TextView mDotImageText;
 
-    @Bind(R.id.dot_wall_handle)
-    TextView mDotHandle;
+        @Bind(R.id.dot_wall_name)
+        TextView mDotName;
 
-    @Bind(R.id.dot_wall_about)
-    TextView mDotAbout;
+        @Bind(R.id.dot_wall_handle)
+        TextView mDotHandle;
 
-    @Bind(R.id.dot_wall_followers_count)
-    TextView mDotFollowersCnt;
+        @Bind(R.id.dot_wall_about)
+        TextView mDotAbout;
 
-    @Bind(R.id.dot_wall_posts_count)
-    TextView mDotPostsCnt;
+        @Bind(R.id.dot_wall_followers_count)
+        TextView mDotFollowersCnt;
 
-    @Bind(R.id.dot_wall_blog_wrapper)
-    LinearLayout mDotBlogWrapper;
+        @Bind(R.id.dot_wall_posts_count)
+        TextView mDotPostsCnt;
 
-    @Bind(R.id.dot_wall_blog)
-    TextView mDotBlog;
+        @Bind(R.id.dot_wall_blog_wrapper)
+        LinearLayout mDotBlogWrapper;
 
-    @Bind(R.id.dot_wall_edit)
-    TextView mDotEdit;
+        @Bind(R.id.dot_wall_blog)
+        TextView mDotBlog;
+
+        @Bind(R.id.dot_wall_edit)
+        TextView mDotEdit;
+    }
+
 
     private LocalHandler mHandler;
 
@@ -152,6 +159,16 @@ public class MainActivityIn extends AppCompatActivity {
         ButterKnife.bind(MainActivityIn.this);
         BusProvider.INSTANCE.getBus().register(this);
 
+        mNavigationView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                nv = new NavViews();
+                ButterKnife.bind(nv, mNavigationView);
+                mNavigationView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                setupDrawerContent(mUser, true);
+            }
+        });
+
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.menu_blue);
@@ -160,7 +177,6 @@ public class MainActivityIn extends AppCompatActivity {
         // handler
         mHandler = new LocalHandler(this);
 
-        setupDrawerContent(mUser, true);
         setupViewPager();
 
         //update user details
@@ -171,6 +187,7 @@ public class MainActivityIn extends AppCompatActivity {
         intent.putExtras(iArgs);
         startService(intent);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -245,15 +262,15 @@ public class MainActivityIn extends AppCompatActivity {
         String lName = user.getLname();
         // tag map
         if (StringUtils.isBlank(user.getPhoto())) {
-            mVS.setDisplayedChild(1);
+            nv.mVS.setDisplayedChild(1);
             String initials = StringUtils.join(StringUtils.substring(fName, 0, 1), StringUtils.substring(lName, 0, 1));
             initials = StringUtils.isNotBlank(initials) ? initials : StringUtils.substring(user.getPinchHandle(), 0, 1);
 
-            mDotImageText.setText(initials);
+            nv.mDotImageText.setText(initials);
             Bitmap blurredBitmap = ImageUtils.blurredDfltBitmap();
-            mBackdrop.setImageBitmap(blurredBitmap);
+            nv.mBackdrop.setImageBitmap(blurredBitmap);
         } else {
-            mVS.setDisplayedChild(0);
+            nv.mVS.setDisplayedChild(0);
             Postprocessor postprocessor = new BasePostprocessor() {
                 @Override
                 public String getName() {
@@ -265,9 +282,9 @@ public class MainActivityIn extends AppCompatActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            mBackdrop.setImageBitmap(null);
+                            nv.mBackdrop.setImageBitmap(null);
                             Bitmap blurredBitmap = ImageUtils.blur(getApplicationContext(), bitmap);
-                            mBackdrop.setImageBitmap(blurredBitmap);
+                            nv.mBackdrop.setImageBitmap(blurredBitmap);
                         }
                     });
 
@@ -277,34 +294,34 @@ public class MainActivityIn extends AppCompatActivity {
             RoundingParams roundingParams = RoundingParams.asCircle();
             roundingParams.setBorder(R.color.light_blue_500, 1.0f);
 
-            mDotImage.setRoundingParams(roundingParams);
-            mDotImage.populateImageViewWithAdjustedAspect(user.getPhoto(), postprocessor);
+            nv.mDotImage.setRoundingParams(roundingParams);
+            nv.mDotImage.populateImageViewWithAdjustedAspect(user.getPhoto(), postprocessor);
         }
 
-        mDotName.setText(StringUtils.join(new String[]{fName, lName}, " "));
+        nv.mDotName.setText(StringUtils.join(new String[]{fName, lName}, " "));
         String pinchHandle = String.format(getApplicationContext().getString(R.string.pinch_handle), user.getPinchHandle());
-        mDotHandle.setText(pinchHandle);
+        nv.mDotHandle.setText(pinchHandle);
         if (user.getFollowersCount() != null) {
-            mDotFollowersCnt.setText(Long.toString(user.getFollowersCount()));
+            nv.mDotFollowersCnt.setText(Long.toString(user.getFollowersCount()));
         } else {
-            mDotFollowersCnt.setText(DFLT_ZERO);
+            nv.mDotFollowersCnt.setText(DFLT_ZERO);
         }
 
         if (StringUtils.isNotBlank(user.getSummary())) {
-            mDotAbout.setText(user.getSummary());
+            nv.mDotAbout.setText(user.getSummary());
         } else {
-            mDotAbout.setVisibility(View.GONE);
+            nv.mDotAbout.setVisibility(View.GONE);
         }
 
         if (user.getPostsCount() != null) {
-            mDotPostsCnt.setText(Long.toString(user.getPostsCount()));
+            nv.mDotPostsCnt.setText(Long.toString(user.getPostsCount()));
         } else {
-            mDotPostsCnt.setText(DFLT_ZERO);
+            nv.mDotPostsCnt.setText(DFLT_ZERO);
         }
 
         if (Utils.isValidUri(user.getBlog())) {
-            mDotBlogWrapper.setVisibility(View.VISIBLE);
-            mDotBlog.setOnClickListener(new View.OnClickListener() {
+            nv.mDotBlogWrapper.setVisibility(View.VISIBLE);
+            nv.mDotBlog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(user.getBlog()));
@@ -312,11 +329,11 @@ public class MainActivityIn extends AppCompatActivity {
                 }
             });
         }else{
-            mDotBlogWrapper.setVisibility(View.GONE);
+            nv.mDotBlogWrapper.setVisibility(View.GONE);
         }
 
         if (init) {
-            mDotEdit.setOnClickListener(new View.OnClickListener() {
+            nv.mDotEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Bundle args = new Bundle();
@@ -403,6 +420,7 @@ public class MainActivityIn extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         if (!Utils.isLoggedIn()) {
             Intent intent = new Intent(this, RootActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |

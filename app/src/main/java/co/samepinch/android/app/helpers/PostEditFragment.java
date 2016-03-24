@@ -1,5 +1,6 @@
 package co.samepinch.android.app.helpers;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -72,6 +73,7 @@ import co.samepinch.android.app.helpers.adapters.TagsRVAdapter;
 import co.samepinch.android.app.helpers.intent.MultiMediaUploadService;
 import co.samepinch.android.app.helpers.intent.PostDetailsService;
 import co.samepinch.android.app.helpers.intent.TagsPullService;
+import co.samepinch.android.app.helpers.misc.Permissions;
 import co.samepinch.android.app.helpers.pubsubs.BusProvider;
 import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.data.dao.SchemaPostDetails;
@@ -254,11 +256,16 @@ public class PostEditFragment extends Fragment implements PopupMenu.OnMenuItemCl
         String postId = getArguments().getString(AppConstants.K.POST.name());
         // query for post details
         Cursor cursor = getActivity().getContentResolver().query(SchemaPostDetails.CONTENT_URI, null, SchemaPostDetails.COLUMN_UID + "=?", new String[]{postId}, null);
-        PostDetails post = cursor.moveToFirst() ? Utils.cursorToPostDetailsEntity(cursor) : null;
+
+        PostDetails post = cursor != null ?
+                cursor.moveToFirst() ?
+                        Utils.cursorToPostDetailsEntity(cursor) : null : null;
         if (post == null) {
             Snackbar.make(mView, "problem opening post. try again...", Snackbar.LENGTH_SHORT).show();
             getActivity().finish();
+            return mView;
         }
+
 
         Map<String, String> imageKV = post.getImages();
         for (Map.Entry<String, String> imageKVEntry : imageKV.entrySet()) {
@@ -563,14 +570,23 @@ public class PostEditFragment extends Fragment implements PopupMenu.OnMenuItemCl
 
     @OnClick(R.id.fab)
     public void onClickFAB() {
-// Determine Uri of camera image to save.
+        Permissions.askPermission(new Permissions.OnActionPermitted() {
+            @Override
+            public void onPermitted() {
+                chooseImage();
+            }
+        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    private void chooseImage() {
+        // Determine Uri of camera image to save.
         final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "SamePinch" + File.separator);
         root.mkdirs();
         final String fname = Utils.getUniqueImageFilename();
         final File sdImageMainDirectory = new File(root, fname);
         outputFileUri = Uri.fromFile(sdImageMainDirectory);
 
-// Camera.
+        // Camera.
         final List<Intent> cameraIntents = new ArrayList<>();
         final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         final PackageManager packageManager = getActivity().getPackageManager();
