@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphRequestBatch;
 import com.facebook.GraphResponse;
-import com.facebook.LoggingBehavior;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
@@ -310,7 +308,7 @@ public class LoginFBFragment extends android.support.v4.app.Fragment {
                     // muted
                 }
                 // intent
-                Intent intent = new Intent(getActivity().getApplicationContext(), ActivityFragment.class);
+                Intent intent = new Intent(getActivity(), ActivityFragment.class);
                 intent.putExtras(args);
                 startActivityForResult(intent, Integer.parseInt(AppConstants.APP_INTENT.CHOOSE_PINCH_HANDLE.getValue()));
                 break;

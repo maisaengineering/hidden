@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import co.samepinch.android.app.ActivityFragment;
 import co.samepinch.android.app.LoginActivity;
 import co.samepinch.android.app.R;
+import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.app.helpers.AppConstants;
 import co.samepinch.android.app.helpers.TimeUtils;
 import co.samepinch.android.app.helpers.Utils;
@@ -52,8 +53,8 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
     @Bind(R.id.avatar_name)
     TextView mAvatarName;
 
-    @Bind(R.id.avatar_handle)
-    TextView mAvatarHandle;
+    @Bind(R.id.avatar_full_name)
+    TextView mAvatarFullName;
 
     @Bind(R.id.comment_upvote)
     TextView mCommentUpvote;
@@ -99,10 +100,10 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
                     args.putString(AppConstants.K.KEY_DOT.name(), commenter.getUid());
 
                     // intent
-                    Intent intent = new Intent(mView.getContext(), ActivityFragment.class);
+                    Intent intent = new Intent(SPApplication.getContext(), ActivityFragment.class);
                     intent.putExtras(args);
-
-                    mView.getContext().startActivity(intent);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    SPApplication.getContext().startActivity(intent);
                 }
             };
         }
@@ -125,8 +126,8 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
         }
 
         // setup handle
-        String pinchHandle = String.format(mView.getContext().getString(R.string.pinch_handle), handle);
-        mAvatarHandle.setText(pinchHandle);
+//        String pinchHandle = String.format(mView.getContext().getString(R.string.pinch_handle), handle);
+        mAvatarFullName.setText(StringUtils.join(fName, " ", lName));
 
         // setup counts
         mCommentUpvote.setText(StringUtils.defaultString(Integer.toString(commentDetails.getUpvoteCount()), DFLT_ZERO));

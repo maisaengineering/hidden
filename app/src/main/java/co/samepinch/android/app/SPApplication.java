@@ -3,6 +3,7 @@ package co.samepinch.android.app;
 import android.app.Application;
 import android.content.Context;
 import android.provider.Settings;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
@@ -18,7 +19,7 @@ import co.samepinch.android.app.helpers.Utils;
 /**
  * Created by cbenjaram on 8/6/15.
  */
-public class SPApplication extends Application {
+public class SPApplication extends MultiDexApplication {
     private static Context mContext;
 
     @Override

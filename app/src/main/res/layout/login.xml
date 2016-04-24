@@ -10,26 +10,26 @@
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:paddingTop="56dp">
+        android:layout_gravity="center">
 
-        <ImageView
-            android:id="@+id/view_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"
-            android:src="@drawable/logo"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/view_logo"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:layout_marginBottom="24dp"-->
+            <!--android:src="@drawable/logo"/>-->
 
-        <fragment
-            android:id="@+id/email_fragment"
-            android:name="co.samepinch.android.app.helpers.LoginEMailFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/view_logo"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center" />
+        <!--<fragment-->
+            <!--android:id="@+id/email_fragment"-->
+            <!--android:name="co.samepinch.android.app.helpers.LoginEMailFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/view_logo"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_gravity="center" />-->
 
         <!--<View-->
             <!--android:id="@+id/divider"-->
@@ -42,30 +42,28 @@
             style="@style/SP_HINT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hint_or"
-            android:layout_below="@+id/email_fragment"
-            android:paddingTop="9dp"
+            android:text="@string/must_login"
             android:gravity="center"
             />
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btn_signin_google"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/divider"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:paddingTop="5dp" />
+        <!--<com.google.android.gms.common.SignInButton-->
+            <!--android:id="@+id/btn_signin_google"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/divider"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:paddingTop="5dp" />-->
 
         <fragment
             android:id="@+id/fb_fragment"
             android:name="co.samepinch.android.app.helpers.LoginFBFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/btn_signin_google"
+            android:layout_below="@+id/divider"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:paddingTop="5dp" />
+            android:paddingTop="10dp" />
 
     </RelativeLayout>
 </ScrollView>

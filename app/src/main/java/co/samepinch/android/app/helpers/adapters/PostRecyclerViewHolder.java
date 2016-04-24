@@ -110,7 +110,7 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
         String name = StringUtils.join(new String[]{StringUtils.capitalize(fName), StringUtils.capitalize(lName), StringUtils.SPACE});
         mWallPostDotView.setText(StringUtils.defaultString(name, "anonymous"));
         mWallPinchHandleView.setText(String.format(mContext.getString(R.string.pinch_handle), user.getPinchHandle()));
-        if(mPost == null){
+        if (mPost == null) {
             return;
         }
         Integer viewsCnt = mPost.getViews();
@@ -172,7 +172,7 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
             mWallPostImages.setVisibility(View.VISIBLE);
         }
 
-        if(StringUtils.isNotBlank(mPost.getTagsForDB())){
+        if (StringUtils.isNotBlank(mPost.getTagsForDB())) {
             Utils.markTags(mContext, mWallTags, mPost.getTagsForDB().split(","));
         }
     }

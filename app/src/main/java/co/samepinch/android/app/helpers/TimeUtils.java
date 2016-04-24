@@ -3,8 +3,6 @@ package co.samepinch.android.app.helpers;
 import android.content.Context;
 import android.text.format.DateUtils;
 
-import com.aviary.android.feather.common.utils.DateTimeUtils;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;

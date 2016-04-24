@@ -19,6 +19,7 @@ public class AppConstants {
         PREF_ANONYMOUS_IMG("anonymous.image"),
         DEFAULT_DATE_FORMAT("MM/dd/yyyy hh:mma Z"),
 
+
         BASE("https://msocl.herokuapp.com/"),
         GPLAY_LINK("market://details?id=co.samepinch.android.app"),
         CLIENTAUTH(BASE.getValue().concat("api/clients/token")),
@@ -33,8 +34,7 @@ public class AppConstants {
         URL_TERMS_COND("http://www.samepinch.co/t&c"),
         URL_SYS_STATUS("http://www.samepinch.co/systemstatus/"),
         PARSE_APPLICATION_ID("Kk6uWSLLnGCp6xEOPYQq5iGbIz0NiBj5DtH7qdY5"),
-        PARSE_CLIENT_KEY("vdj0zlO0cmgeZwoKvSZ8EfwVz7OEVZbrgs73OeQy"),
-        ;
+        PARSE_CLIENT_KEY("vdj0zlO0cmgeZwoKvSZ8EfwVz7OEVZbrgs73OeQy"),;
         private final String value;
 
         API(String value) {
@@ -90,8 +90,7 @@ public class AppConstants {
         KEY_FRESH_FAV_WALL_FLAG("freshFavWallFlag"),
         KEY_ADMIN_COMMAND("admin.command"),
         CHOOSE_PINCH_HANDLE("77"),
-        KEY_APP_ACCESS_STATE("APP_ACCESS_STATE"),
-        ;
+        KEY_APP_ACCESS_STATE("APP_ACCESS_STATE"),;
 
         private final String value;
 
@@ -119,8 +118,7 @@ public class AppConstants {
         REQUEST_EDIT_TAG("REQUEST_EDIT_TAG", "222"),
         REQUEST_ADD_COMMENT("REQUEST_ADD_COMMENT", "333"),
         REQUEST_EDIT_COMMENT("REQUEST_EDIT_COMMENT", "334"),
-        LOAD_MORE("LOAD_MORE", "9"),
-        ;
+        LOAD_MORE("LOAD_MORE", "9"),;
 
         private final String key, value;
 

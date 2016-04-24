@@ -6,12 +6,14 @@
     android:orientation="vertical">
 
     <View style="@style/Divider" />
+    <include
+        android:id="@+id/horizontal_line"
+        layout="@layout/horizontal_line" />
     <RelativeLayout
         android:id="@+id/comment_item_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="2dp">
-
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/avatar"
             android:layout_width="35dp"
@@ -20,7 +22,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:clickable="true"
-            android:background="@drawable/avatar_square_border"
+            android:background="@drawable/rounded_corners"
             fresco:roundedCornerRadius="5dp"
             fresco:viewAspectRatio="1"
             android:layout_margin="5dp"/>
@@ -32,19 +34,19 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/rounded_square"
+            android:background="@drawable/rounded_corners"
             android:clickable="true"
             android:gravity="center"
             android:textColor="@color/blue_500"
             android:layout_margin="5dp"/>
 
         <TextView
-            android:id="@+id/avatar_handle"
+            android:id="@+id/avatar_full_name"
             style="@style/SP_TEXT.BODY.DISABLED"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/avatar"
-            android:layout_toRightOf="@+id/avatar" />
+            android:layout_toRightOf="@+id/avatar"/>
 
         <TextView
             android:id="@+id/comment_upvote"
@@ -73,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="14dp"
             android:src="@drawable/more"
-            android:layout_alignBottom="@+id/avatar_handle"
+            android:layout_alignBottom="@+id/avatar_full_name"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 

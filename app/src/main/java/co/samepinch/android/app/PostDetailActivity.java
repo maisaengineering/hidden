@@ -138,7 +138,7 @@ public class PostDetailActivity extends AppCompatActivity {
         // query for post details
         Cursor currPost = getContentResolver().query(SchemaPostDetails.CONTENT_URI, null, SchemaPostDetails.COLUMN_UID + "=?", new String[]{mPostId}, null);
         // query for post comments
-        Cursor currComments = getContentResolver().query(SchemaComments.CONTENT_URI, null, SchemaComments.COLUMN_POST_DETAILS + "=?", new String[]{mPostId}, null);
+        Cursor currComments = getContentResolver().query(SchemaComments.CONTENT_URI, null, SchemaComments.COLUMN_POST_DETAILS + "=?", new String[]{mPostId}, SchemaComments.COLUMN_CREATED_AT + " DESC");
         MergeCursor mergeCursor = new MergeCursor(new Cursor[]{currPost, currComments});
 
         // setup meta-data
@@ -194,7 +194,7 @@ public class PostDetailActivity extends AppCompatActivity {
             }
 
             // post date
-            mPostDate.setText(TimeUtils.toHumanLocal(getApplicationContext(), mPostDetails.getCreatedAt()));
+            mPostDate.setText(TimeUtils.toHumanRelativePeriod(mPostDetails.getCreatedAt()));
 
             // views count
             if (mPostDetails.getViews() == null) {
