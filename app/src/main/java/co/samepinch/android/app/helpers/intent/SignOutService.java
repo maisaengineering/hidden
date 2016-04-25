@@ -2,11 +2,8 @@ package co.samepinch.android.app.helpers.intent;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import com.facebook.login.LoginManager;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -15,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,20 +81,6 @@ public class SignOutService extends IntentService {
         if (StringUtils.equalsIgnoreCase(currProvider, AppConstants.K.facebook.name())) {
             // fb
             LoginManager.getInstance().logOut();
-        } else if (StringUtils.equalsIgnoreCase(currProvider, AppConstants.K.google.name())) {
-            // google
-            GoogleApiClient mGoogleApiClient =
-                    new GoogleApiClient.Builder(getApplicationContext())
-                            .addApi(Plus.API, Plus.PlusOptions.builder().build())
-                            .addScope(Plus.SCOPE_PLUS_LOGIN)
-                            .addScope(Plus.SCOPE_PLUS_PROFILE)
-                            .build();
-
-            mGoogleApiClient.blockingConnect();
-            if (mGoogleApiClient.isConnected()) {
-                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                mGoogleApiClient.reconnect();
-            }
         }
     }
 }

@@ -1,16 +1,12 @@
 package co.samepinch.android.app;
 
-import android.app.Application;
 import android.content.Context;
-import android.provider.Settings;
 import android.support.multidex.MultiDexApplication;
-import android.util.Log;
 
 import com.facebook.FacebookSdk;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.karumi.dexter.Dexter;
 import com.parse.Parse;
-import com.parse.ParseCloud;
 import com.parse.ParseInstallation;
 
 import co.samepinch.android.app.helpers.AppConstants;
