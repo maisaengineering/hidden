@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 32
+        versionCode 36
         versionName "1.1.0"
         applicationId "co.samepinch.android.app"
 //        renderscriptTargetApi 23
@@ -38,6 +38,7 @@ android {
 
     buildTypes {
 //        debug {
+//            debuggable true
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-fresco.pro', 'proguard-butterknife.pro','proguard-project.pro'
 //        }
         release {

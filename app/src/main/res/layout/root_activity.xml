@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewSwitcher xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content_switch"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,14 +11,27 @@
         android:layout_height="match_parent"
         android:background="@drawable/bground_gradient_center">
 
-        <TextView
-            style="@style/SP_LANDING"
+        <!--<TextView-->
+            <!--style="@style/SP_LANDING"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:gravity="center"-->
+            <!--android:text="@string/loading_with_text" />-->
+
+        <!--<com.facebook.drawee.view.SimpleDraweeView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:gravity="center"-->
+            <!--fresco:placeholderImage="@drawable/logo"-->
+            <!--fresco:placeholderImageScaleType="fitCenter"-->
+            <!--fresco:roundAsCircle="true" />-->
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/loading_with_text" />
-
+            android:src="@drawable/logo" />
         <TextView
             style="@style/SP_LANDING"
             android:layout_width="wrap_content"

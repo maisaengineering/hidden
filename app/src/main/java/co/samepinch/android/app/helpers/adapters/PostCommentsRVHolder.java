@@ -75,7 +75,7 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
 
     void onBindViewHolderImpl(Cursor cursor) {
         final CommentDetails commentDetails = Utils.cursorToCommentDetails(cursor);
-        String fName, lName, photo, handle;
+        String fName, lName, photo;
         View.OnClickListener dotClick = null;
         if (commentDetails.getAnonymous()) {
             StorageComponent component = DaggerStorageComponent.create();
@@ -83,13 +83,11 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
             fName = anonyOwner.getFname();
             lName = anonyOwner.getLname();
             photo = anonyOwner.getPhoto();
-            handle = anonyOwner.getPinchHandle();
         } else {
             final Commenter commenter = commentDetails.getCommenter();
             fName = commenter.getFname();
             lName = commenter.getLname();
             photo = commenter.getPhoto();
-            handle = commenter.getPinchHandle();
             dotClick = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
