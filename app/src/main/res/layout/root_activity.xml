@@ -28,10 +28,12 @@
             <!--fresco:placeholderImageScaleType="fitCenter"-->
             <!--fresco:roundAsCircle="true" />-->
         <ImageView
+            android:id="@+id/spicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/logo" />
+            android:gravity="center"
+            android:src="@drawable/icon" />
         <TextView
             style="@style/SP_LANDING"
             android:layout_width="wrap_content"

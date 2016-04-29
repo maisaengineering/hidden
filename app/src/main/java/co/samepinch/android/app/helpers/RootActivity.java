@@ -12,7 +12,10 @@ import android.transition.Slide;
 import android.transition.TransitionInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -67,6 +70,12 @@ public class RootActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.root_activity);
+
+        // app icon rotate animation
+        ImageView animationTarget = (ImageView) this.findViewById(R.id.spicon);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point);
+        animationTarget.startAnimation(animation);
+
         setupWindowAnimations();
 
         mHandler = new LocalHandler(RootActivity.this);

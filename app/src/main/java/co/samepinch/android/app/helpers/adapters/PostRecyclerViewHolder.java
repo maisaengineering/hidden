@@ -107,9 +107,9 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
         }
         String fName = StringUtils.defaultString(user.getFname()).toLowerCase(Locale.getDefault());
         String lName = StringUtils.defaultString(user.getLname()).toLowerCase(Locale.getDefault());
-        String name = StringUtils.join(new String[]{StringUtils.capitalize(fName), StringUtils.capitalize(lName), StringUtils.SPACE});
+        String name = StringUtils.join(new String[]{StringUtils.capitalize(fName), StringUtils.capitalize(lName)}, " ");
         mWallPostDotView.setText(StringUtils.defaultString(name, "anonymous"));
-        mWallPinchHandleView.setText(String.format(mContext.getString(R.string.pinch_handle), user.getPinchHandle()));
+//        mWallPinchHandleView.setText(String.format(mContext.getString(R.string.pinch_handle), user.getPinchHandle()));
         if (mPost == null) {
             return;
         }
