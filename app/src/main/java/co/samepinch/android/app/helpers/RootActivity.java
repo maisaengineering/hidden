@@ -70,12 +70,6 @@ public class RootActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.root_activity);
-
-        // app icon rotate animation
-        ImageView animationTarget = (ImageView) this.findViewById(R.id.spicon);
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point);
-        animationTarget.startAnimation(animation);
-
         setupWindowAnimations();
 
         mHandler = new LocalHandler(RootActivity.this);
@@ -232,6 +226,11 @@ public class RootActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setupWindowAnimations() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // app icon rotate animation
+            ImageView animationTarget = (ImageView) this.findViewById(R.id.spicon);
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point);
+            animationTarget.startAnimation(animation);
+
             Slide slide = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.activity_slide);
             getWindow().setEnterTransition(slide);
 
