@@ -36,10 +36,17 @@
             <!--style="@style/Divider"-->
             <!--android:layout_below="@+id/email_fragment"-->
             <!--android:paddingTop="9dp" />-->
+        <ImageView
+            android:id="@+id/spicon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/icon" />
 
         <TextView
             android:id="@+id/divider"
             style="@style/SP_HINT"
+            android:layout_below="@+id/spicon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/must_login"

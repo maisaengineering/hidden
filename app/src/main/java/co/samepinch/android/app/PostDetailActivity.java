@@ -80,6 +80,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private String mPostId;
     private PostDetails mPostDetails;
     private PostDetailsRVAdapter mViewAdapter;
+    private Menu mMenu;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -301,12 +302,23 @@ public class PostDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.mMenu = menu;
         getMenuInflater().inflate(R.menu.post_detail_menu, menu);
         List<String> permissions = mPostDetails == null ? null : mPostDetails.getPermissions();
         if (permissions != null && permissions.contains("edit")) {
             // self
             menu.findItem(R.id.menuitem_post_edit_id).setVisible(Boolean.TRUE);
         }
+
+        // open share dialog?
+        try{
+            if(getIntent().getExtras().getBoolean(AppConstants.K.DO_SHARE.name(), false)){
+                onOptionsItemSelected(mMenu.findItem(R.id.menuitem_post_share_id));
+            }
+        }catch(Exception e){
+            // muted
+        }
+
         return true;
     }
 

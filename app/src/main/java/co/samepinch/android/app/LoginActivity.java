@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.squareup.otto.Subscribe;
 
@@ -35,6 +38,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        ImageView animationTarget = (ImageView) this.findViewById(R.id.spicon);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point_2);
+        animationTarget.startAnimation(animation);
+
         ButterKnife.bind(LoginActivity.this);
         BusProvider.INSTANCE.getBus().register(this);
 
@@ -45,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {
-
         return super.onCreateView(name, context, attrs);
     }
 

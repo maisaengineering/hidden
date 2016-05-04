@@ -20,7 +20,7 @@ public class AppConstants {
         DEFAULT_DATE_FORMAT("MM/dd/yyyy hh:mma Z"),
 
 
-        BASE("https://msocl.herokuapp.com/"),
+        BASE("https://posts.samepinch.co/"),
         GPLAY_LINK("market://details?id=co.samepinch.android.app"),
         CLIENTAUTH(BASE.getValue().concat("api/clients/token")),
         POSTS_WITH_FILTER(BASE.getValue().concat("api/v2/posts")),
@@ -30,6 +30,7 @@ public class AppConstants {
         COMMENTS(BASE.getValue().concat("api/comments")),
         GROUPS(BASE.getValue().concat("api/groups")),
         CONTENT_AUTHORITY("co.samepinch.android.app"),
+        URL_USER_SETTINGS(BASE.getValue() + "%s/app_setting"),
         URL_RULES("http://www.samepinch.co/rules/"),
         URL_TERMS_COND("http://www.samepinch.co/t&c"),
         URL_SYS_STATUS("http://www.samepinch.co/systemstatus/"),
@@ -106,8 +107,8 @@ public class AppConstants {
 
     public enum KV {
         GRANT_TYPE("grant_type", "client_credentials"),
-        CLIENT_ID("client_id", "3e0786a2f258e6f9b08250dbd7f35010480988e0d3d1ef373b79e07884be79f9"),
-        CLIENT_SECRET("client_secret", "813c95cc2eb6c0cf4f49d30d0add0c6fc3ea82863d30507beb6733c0e643927c"),
+        CLIENT_ID("client_id", ""),
+        CLIENT_SECRET("client_secret", ""),
         SCOPE("scope", "imsocl"),
         PLATFORM("platform", "android"),
         REQUEST_SIGNUP("REQUEST_SIGNUP", "108"),
@@ -170,6 +171,7 @@ public class AppConstants {
         provider,
         MESSAGE,
         REMOTE_URL,
-        IMAGE_URL
+        IMAGE_URL,
+        DO_SHARE,
     }
 }

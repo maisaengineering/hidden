@@ -225,12 +225,12 @@ public class RootActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setupWindowAnimations() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // app icon rotate animation
-            ImageView animationTarget = (ImageView) this.findViewById(R.id.spicon);
-            Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point);
-            animationTarget.startAnimation(animation);
+        // app icon rotate animation
+        ImageView animationTarget = (ImageView) this.findViewById(R.id.spicon);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point);
+        animationTarget.startAnimation(animation);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Slide slide = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.activity_slide);
             getWindow().setEnterTransition(slide);
 

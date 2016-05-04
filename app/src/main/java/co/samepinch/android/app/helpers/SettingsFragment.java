@@ -10,7 +10,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +30,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +38,6 @@ import butterknife.ButterKnife;
 import co.samepinch.android.app.R;
 import co.samepinch.android.data.dto.User;
 import co.samepinch.android.rest.ReqSetBody;
-import co.samepinch.android.rest.Resp;
 import co.samepinch.android.rest.RespUserDetails;
 import co.samepinch.android.rest.RestClient;
 
@@ -63,19 +60,6 @@ public class SettingsFragment extends Fragment {
 
     @Bind(R.id.switch_button2)
     SwitchButton switchButton2;
-
-    // options
-    @Bind(R.id.settings_notifs_posts_likes_tags_switch)
-    SwitchButton notifsPostsLikesTags;
-
-    @Bind(R.id.settings_notifs_posts_likes_switch)
-    SwitchButton notifsPostsLikes;
-
-    @Bind(R.id.settings_notifs_posts_switch)
-    SwitchButton notifsPosts;
-
-    @Bind(R.id.settings_email_subscribe_switch)
-    SwitchButton emailSubscribe;
 
     ProgressDialog progressDialog;
     User mUser;
@@ -127,17 +111,17 @@ public class SettingsFragment extends Fragment {
 
     private void setupData(User aUser) {
         // notification stuff
-        if (aUser.getApnNotify() != null) {
-            notifsPostsLikesTags.setChecked(aUser.getApnNotify() == 3);
-            notifsPostsLikes.setChecked(aUser.getApnNotify() == 2);
-            notifsPosts.setChecked(aUser.getApnNotify() == 1);
-        }
-        // email stuff
-        if (aUser.getEmailNotify() != null) {
-            emailSubscribe.setChecked(aUser.getEmailNotify().booleanValue());
-        } else {
-            emailSubscribe.setChecked(false);
-        }
+//        if (aUser.getApnNotify() != null) {
+//            notifsPostsLikesTags.setChecked(aUser.getApnNotify() == 3);
+//            notifsPostsLikes.setChecked(aUser.getApnNotify() == 2);
+//            notifsPosts.setChecked(aUser.getApnNotify() == 1);
+//        }
+//        // email stuff
+//        if (aUser.getEmailNotify() != null) {
+//            emailSubscribe.setChecked(aUser.getEmailNotify().booleanValue());
+//        } else {
+//            emailSubscribe.setChecked(false);
+//        }
     }
 
     @Override
@@ -162,21 +146,21 @@ public class SettingsFragment extends Fragment {
 
     private void saveAction() {
         User userDTO = new User();
-        // notifications
-        Integer apnNotify = 3;
-        if (notifsPostsLikesTags.isChecked()) {
-            apnNotify = 3;
-        } else if (notifsPostsLikes.isChecked()) {
-            apnNotify = 2;
-        } else if (notifsPosts.isChecked()) {
-            apnNotify = 1;
-        }
+//        // notifications
+//        Integer apnNotify = 3;
+//        if (notifsPostsLikesTags.isChecked()) {
+//            apnNotify = 3;
+//        } else if (notifsPostsLikes.isChecked()) {
+//            apnNotify = 2;
+//        } else if (notifsPosts.isChecked()) {
+//            apnNotify = 1;
+//        }
 
         // app notify
-        userDTO.setApnNotify(apnNotify);
+//        userDTO.setApnNotify(apnNotify);
 
         // email
-        userDTO.setEmailNotify(emailSubscribe.isChecked());
+//        userDTO.setEmailNotify(emailSubscribe.isChecked());
 
         progressDialog.setMessage("saving your preferences...");
         progressDialog.show();

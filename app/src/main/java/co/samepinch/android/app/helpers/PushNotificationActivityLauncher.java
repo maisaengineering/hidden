@@ -17,10 +17,12 @@ import co.samepinch.android.data.dto.PushNotification;
 public class PushNotificationActivityLauncher extends AppCompatActivity {
     public static final String TAG = "PushNotificationActivityLauncher";
     public static final String TYPE_DOT = "FOLLOWER";
+    public static final String TYPE_ADD_POST = "ADDPOST";
     public static final String TYPE_POST = "POST";
     public static final String TYPE_GROUP = "GROUP";
     public static final String TYPE_COMMENT = "COMMENT";
     public static final String TYPE_VOTE = "VOTE";
+    public static final String TYPE_SHARE = "SHARE";
     public static final String TYPE_ADMIN = "ADMIN";
     public static final String TYPE_ROOT = "";
 
@@ -63,6 +65,21 @@ public class PushNotificationActivityLauncher extends AppCompatActivity {
                 case TYPE_COMMENT:
                 case TYPE_VOTE:
                     iArgs.putString(AppConstants.K.POST.name(), uid);
+                    targetActivity = PostDetailActivity.class;
+                    break;
+
+                case TYPE_ADD_POST:
+                    if(Utils.isLoggedIn()){
+                        iArgs.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_CREATE_POST.name());
+                        targetActivity = ActivityFragment.class;
+                    }else{
+                        targetActivity = RootActivity.class;
+                    }
+                    break;
+
+                case TYPE_SHARE:
+                    iArgs.putString(AppConstants.K.POST.name(), uid);
+                    iArgs.putBoolean(AppConstants.K.DO_SHARE.name(), true);
                     targetActivity = PostDetailActivity.class;
                     break;
 

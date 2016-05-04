@@ -37,6 +37,7 @@ import com.squareup.otto.Subscribe;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -370,7 +371,11 @@ public class MainActivityIn extends AppCompatActivity {
                                 args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_MANAGE_TAGS.name());
                                 break;
                             case R.id.nav_settings:
-                                args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_SETTINGS.name());
+                                Map<String, String> userInfo = Utils.PreferencesManager.getInstance().getValueAsMap(AppConstants.API.PREF_AUTH_USER.getValue());
+                                String userId = userInfo.get(AppConstants.APP_INTENT.KEY_UID.getValue());
+                                String userSettings = String.format(AppConstants.API.URL_USER_SETTINGS.getValue(), userId);
+                                args.putString(AppConstants.K.REMOTE_URL.name(), userSettings);
+                                args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_WEBVIEW.name());
                                 break;
                             case R.id.nav_rules:
                                 args.putString(AppConstants.K.REMOTE_URL.name(), AppConstants.API.URL_RULES.getValue());

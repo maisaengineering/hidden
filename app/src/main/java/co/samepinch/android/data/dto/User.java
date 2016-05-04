@@ -27,8 +27,8 @@ public class User {
     Boolean follow;
     List<String> badges;
 
-    Integer apnNotify;
-    Boolean emailNotify;
+    Object apnNotify;
+    Object emailNotify;
 
     public User() {
     }
@@ -139,19 +139,19 @@ public class User {
         this.imageKey = imageKey;
     }
 
-    public Integer getApnNotify() {
+    public Object getApnNotify() {
         return apnNotify;
     }
 
-    public void setApnNotify(Integer apnNotify) {
+    public void setApnNotify(Object apnNotify) {
         this.apnNotify = apnNotify;
     }
 
-    public Boolean getEmailNotify() {
+    public Object getEmailNotify() {
         return emailNotify;
     }
 
-    public void setEmailNotify(Boolean emailNotify) {
+    public void setEmailNotify(Object emailNotify) {
         this.emailNotify = emailNotify;
     }
 
