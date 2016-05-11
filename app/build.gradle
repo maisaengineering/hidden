@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 //apply plugin: 'com.google.gms.google-services'
 
+def homePath = System.properties['user.home']
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -23,7 +25,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("/tmp/upload/ks/gplay_ks.jks")
+            storeFile file(homePath + "/dev/labs/keystore/hidden/gplay_ks.jks")
             storePassword "123456"
             keyAlias "samepinch_release"
             keyPassword "123456"
@@ -136,5 +138,8 @@ dependencies {
 
     compile 'org.springframework.android:spring-android-rest-template:2.0.0.M1'
     compile 'com.karumi:dexter:2.2.2'
+
+//    classpath 'com.android.tools.build:gradle:+'
+//    classpath 'com.android.tools.build:gradle:1.5.0'
 //    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }

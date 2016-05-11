@@ -20,7 +20,7 @@ public class AppConstants {
         DEFAULT_DATE_FORMAT("MM/dd/yyyy hh:mma Z"),
 
 
-        BASE("https://posts.samepinch.co/"),
+        BASE("https://msocl.herokuapp.com/"),
         GPLAY_LINK("market://details?id=co.samepinch.android.app"),
         CLIENTAUTH(BASE.getValue().concat("api/clients/token")),
         POSTS_WITH_FILTER(BASE.getValue().concat("api/v2/posts")),
@@ -107,8 +107,8 @@ public class AppConstants {
 
     public enum KV {
         GRANT_TYPE("grant_type", "client_credentials"),
-        CLIENT_ID("client_id", ""),
-        CLIENT_SECRET("client_secret", ""),
+        CLIENT_ID("client_id", "3e0786a2f258e6f9b08250dbd7f35010480988e0d3d1ef373b79e07884be79f9"),
+        CLIENT_SECRET("client_secret", "813c95cc2eb6c0cf4f49d30d0add0c6fc3ea82863d30507beb6733c0e643927c"),
         SCOPE("scope", "imsocl"),
         PLATFORM("platform", "android"),
         REQUEST_SIGNUP("REQUEST_SIGNUP", "108"),
