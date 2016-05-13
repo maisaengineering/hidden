@@ -7,7 +7,7 @@
     <!-- pinch handle-->
     <string name="pinch_handle">\u0040<xliff:g id="handle">%1$s</xliff:g></string>
     <string name="terms_n_cond">Terms \u0026 Conditions</string>
-    <string name="enter_comment">enter your comment here\u2026</string>
+    <string name="enter_comment">enter your advice here\u2026</string>
     <string name="enter_post">type here\u2026</string>
     <string name="select_tags">tag this post with</string>
     <string name="profile_picture_desc">Profile picture</string>
@@ -20,7 +20,7 @@
     <string name="post_edit_label">update</string>
     <string name="post_del_label">delete</string>
     <string name="post_del_pop_title">Delete post?</string>
-    <string name="post_del_pop_desc">Deleted post may not be recovered. You loose complete data including likes, comments, views, etc. Better yet, you can choose to edit.</string>
+    <string name="post_del_pop_desc">Deleted post may not be recovered. You loose complete data including likes, advises, views, etc. Better yet, you can choose to edit.</string>
     <string name="post_del_positive">OK</string>
     <string name="post_del_negative">Cancel</string>
 
@@ -76,7 +76,7 @@
     <string name="hint_last_name">Last Name</string>
     <string name="hint_create_acc">Create My Account</string>
     <string name="hint_a_member">Already a member? Login</string>
-    <string name="hint_comment">comment</string>
+    <string name="hint_comment">advice</string>
     <string name="hint_dislike">dislike</string>
     <string name="hint_edit">edit</string>
     <string name="hint_flag">flag</string>
@@ -99,7 +99,7 @@
     <string name="hint_about_me">About Me</string>
     <string name="hint_my_blog">My Blog</string>
     <string name="hint_change_pass">change password</string>
-    <string name="title_comment">COMMENT</string>
+    <string name="title_comment">ADVICE</string>
     <string name="title_as_you">as you</string>
     <string name="title_as_anonymous">as anonymous</string>
     <string name="title_update">UPDATE</string>

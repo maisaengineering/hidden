@@ -12,7 +12,7 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 44
+        versionCode 46
         versionName "1.1.1"
         applicationId "co.samepinch.android.app"
 //        renderscriptTargetApi 23

@@ -57,10 +57,9 @@ import co.samepinch.android.data.dto.User;
 
 public class MainActivityIn extends AppCompatActivity {
     public static final String TAG = "MainActivityIn";
+    public static final String DFLT_ZERO = "0";
     private static final int INTENT_LOGOUT = 1;
     private static final int TAB_ITEM_COUNT = 2;
-    public static final String DFLT_ZERO = "0";
-
     @Bind(R.id.bottomsheet)
     BottomSheetLayout mBottomsheet;
 
@@ -87,50 +86,8 @@ public class MainActivityIn extends AppCompatActivity {
     NavigationView mNavigationView;
 
     NavViews nv;
-
-    static class NavViews {
-        @Bind(R.id.dot_wall_switch)
-        ViewSwitcher mVS;
-
-        @Bind(R.id.backdrop)
-        ImageView mBackdrop;
-
-        @Bind(R.id.dot_wall_image)
-        SIMView mDotImage;
-
-        @Bind(R.id.dot_wall_image_txt)
-        TextView mDotImageText;
-
-        @Bind(R.id.dot_wall_name)
-        TextView mDotName;
-
-        @Bind(R.id.dot_wall_handle)
-        TextView mDotHandle;
-
-        @Bind(R.id.dot_wall_about)
-        TextView mDotAbout;
-
-        @Bind(R.id.dot_wall_followers_count)
-        TextView mDotFollowersCnt;
-
-        @Bind(R.id.dot_wall_posts_count)
-        TextView mDotPostsCnt;
-
-        @Bind(R.id.dot_wall_blog_wrapper)
-        LinearLayout mDotBlogWrapper;
-
-        @Bind(R.id.dot_wall_blog)
-        TextView mDotBlog;
-
-        @Bind(R.id.dot_wall_edit)
-        TextView mDotEdit;
-    }
-
-
     private LocalHandler mHandler;
-
     private User mUser;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +145,6 @@ public class MainActivityIn extends AppCompatActivity {
         intent.putExtras(iArgs);
         startService(intent);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -258,7 +214,14 @@ public class MainActivityIn extends AppCompatActivity {
     }
 
     private void setupDrawerContent(final User user, boolean init) {
-
+        if (nv == null) {
+            Intent intent = new Intent(this, RootActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            return;
+        }
         String fName = user.getFname();
         String lName = user.getLname();
         // tag map
@@ -329,7 +292,7 @@ public class MainActivityIn extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-        }else{
+        } else {
             nv.mDotBlogWrapper.setVisibility(View.GONE);
         }
 
@@ -421,7 +384,6 @@ public class MainActivityIn extends AppCompatActivity {
                 });
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -475,7 +437,6 @@ public class MainActivityIn extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -510,42 +471,6 @@ public class MainActivityIn extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtras(args);
         startActivity(intent);
-    }
-
-    public class TabItemAdapter extends SmartFragmentStatePagerAdapter {
-        private final int itemCount;
-
-        public TabItemAdapter(FragmentManager fm, int itemCount) {
-            super(fm);
-            this.itemCount = itemCount;
-        }
-
-        @Override
-        public int getCount() {
-            return itemCount;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fragment = getRegisteredFragment(position);
-            if (fragment == null) {
-                switch (position) {
-                    case 0:
-                        fragment = PostListFragment.newInstance(position);
-                        break;
-                    case 1:
-                        fragment = FavPostListFragment.newInstance(position);
-                        break;
-                    default:
-                        throw new IllegalStateException("non-bound position index: " + position);
-                }
-            }
-            return fragment;
-        }
-//
-//        public int getItemPosition(Object object) {
-//            return POSITION_NONE;
-//        }
     }
 
     @Subscribe
@@ -587,11 +512,85 @@ public class MainActivityIn extends AppCompatActivity {
         });
     }
 
+    static class NavViews {
+        @Bind(R.id.dot_wall_switch)
+        ViewSwitcher mVS;
+
+        @Bind(R.id.backdrop)
+        ImageView mBackdrop;
+
+        @Bind(R.id.dot_wall_image)
+        SIMView mDotImage;
+
+        @Bind(R.id.dot_wall_image_txt)
+        TextView mDotImageText;
+
+        @Bind(R.id.dot_wall_name)
+        TextView mDotName;
+
+        @Bind(R.id.dot_wall_handle)
+        TextView mDotHandle;
+
+        @Bind(R.id.dot_wall_about)
+        TextView mDotAbout;
+
+        @Bind(R.id.dot_wall_followers_count)
+        TextView mDotFollowersCnt;
+
+        @Bind(R.id.dot_wall_posts_count)
+        TextView mDotPostsCnt;
+
+        @Bind(R.id.dot_wall_blog_wrapper)
+        LinearLayout mDotBlogWrapper;
+
+        @Bind(R.id.dot_wall_blog)
+        TextView mDotBlog;
+
+        @Bind(R.id.dot_wall_edit)
+        TextView mDotEdit;
+    }
+
     private static final class LocalHandler extends Handler {
         private final WeakReference<MainActivityIn> mActivity;
 
         public LocalHandler(MainActivityIn parent) {
             mActivity = new WeakReference<MainActivityIn>(parent);
         }
+    }
+
+    public class TabItemAdapter extends SmartFragmentStatePagerAdapter {
+        private final int itemCount;
+
+        public TabItemAdapter(FragmentManager fm, int itemCount) {
+            super(fm);
+            this.itemCount = itemCount;
+        }
+
+        @Override
+        public int getCount() {
+            return itemCount;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment = getRegisteredFragment(position);
+            if (fragment == null) {
+                switch (position) {
+                    case 0:
+                        fragment = PostListFragment.newInstance(position);
+                        break;
+                    case 1:
+                        fragment = FavPostListFragment.newInstance(position);
+                        break;
+                    default:
+                        throw new IllegalStateException("non-bound position index: " + position);
+                }
+            }
+            return fragment;
+        }
+//
+//        public int getItemPosition(Object object) {
+//            return POSITION_NONE;
+//        }
     }
 }

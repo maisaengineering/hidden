@@ -134,7 +134,8 @@
                         android:inputType="text"
                         android:enabled="false"
                         android:hint="@string/hint_pinch_handle"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:visibility="gone"/>
                 </android.support.design.widget.TextInputLayout>
 
 
