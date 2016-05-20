@@ -45,7 +45,28 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".MainActivityIn" />
+        <!-- PUSH NOTIFICATIONS ACTIVITY -->
         <activity android:name=".helpers.PushNotificationActivityLauncher" />
+
+        <!-- DEEP LINKING ACTIVITY -->
+        <activity
+            android:name=".helpers.Web2AppActivityLauncher"
+            android:label="@string/app_name" >
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <data android:host="@string/deeplink_name"
+                    android:pathPrefix="@string/deeplink_open"
+                    android:scheme="https"/>
+                <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <!--<data android:scheme="@string/deeplink_name"-->
+                    <!--android:host="@string/deeplink_open" />-->
+
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="co.samepinch.android.data.dao.SPContentProvider"

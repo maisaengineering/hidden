@@ -4,6 +4,8 @@
     <string name="desc_list_item_left_icon">desc_list_item_icon</string>
     <!-- SAMEPINCH specifics -->
     <string name="app_name">SamePinch</string>
+    <string name="deeplink_name">samepinch.co</string>
+    <string name="deeplink_open">/droidlaunch</string>
     <!-- pinch handle-->
     <string name="pinch_handle">\u0040<xliff:g id="handle">%1$s</xliff:g></string>
     <string name="terms_n_cond">Terms \u0026 Conditions</string>

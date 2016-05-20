@@ -215,7 +215,7 @@ public class MainActivityIn extends AppCompatActivity {
 
     private void setupDrawerContent(final User user, boolean init) {
         if (nv == null) {
-            Intent intent = new Intent(this, RootActivity.class);
+            Intent intent = new Intent(MainActivityIn.this, MainActivityIn.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                     Intent.FLAG_ACTIVITY_CLEAR_TASK |
                     Intent.FLAG_ACTIVITY_NEW_TASK);

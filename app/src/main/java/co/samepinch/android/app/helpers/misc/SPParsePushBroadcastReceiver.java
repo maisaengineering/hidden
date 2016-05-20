@@ -21,23 +21,13 @@ import com.google.gson.Gson;
 import com.parse.ParsePushBroadcastReceiver;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.concurrent.CountDownLatch;
 
 import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.app.helpers.PushNotificationActivityLauncher;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.data.dto.PushNotification;
-import co.samepinch.android.rest.ReqNoBody;
-import co.samepinch.android.rest.ReqPosts;
-import co.samepinch.android.rest.RestClient;
 
 /**
  * Created by imaginationcoder on 10/16/15.
