@@ -5,3 +5,4 @@
 .DS_Store
 /build
 /captures
+hidden/app/src/main/java/co/samepinch/android/app/helpers/AppConstants.java
