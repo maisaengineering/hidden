@@ -57,9 +57,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
-                <data android:host="@string/deeplink_name"
-                    android:pathPrefix="@string/deeplink_open"
-                    android:scheme="https"/>
+                <data android:scheme="http"
+                    android:host="@string/deeplink_name_with_host"
+                    android:pathPrefix="@string/deeplink_open"/>
+                <data android:scheme="https"
+                    android:host="@string/deeplink_name_with_host"
+                    android:pathPrefix="@string/deeplink_open"/>
+                <data android:scheme="@string/deeplink_name"
+                    android:host="@string/deeplink_open" />
                 <!-- note that the leading "/" is required for pathPrefix-->
                 <!-- Accepts URIs that begin with "example://gizmos” -->
                 <!--<data android:scheme="@string/deeplink_name"-->

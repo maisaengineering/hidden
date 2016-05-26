@@ -30,12 +30,15 @@ public class AppConstants {
         COMMENTS(BASE.getValue().concat("api/comments")),
         GROUPS(BASE.getValue().concat("api/groups")),
         CONTENT_AUTHORITY("co.samepinch.android.app"),
+        NOTIFICATIONS(BASE.getValue().concat("api/notifications")),
         URL_USER_SETTINGS(BASE.getValue() + "%s/app_setting"),
         URL_RULES("http://www.samepinch.co/rules/"),
         URL_TERMS_COND("http://www.samepinch.co/t&c"),
         URL_SYS_STATUS("http://www.samepinch.co/systemstatus/"),
         PARSE_APPLICATION_ID("Kk6uWSLLnGCp6xEOPYQq5iGbIz0NiBj5DtH7qdY5"),
         PARSE_CLIENT_KEY("vdj0zlO0cmgeZwoKvSZ8EfwVz7OEVZbrgs73OeQy"),;
+
+
         private final String value;
 
         API(String value) {
