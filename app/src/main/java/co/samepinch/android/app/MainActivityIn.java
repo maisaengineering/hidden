@@ -1,9 +1,11 @@
 package co.samepinch.android.app;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -21,6 +23,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -78,7 +82,6 @@ public class MainActivityIn extends AppCompatActivity {
     /**
      * NAVIGATION RELATED
      */
-
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
@@ -129,8 +132,22 @@ public class MainActivityIn extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.menu_blue);
-        ab.setDisplayHomeAsUpEnabled(true);
+//        ab.setHomeAsUpIndicator(R.drawable.menu_blue);
+//        ab.setDisplayHomeAsUpEnabled(true);
+
+        ab.setDisplayShowCustomEnabled(true);
+        View headerView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.main_tab_header, null);
+        headerView.findViewById(R.id.nav_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+        ab.setCustomView(headerView);
+        setupWindowAnimations((ImageView) headerView.findViewById(R.id.home));
+
+//        ab.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.menu_blue));
 
         // handler
         mHandler = new LocalHandler(this);
@@ -510,6 +527,16 @@ public class MainActivityIn extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setupWindowAnimations(ImageView imageView) {
+        try {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+            imageView.startAnimation(animation);
+        } catch (Throwable te) {
+            // muted
+        }
     }
 
     static class NavViews {

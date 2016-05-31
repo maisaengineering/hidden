@@ -142,4 +142,7 @@ dependencies {
 //    classpath 'com.android.tools.build:gradle:+'
 //    classpath 'com.android.tools.build:gradle:1.5.0'
 //    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+
+    compile 'com.android.support:multidex:1.0.0'
+
 }
