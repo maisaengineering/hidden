@@ -51,6 +51,7 @@ import co.samepinch.android.app.helpers.ImageUtils;
 import co.samepinch.android.app.helpers.RootActivity;
 import co.samepinch.android.app.helpers.SmartFragmentStatePagerAdapter;
 import co.samepinch.android.app.helpers.Utils;
+import co.samepinch.android.app.helpers.intent.AllNotificationsService;
 import co.samepinch.android.app.helpers.intent.DotDetailsService;
 import co.samepinch.android.app.helpers.misc.FragmentLifecycle;
 import co.samepinch.android.app.helpers.pubsubs.BusProvider;
@@ -133,21 +134,21 @@ public class MainActivityIn extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
 //        ab.setHomeAsUpIndicator(R.drawable.menu_blue);
-//        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayHomeAsUpEnabled(false);
+        ab.setDisplayShowTitleEnabled(false);
+        ab.setDisplayShowHomeEnabled(false);
 
+        View headerView = LayoutInflater.from(SPApplication.getContext()).inflate(R.layout.main_tab_header, null);
+        // settings handler setup
+        setupSettingsHandler(headerView.findViewById(R.id.nav_settings));
+        // in-app notifications handler setup
+        setupInAppNotifsHandler(headerView.findViewById(R.id.nav_notif));
+
+        // attach view
         ab.setDisplayShowCustomEnabled(true);
-        View headerView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.main_tab_header, null);
-        headerView.findViewById(R.id.nav_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-
         ab.setCustomView(headerView);
-        setupWindowAnimations((ImageView) headerView.findViewById(R.id.home));
 
-//        ab.setBackgroundDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.menu_blue));
+        setupWindowAnimations((ImageView) headerView.findViewById(R.id.home));
 
         // handler
         mHandler = new LocalHandler(this);
@@ -161,6 +162,45 @@ public class MainActivityIn extends AppCompatActivity {
                 new Intent(getApplicationContext(), DotDetailsService.class);
         intent.putExtras(iArgs);
         startService(intent);
+
+        // refresh user notifications
+        Intent intentNotifs =
+                new Intent(getApplicationContext(), AllNotificationsService.class);
+        startService(intentNotifs);
+    }
+
+    private void setupSettingsHandler(View view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+    }
+
+
+    private void setupInAppNotifsHandler(View view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                boolean wrapInScrollView = true;
+//                new MaterialDialog.Builder(MainActivityIn.this)
+//                        .title("SHOW")
+//                        .customView(R.layout.list_item, wrapInScrollView)
+//                        .positiveText("POSITIVE")
+//                        .show();
+
+                Bundle args = new Bundle();
+                // target
+                args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_NOTIFS.name());
+
+                // intent
+                Intent intent = new Intent(getApplicationContext(), ActivityFragment.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtras(args);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

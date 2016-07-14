@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import co.samepinch.android.app.helpers.AppConstants;
+import co.samepinch.android.app.helpers.Utils;
 
 /**
  * Created by imaginationcoder on 7/4/15.
@@ -48,6 +49,9 @@ public class SPContentProvider extends ContentProvider {
     private static final int PATH_COMMENTS = 408;
     private static final int PATH_COMMENTS_ITEM = 409;
 
+    private static final int PATH_NOTIFICATIONS = 508;
+    private static final int PATH_NOTIFICATIONS_ITEM = 509;
+
     // uri patterns matcher
     private static final UriMatcher sUriMatcher;
 
@@ -73,6 +77,10 @@ public class SPContentProvider extends ContentProvider {
         // comments handler
         sUriMatcher.addURI(authority, SchemaComments.PATH_COMMENTS, PATH_COMMENTS);
         sUriMatcher.addURI(authority, SchemaComments.PATH_COMMENTS + "/#", PATH_COMMENTS_ITEM);
+
+        // notifications handler
+        sUriMatcher.addURI(authority, SchemaNotifications.PATH_NOTIFICATIONS, PATH_NOTIFICATIONS);
+        sUriMatcher.addURI(authority, SchemaNotifications.PATH_NOTIFICATIONS + "/#", PATH_NOTIFICATIONS_ITEM);
     }
 
     DBHelper mHelper;
@@ -95,6 +103,10 @@ public class SPContentProvider extends ContentProvider {
             case PATH_COMMENTS:
             case PATH_COMMENTS_ITEM:
                 return SchemaComments.PATH_COMMENTS;
+            case PATH_NOTIFICATIONS:
+            case PATH_NOTIFICATIONS_ITEM:
+                return SchemaNotifications.TABLE_NAME;
+
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
@@ -132,6 +144,10 @@ public class SPContentProvider extends ContentProvider {
             case PATH_COMMENTS:
             case PATH_COMMENTS_ITEM:
                 qb.setTables(SchemaComments.TABLE_NAME);
+                break;
+            case PATH_NOTIFICATIONS:
+            case PATH_NOTIFICATIONS_ITEM:
+                qb.setTables(SchemaNotifications.TABLE_NAME);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -176,6 +192,12 @@ public class SPContentProvider extends ContentProvider {
                     db = mHelper.getWritableDatabase();
                     rowId = db.insertWithOnConflict(SchemaComments.TABLE_NAME, "", values, SQLiteDatabase.CONFLICT_FAIL);
                     break;
+                case PATH_NOTIFICATIONS:
+                case PATH_NOTIFICATIONS_ITEM:
+                    selectionArgsMap.put(SchemaNotifications.COLUMN_UID + "=?", values.getAsString(SchemaNotifications.COLUMN_UID));
+                    db = mHelper.getWritableDatabase();
+                    rowId = db.insertWithOnConflict(SchemaNotifications.TABLE_NAME, "", values, SQLiteDatabase.CONFLICT_FAIL);
+                    break;
 
                 default:
                     throw new IllegalArgumentException("Unknown uri: " + uri);
@@ -211,6 +233,92 @@ public class SPContentProvider extends ContentProvider {
         throw new IllegalStateException("failed to insert.");
     }
 
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        int updatedRowsCount = 0;
+        String tableName = null;
+        switch (sUriMatcher.match(uri)) {
+            case PATH_POSTS:
+            case PATH_POSTS_ITEM:
+                tableName = SchemaPosts.TABLE_NAME;
+                break;
+            case PATH_POST_DETAILS:
+            case PATH_POST_DETAILS_ITEM:
+                tableName = SchemaPostDetails.TABLE_NAME;
+                break;
+            case PATH_DOTS:
+            case PATH_DOTS_ITEM:
+                tableName = SchemaDots.TABLE_NAME;
+                break;
+            case PATH_TAGS:
+            case PATH_TAGS_ITEM:
+                tableName = SchemaTags.TABLE_NAME;
+                break;
+            case PATH_COMMENTS:
+            case PATH_COMMENTS_ITEM:
+                tableName = SchemaComments.TABLE_NAME;
+                break;
+            case PATH_NOTIFICATIONS:
+            case PATH_NOTIFICATIONS_ITEM:
+                tableName = SchemaNotifications.TABLE_NAME;
+                break;
+
+            default:
+                throw new IllegalArgumentException("un-known uri: " + uri);
+        }
+
+        updatedRowsCount = db.update(tableName, values, selection, selectionArgs);
+        if (updatedRowsCount > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return updatedRowsCount;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        int delRowsCount = 0;
+        String tableName = null;
+        switch (sUriMatcher.match(uri)) {
+            case PATH_POSTS:
+            case PATH_POSTS_ITEM:
+                tableName = SchemaPosts.TABLE_NAME;
+                break;
+            case PATH_POST_DETAILS:
+            case PATH_POST_DETAILS_ITEM:
+                tableName = SchemaPostDetails.TABLE_NAME;
+                break;
+            case PATH_DOTS:
+            case PATH_DOTS_ITEM:
+                tableName = SchemaDots.TABLE_NAME;
+                break;
+            case PATH_TAGS:
+            case PATH_TAGS_ITEM:
+                tableName = SchemaTags.TABLE_NAME;
+                break;
+            case PATH_COMMENTS:
+            case PATH_COMMENTS_ITEM:
+                tableName = SchemaComments.TABLE_NAME;
+                break;
+            case PATH_NOTIFICATIONS:
+            case PATH_NOTIFICATIONS_ITEM:
+                tableName = SchemaNotifications.TABLE_NAME;
+                break;
+
+            default:
+                throw new IllegalArgumentException("un-known uri: " + uri);
+        }
+
+        delRowsCount = db.delete(tableName, selection, selectionArgs);
+        if (delRowsCount > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return delRowsCount;
+    }
+
     /**
      * Performs the work provided in a single transaction
      */
@@ -242,88 +350,10 @@ public class SPContentProvider extends ContentProvider {
         return result;
     }
 
-    @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
-        int delRowsCount = 0;
-        String tableName = null;
-        switch (sUriMatcher.match(uri)) {
-            case PATH_POSTS:
-            case PATH_POSTS_ITEM:
-                tableName = SchemaPosts.TABLE_NAME;
-                break;
-            case PATH_POST_DETAILS:
-            case PATH_POST_DETAILS_ITEM:
-                tableName = SchemaPostDetails.TABLE_NAME;
-                break;
-            case PATH_DOTS:
-            case PATH_DOTS_ITEM:
-                tableName = SchemaDots.TABLE_NAME;
-                break;
-            case PATH_TAGS:
-            case PATH_TAGS_ITEM:
-                tableName = SchemaTags.TABLE_NAME;
-                break;
-            case PATH_COMMENTS:
-            case PATH_COMMENTS_ITEM:
-                tableName = SchemaComments.TABLE_NAME;
-                break;
-
-            default:
-                throw new IllegalArgumentException("un-known uri: " + uri);
-        }
-
-        delRowsCount = db.delete(tableName, selection, selectionArgs);
-        if (delRowsCount > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
-
-        return delRowsCount;
-    }
-
-    @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
-        int updatedRowsCount = 0;
-        String tableName = null;
-        switch (sUriMatcher.match(uri)) {
-            case PATH_POSTS:
-            case PATH_POSTS_ITEM:
-                tableName = SchemaPosts.TABLE_NAME;
-                break;
-            case PATH_POST_DETAILS:
-            case PATH_POST_DETAILS_ITEM:
-                tableName = SchemaPostDetails.TABLE_NAME;
-                break;
-            case PATH_DOTS:
-            case PATH_DOTS_ITEM:
-                tableName = SchemaDots.TABLE_NAME;
-                break;
-            case PATH_TAGS:
-            case PATH_TAGS_ITEM:
-                tableName = SchemaTags.TABLE_NAME;
-                break;
-            case PATH_COMMENTS:
-            case PATH_COMMENTS_ITEM:
-                tableName = SchemaComments.TABLE_NAME;
-                break;
-
-            default:
-                throw new IllegalArgumentException("un-known uri: " + uri);
-        }
-
-        updatedRowsCount = db.update(tableName, values, selection, selectionArgs);
-        if (updatedRowsCount > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
-
-        return updatedRowsCount;
-    }
-
     public static class DBHelper extends SQLiteOpenHelper {
         public static final String LOG_TAG = "DBHelper";
         static final String DATABASE_NAME = "co.samepinch.android.app.db";
-        static final int DATABASE_VERSION = 108;
+        static final int DATABASE_VERSION = 1010;
 
         public DBHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -341,7 +371,9 @@ public class SPContentProvider extends ContentProvider {
 
             sqLiteDatabase.execSQL(SchemaDots.TABLE_CREATE);
             sqLiteDatabase.execSQL(SchemaTags.TABLE_CREATE);
+
             sqLiteDatabase.execSQL(SchemaComments.TABLE_CREATE);
+            sqLiteDatabase.execSQL(SchemaNotifications.TABLE_CREATE);
 
             // VIEWS
             sqLiteDatabase.execSQL(SchemaPosts.VIEW_CREATE_POST_WITH_DOT);
@@ -360,12 +392,17 @@ public class SPContentProvider extends ContentProvider {
             sqLiteDatabase.execSQL(SchemaTags.TABLE_DROP);
 
             sqLiteDatabase.execSQL(SchemaComments.TABLE_DROP);
+            sqLiteDatabase.execSQL(SchemaNotifications.TABLE_DROP);
 
             // VIEWS
             sqLiteDatabase.execSQL(SchemaPosts.VIEW_DROP_POST_WITH_DOT);
 
             // create table(s)
             onCreate(sqLiteDatabase);
+
+            // remove all traces
+            Utils.PreferencesManager pref = Utils.PreferencesManager.getInstance();
+            pref.clear();
         }
 
     }

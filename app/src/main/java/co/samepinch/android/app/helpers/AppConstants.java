@@ -160,6 +160,7 @@ public class AppConstants {
         FRAGMENT_SETTINGS,
         FRAGMENT_WEBVIEW,
         FRAGMENT_IMAGEVIEW,
+        FRAGMENT_NOTIFS,
         KEY_TAG,
         KEY_DOT,
         Wall,

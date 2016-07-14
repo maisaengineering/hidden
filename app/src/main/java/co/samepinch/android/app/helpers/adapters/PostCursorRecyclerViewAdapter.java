@@ -12,7 +12,7 @@ import co.samepinch.android.app.R;
  * Created by imaginationcoder on 7/2/15.
  */
 public class PostCursorRecyclerViewAdapter extends CursorRecyclerViewAdapter<PostRecyclerViewHolder> {
-    public static final String TAG = "PostCursorRecyclerView";
+    public static final String TAG = "PostCursorRecyclerViewAdapter";
 
     final Context mContext;
 

@@ -58,6 +58,10 @@
     <string name="flag_btn_choose">Send</string>
     <string name="flag_btn_cancel">Cancel</string>
 
+    <!-- NOTIFICATIONS -->
+    <string name="notifs_title">NOTIFICATIONS</string>
+    <string name="notifs_none">Good job! no more to catch-up right at this moment.</string>
+
     <!-- CHANGE PASSWORD -->
     <string name="change_password_title">Change Password</string>
     <string name="change_password_positive">Update</string>

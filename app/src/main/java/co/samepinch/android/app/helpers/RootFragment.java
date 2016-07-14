@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import co.samepinch.android.app.CommentFragment;
 import co.samepinch.android.app.DotWallFragment;
+import co.samepinch.android.app.NotifsFragment;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.TagWallFragment;
 
@@ -77,6 +78,9 @@ public class RootFragment extends Fragment {
                 break;
             case FRAGMENT_IMAGEVIEW:
                 fragment = new ImageViewFragment();
+                break;
+            case FRAGMENT_NOTIFS:
+                fragment = new NotifsFragment();
                 break;
             default:
                 throw new IllegalArgumentException("un-known fragment " + targetFragment);
