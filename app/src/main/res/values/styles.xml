@@ -258,4 +258,63 @@
         <item name="android:windowCloseOnTouchOutside">false</item>
         <!--<item name="colorAccent">@color/colorAccent</item>-->
     </style>
+
+
+    <!-- TextView Empty Base-->
+    <style name="TextViewBase" parent="android:TextAppearance.Holo.Widget.TextView"/>
+
+    <!-- ActionBar Title -->
+    <style name="CustomActionBarTitleBase" parent="TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+
+    <!-- Text Views Default Base -->
+    <style name="TextViewDisplay4" parent="TextAppearance.AppCompat.Display4">
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
+    </style>
+
+    <style name="TextViewDisplay3" parent="TextAppearance.AppCompat.Display3">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="TextViewDisplay2" parent="TextAppearance.AppCompat.Display2">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="TextViewDisplay1" parent="TextAppearance.AppCompat.Display1">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="TextViewHeadline" parent="TextAppearance.AppCompat.Headline">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="TextViewTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
+
+    <style name="TextViewSubhead" parent="TextAppearance.AppCompat.Subhead">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="TextViewBody2" parent="TextAppearance.AppCompat.Body2">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
+
+    <style name="TextViewBody1" parent="TextAppearance.AppCompat.Body1">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="TextViewCaption" parent="TextAppearance.AppCompat.Caption">
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="TextViewMenu" parent="TextAppearance.AppCompat.Menu"/>
+
+    <style name="TextViewButton" parent="TextAppearance.AppCompat.Button">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
+
+    <!-- For some reason if we dont add the allCapps attribute it is not reflected in all versions -->
+    <style name="TextViewButtonAllCaps" parent="TextViewButton">
+        <item name="android:textAllCaps">true</item>
+    </style>
 </resources>

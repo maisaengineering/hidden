@@ -23,7 +23,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import co.samepinch.android.app.helpers.adapters.NotifsRVAdapter;
 import co.samepinch.android.app.helpers.misc.FragmentLifecycle;
-import co.samepinch.android.app.helpers.misc.SimpleDividerItemDecoration;
 import co.samepinch.android.app.helpers.pubsubs.BusProvider;
 import co.samepinch.android.data.dao.SchemaNotifications;
 
@@ -113,14 +112,12 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
         ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         ab.setDisplayShowCustomEnabled(true);
 
-//        ab.setHomeButtonEnabled(false);
-//        ab.setHomeAsUpIndicator(R.drawable.back_arrow);
         ab.setDisplayHomeAsUpEnabled(false);
         ab.setDisplayShowTitleEnabled(false);
         View headerView = LayoutInflater.from(SPApplication.getContext()).inflate(R.layout.notifs_header, null);
         ab.setCustomView(headerView, LP_AB_MATCH_CTR);
 
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        headerView.findViewById(R.id.nav_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // hack to get click working
@@ -152,7 +149,7 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
         mRecyclerView.setAdapter(mViewAdapter);
 
         // STYLE :: DIVIDER
-        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+//        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
     }
 
 

@@ -1,6 +1,7 @@
 package co.samepinch.android.app;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -59,6 +60,7 @@ import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.app.helpers.widget.SIMView;
 import co.samepinch.android.data.dao.SchemaDots;
 import co.samepinch.android.data.dto.User;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivityIn extends AppCompatActivity {
     public static final String TAG = "MainActivityIn";
@@ -92,6 +94,11 @@ public class MainActivityIn extends AppCompatActivity {
     NavViews nv;
     private LocalHandler mHandler;
     private User mUser;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

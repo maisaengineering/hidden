@@ -1,5 +1,6 @@
 package co.samepinch.android.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import co.samepinch.android.app.helpers.RootFragment;
 import co.samepinch.android.app.helpers.SmartFragmentStatePagerAdapter;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ActivityFragment extends AppCompatActivity {
 
@@ -76,5 +78,10 @@ public class ActivityFragment extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }

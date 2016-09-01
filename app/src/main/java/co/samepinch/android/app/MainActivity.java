@@ -1,6 +1,7 @@
 package co.samepinch.android.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import co.samepinch.android.app.helpers.RootActivity;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.app.helpers.adapters.SPFragmentPagerAdapter;
 import co.samepinch.android.app.helpers.pubsubs.BusProvider;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
@@ -56,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.viewpager)
     ViewPager mViewPager;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onResume() {

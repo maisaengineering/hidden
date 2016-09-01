@@ -1,6 +1,7 @@
 package co.samepinch.android.app.helpers;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -32,6 +33,7 @@ import co.samepinch.android.app.MainActivityIn;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.helpers.intent.ParseSyncService;
 import co.samepinch.android.app.helpers.intent.PostsPullService;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static co.samepinch.android.app.helpers.AppConstants.API.PREF_APP_HELLO_WORLD;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_APP_ACCESS_STATE;
@@ -256,5 +258,10 @@ public class RootActivity extends AppCompatActivity {
         } catch (Exception e) {
             // muted
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }
