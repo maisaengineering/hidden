@@ -1,5 +1,6 @@
 package co.samepinch.android.app;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,13 +18,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.otto.Subscribe;
+
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import co.samepinch.android.app.helpers.AppConstants;
+import co.samepinch.android.app.helpers.Utils;
+import co.samepinch.android.app.helpers.adapters.EndlessRecyclerOnScrollListener;
 import co.samepinch.android.app.helpers.adapters.NotifsRVAdapter;
+import co.samepinch.android.app.helpers.intent.AllNotificationsService;
 import co.samepinch.android.app.helpers.misc.FragmentLifecycle;
 import co.samepinch.android.app.helpers.pubsubs.BusProvider;
+import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.data.dao.SchemaNotifications;
 
 public class NotifsFragment extends Fragment implements FragmentLifecycle {
@@ -92,6 +102,20 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
                 }
             }
         });
+
+        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager, 5) {
+            @Override
+            public void onLoadMore(RecyclerView rv, int current_page) {
+                callForRemoteNotifs(Boolean.TRUE);
+            }
+        });
+
+        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager, AppConstants.KV.LOAD_MORE.getIntValue()) {
+            @Override
+            public void onLoadMore(RecyclerView rv, int current_page) {
+                callForRemoteNotifs(Boolean.TRUE);
+            }
+        });
     }
 
     @Override
@@ -106,7 +130,6 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.notifs_wall, container, false);
         ButterKnife.bind(this, view);
-
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
 
         ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -126,8 +149,16 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
         });
 
         mLayoutManager = new LinearLayoutManager(getActivity());
-        setupRecyclerView();
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                callForRemoteNotifs(Boolean.FALSE);
+            }
+        });
+
+        setupRecyclerView();
         return view;
     }
 
@@ -136,10 +167,10 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
         mRecyclerView.setHasFixedSize(true);
 
         Cursor cursor = getActivity().getContentResolver().query(SchemaNotifications.CONTENT_URI, null, null, null, BaseColumns._ID + " ASC");
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             mViewAdapter = new NotifsRVAdapter(getActivity(), cursor);
-        }else{
-            if(cursor !=null && !cursor.isClosed()){
+        } else {
+            if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
             mViewAdapter = new NotifsRVAdapter(getActivity(), null);
@@ -147,11 +178,34 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
 
         mViewAdapter.setHasStableIds(Boolean.TRUE);
         mRecyclerView.setAdapter(mViewAdapter);
-
-        // STYLE :: DIVIDER
-//        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
     }
 
+    public void callForRemoteNotifs(boolean isPaginating) {
+        Bundle iArgs = new Bundle();
+        if (isPaginating) {
+            Object _state = mRecyclerView.getTag();
+            // prevent unnecessary traffic
+            if (_state != null && (_state instanceof Utils.State)) {
+                if (((Utils.State) _state).isPendingLoadMore()) {
+                    return;
+                }
+            }
+
+            Utils.State state = new Utils.State();
+            state.setPendingLoadMore(true);
+            mRecyclerView.setTag(state);
+            iArgs.putBoolean(AppConstants.KV.LOAD_MORE.getKey(), Boolean.TRUE);
+        }else{
+            mRecyclerView.setTag("");
+        }
+
+        // refresh user notifications
+        Intent intentNotifs =
+                new Intent(SPApplication.getContext(), AllNotificationsService.class);
+        intentNotifs.putExtras(iArgs);
+
+        SPApplication.getContext().startService(intentNotifs);
+    }
 
     @Override
     public void onPauseFragment() {
@@ -168,6 +222,31 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
     @Override
     public void onRefreshFragment() {
 
+    }
+
+    @Subscribe
+    public void onAllNotifsRefreshedEvent(final Events.AllNotifsRefreshedEvent event) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Cursor cursor = getActivity().getContentResolver().query(SchemaNotifications.CONTENT_URI, null, null, null, BaseColumns._ID + " ASC");
+                    if (cursor.moveToFirst()) {
+                        mViewAdapter.changeCursor(cursor);
+                        mRecyclerView.invalidate();
+                    } else {
+                        if (cursor != null && !cursor.isClosed()) {
+                            cursor.close();
+                        }
+                    }
+                } catch (Exception e) {
+                    // muted
+                } finally {
+                    mRefreshLayout.setRefreshing(false);
+                    mRecyclerView.setTag("");
+                }
+            }
+        });
     }
 
     private static final class LocalHandler extends Handler {

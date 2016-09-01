@@ -35,7 +35,6 @@ import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.data.dao.SchemaPosts;
 
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_BY;
-import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_FRESH_DATA_FLAG;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POSTS_FAV;
 
 public class FavPostListFragment extends Fragment implements FragmentLifecycle {
@@ -171,7 +170,7 @@ public class FavPostListFragment extends Fragment implements FragmentLifecycle {
                 iArgs.putString(e.getKey(), e.getValue());
             }
         } else {
-            iArgs.putBoolean(KEY_FRESH_DATA_FLAG.getValue(), Boolean.TRUE);
+            iArgs.putBoolean(AppConstants.KV.LOAD_MORE.getKey(), Boolean.TRUE);
         }
 
         // context

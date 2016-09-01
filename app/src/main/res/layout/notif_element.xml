@@ -16,7 +16,8 @@
             style="@style/TextViewBody2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="6dp"
             android:scrollHorizontally="true"
             android:text="@string/notifs_none"
             android:textColor="@color/light_blue_500" />

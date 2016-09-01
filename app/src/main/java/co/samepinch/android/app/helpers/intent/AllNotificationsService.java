@@ -18,6 +18,8 @@ import java.util.Map;
 
 import co.samepinch.android.app.helpers.AppConstants;
 import co.samepinch.android.app.helpers.Utils;
+import co.samepinch.android.app.helpers.pubsubs.BusProvider;
+import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.data.dao.SchemaNotifications;
 import co.samepinch.android.rest.ReqSetBody;
 import co.samepinch.android.rest.Resp;
@@ -66,6 +68,8 @@ public class AllNotificationsService extends IntentService {
             Map<String, String> eventData = new HashMap<>();
             String msg = resp == null || resp.getMessage() == null ? AppConstants.APP_INTENT.KEY_MSG_GENERIC_ERR.getValue() : resp.getMessage();
             eventData.put(AppConstants.K.MESSAGE.name(), msg);
+        }finally{
+            BusProvider.INSTANCE.getBus().post(new Events.AllNotifsRefreshedEvent(null));
         }
     }
 
@@ -79,14 +83,16 @@ public class AllNotificationsService extends IntentService {
         String currUserId = userInfo.get(KEY_UID.getValue());
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-        for (RespAllNotifs.Notification notification : respData.getBody().getNotifications()) {
-            ops.add(ContentProviderOperation.newInsert(SchemaNotifications.CONTENT_URI)
-                    .withValue(SchemaNotifications.COLUMN_UID, notification.getUid())
-                    .withValue(SchemaNotifications.COLUMN_MSG, notification.getMessage())
-                    .withValue(SchemaNotifications.COLUMN_SRC, notification.getSource())
-                    .withValue(SchemaNotifications.COLUMN_SRC_ID, notification.getSourceId())
-                    .withValue(SchemaNotifications.COLUMN_VIEWED, notification.getViewed())
-                    .build());
+        for(int i=2; i-->0;){
+            for (RespAllNotifs.Notification notification : respData.getBody().getNotifications()) {
+                ops.add(ContentProviderOperation.newInsert(SchemaNotifications.CONTENT_URI)
+                        .withValue(SchemaNotifications.COLUMN_UID, notification.getUid() + System.currentTimeMillis())
+                        .withValue(SchemaNotifications.COLUMN_MSG, notification.getMessage())
+                        .withValue(SchemaNotifications.COLUMN_SRC, notification.getSource())
+                        .withValue(SchemaNotifications.COLUMN_SRC_ID, notification.getSourceId())
+                        .withValue(SchemaNotifications.COLUMN_VIEWED, notification.getViewed())
+                        .build());
+            }
         }
         return ops;
     }

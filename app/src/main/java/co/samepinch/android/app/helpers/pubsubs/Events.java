@@ -161,4 +161,10 @@ public class Events {
             super(metaData);
         }
     }
+
+    public static class AllNotifsRefreshedEvent extends EventBase {
+        public AllNotifsRefreshedEvent(Map<String, String> metaData) {
+            super(metaData);
+        }
+    }
 }
