@@ -17,16 +17,18 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.squareup.otto.Subscribe;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import java.lang.ref.WeakReference;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import co.samepinch.android.app.helpers.AppConstants;
+import co.samepinch.android.app.helpers.NotifsActivityLauncher;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.app.helpers.adapters.EndlessRecyclerOnScrollListener;
 import co.samepinch.android.app.helpers.adapters.NotifsRVAdapter;
@@ -49,6 +51,9 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
 
     @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
+
+    @Bind(R.id.notifs_view_switcher)
+    ViewSwitcher mNotifsVS;
 
     LinearLayoutManager mLayoutManager;
     NotifsRVAdapter mViewAdapter;
@@ -97,20 +102,13 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
                         if (!cursor.isClosed()) {
                             cursor.close();
                         }
-                        //callForRemotePosts(false);
+                        callForRemoteNotifs(Boolean.FALSE);
                     }
                 }
             }
         });
 
         mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager, 5) {
-            @Override
-            public void onLoadMore(RecyclerView rv, int current_page) {
-                callForRemoteNotifs(Boolean.TRUE);
-            }
-        });
-
-        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager, AppConstants.KV.LOAD_MORE.getIntValue()) {
             @Override
             public void onLoadMore(RecyclerView rv, int current_page) {
                 callForRemoteNotifs(Boolean.TRUE);
@@ -159,6 +157,11 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
         });
 
         setupRecyclerView();
+
+        // refresh data
+        Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_NOTIFS_METADATA.getValue());
+        callForRemoteNotifs(Boolean.FALSE);
+
         return view;
     }
 
@@ -168,12 +171,16 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
 
         Cursor cursor = getActivity().getContentResolver().query(SchemaNotifications.CONTENT_URI, null, null, null, BaseColumns._ID + " ASC");
         if (cursor.moveToFirst()) {
+            mNotifsVS.setDisplayedChild(0);
             mViewAdapter = new NotifsRVAdapter(getActivity(), cursor);
         } else {
-            if (cursor != null && !cursor.isClosed()) {
-                cursor.close();
-            }
             mViewAdapter = new NotifsRVAdapter(getActivity(), null);
+            if (cursor != null && cursor.getColumnCount() == 0) {
+                mNotifsVS.setDisplayedChild(1);
+                if (!cursor.isClosed()) {
+                    cursor.close();
+                }
+            }
         }
 
         mViewAdapter.setHasStableIds(Boolean.TRUE);
@@ -195,7 +202,7 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
             state.setPendingLoadMore(true);
             mRecyclerView.setTag(state);
             iArgs.putBoolean(AppConstants.KV.LOAD_MORE.getKey(), Boolean.TRUE);
-        }else{
+        } else {
             mRecyclerView.setTag("");
         }
 
@@ -203,7 +210,6 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
         Intent intentNotifs =
                 new Intent(SPApplication.getContext(), AllNotificationsService.class);
         intentNotifs.putExtras(iArgs);
-
         SPApplication.getContext().startService(intentNotifs);
     }
 
@@ -232,11 +238,16 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
                 try {
                     Cursor cursor = getActivity().getContentResolver().query(SchemaNotifications.CONTENT_URI, null, null, null, BaseColumns._ID + " ASC");
                     if (cursor.moveToFirst()) {
+                        mNotifsVS.setDisplayedChild(0);
+
                         mViewAdapter.changeCursor(cursor);
                         mRecyclerView.invalidate();
                     } else {
-                        if (cursor != null && !cursor.isClosed()) {
-                            cursor.close();
+                        if (cursor != null && cursor.getCount() == 0) {
+                            mNotifsVS.setDisplayedChild(1);
+                            if (!cursor.isClosed()) {
+                                cursor.close();
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -247,6 +258,36 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
                 }
             }
         });
+    }
+
+    @Subscribe
+    public void onAllNotifsUPDATEEvent(final Events.AllNotifsUPDATEEvent event) {
+        this.onAllNotifsRefreshedEvent(null);
+    }
+
+    @Subscribe
+    public void onAllNotifsERROREvent(final Events.AllNotifsERROREvent event) {
+        mRefreshLayout.setRefreshing(false);
+        mRecyclerView.setTag("");
+    }
+
+    @Subscribe
+    public void onSingleNotifsUPDATEEvent(final Events.SingleNotifsUPDATEEvent event) {
+        Map<String, String> eventData = null;
+        if (event == null || (eventData = event.getMetaData()) == null) {
+            return;
+        }
+        String src = eventData.get(AppConstants.K.SRC.name());
+        String srcID = eventData.get(AppConstants.K.SRC_ID.name());
+
+        // target activity
+        Bundle iArgs = new Bundle();
+        iArgs.putString(AppConstants.K.ACTION_TYPE.name(), src);
+        iArgs.putString(AppConstants.K.ID.name(), srcID);
+        Intent actionIntent =
+                new Intent(getContext(), NotifsActivityLauncher.class);
+        actionIntent.putExtras(iArgs);
+        getContext().startActivity(actionIntent);
     }
 
     private static final class LocalHandler extends Handler {

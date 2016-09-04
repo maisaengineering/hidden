@@ -190,13 +190,6 @@ public class MainActivityIn extends AppCompatActivity {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                boolean wrapInScrollView = true;
-//                new MaterialDialog.Builder(MainActivityIn.this)
-//                        .title("SHOW")
-//                        .customView(R.layout.list_item, wrapInScrollView)
-//                        .positiveText("POSITIVE")
-//                        .show();
-
                 Bundle args = new Bundle();
                 // target
                 args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_NOTIFS.name());

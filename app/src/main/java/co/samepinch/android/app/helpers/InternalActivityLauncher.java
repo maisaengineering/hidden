@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import co.samepinch.android.app.ActivityFragment;
+import co.samepinch.android.app.LoginActivity;
 import co.samepinch.android.app.PostDetailActivity;
 
 /**
@@ -46,7 +47,7 @@ public abstract class InternalActivityLauncher extends AppCompatActivity {
                         iArgs.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_CREATE_POST.name());
                         targetActivity = ActivityFragment.class;
                     } else {
-                        targetActivity = RootActivity.class;
+                        targetActivity = LoginActivity.class;
                     }
                     break;
 

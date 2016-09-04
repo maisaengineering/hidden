@@ -96,13 +96,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(MainActivity.this);
         BusProvider.INSTANCE.getBus().register(this);
+        setupDrawerContent(mNavigationView);
 
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.menu_blue);
-        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayHomeAsUpEnabled(false);
+        ab.setDisplayShowTitleEnabled(false);
+        ab.setDisplayShowHomeEnabled(false);
 
-        setupDrawerContent(mNavigationView);
+        // navigation view
+        View headerView = LayoutInflater.from(SPApplication.getContext()).inflate(R.layout.main_tab_header, null);
+        // login handler setup
+        setupLoginHandler(headerView.findViewById(R.id.nav_login));
+
+        // settings handler setup
+        setupSettingsHandler(headerView.findViewById(R.id.nav_settings));
+
+        // in-app notifications handler setup
+        setupInAppNotifsHandler(headerView.findViewById(R.id.nav_notif));
+
+        // attach view
+        ab.setDisplayShowCustomEnabled(true);
+        ab.setCustomView(headerView);
+
 
         SPFragmentPagerAdapter adapterViewPager = new SPFragmentPagerAdapter(getSupportFragmentManager());
         adapterViewPager.setCount(1);
@@ -116,6 +132,43 @@ public class MainActivity extends AppCompatActivity {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
             tab.setCustomView(SPFragmentPagerAdapter.getTabView(getApplicationContext(), i));
         }
+    }
+    private void setupLoginHandler(View view) {
+        view.setVisibility(View.VISIBLE);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivityForResult(loginIntent, INTENT_LOGIN);
+            }
+        });
+    }
+
+    private void setupSettingsHandler(View view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+    }
+
+
+    private void setupInAppNotifsHandler(View view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle args = new Bundle();
+                // target
+                args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_NOTIFS.name());
+
+                // intent
+                Intent intent = new Intent(getApplicationContext(), ActivityFragment.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtras(args);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -137,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return false;
     }
 
     @Override

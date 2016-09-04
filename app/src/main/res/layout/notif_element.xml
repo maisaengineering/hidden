@@ -16,11 +16,11 @@
             style="@style/TextViewBody2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="3dp"
-            android:paddingBottom="6dp"
+            android:padding="5dp"
             android:scrollHorizontally="true"
             android:text="@string/notifs_none"
-            android:textColor="@color/light_blue_500" />
+            android:textColor="@drawable/text_select_2"
+/>
 
         <TextView
             android:id="@+id/notif_msg_none"

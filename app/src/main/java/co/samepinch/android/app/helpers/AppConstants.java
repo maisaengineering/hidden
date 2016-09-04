@@ -17,6 +17,7 @@ public class AppConstants {
         PREF_POSTS_LIST_USER("posts.lists.user"),
         PREF_POSTS_LIST_TAG("posts.lists.tag"),
         PREF_ANONYMOUS_IMG("anonymous.image"),
+        PREF_NOTIFS_METADATA("notifications.metadata"),
         DEFAULT_DATE_FORMAT("MM/dd/yyyy hh:mma Z"),
 
 
@@ -177,5 +178,11 @@ public class AppConstants {
         REMOTE_URL,
         IMAGE_URL,
         DO_SHARE,
+        NO_CHANGES,
+        NOTIF,
+        SRC,
+        SRC_ID,
+        ACTION_TYPE,
+        ID
     }
 }

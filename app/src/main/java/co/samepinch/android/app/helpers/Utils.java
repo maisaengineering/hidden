@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,6 +81,8 @@ import static co.samepinch.android.app.helpers.AppConstants.KV.SCOPE;
  */
 public class Utils {
     private static final Pattern IMG_PATTERN = Pattern.compile("::(.*?)(::)");
+    private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
+    private static String uniqueID = null;
 
     public static User cursorToUserEntity(Cursor cursor) {
         if (cursor == null || !cursor.moveToFirst()) {
@@ -445,89 +448,6 @@ public class Utils {
         return StringUtils.EMPTY;
     }
 
-    public static class PreferencesManager {
-
-        private static PreferencesManager sInstance;
-        private final SharedPreferences mPref;
-
-        private PreferencesManager(Context context) {
-            mPref = context.getSharedPreferences(AppConstants.API.SHARED_PREFS_NAME.getValue(), Context.MODE_PRIVATE);
-        }
-
-        public static synchronized void initializeInstance(Context context) {
-            if (sInstance == null) {
-                sInstance = new PreferencesManager(context);
-            }
-        }
-
-        public static synchronized PreferencesManager getInstance() {
-            if (sInstance == null) {
-                throw new IllegalStateException(PreferencesManager.class.getSimpleName() +
-                        " is not initialized, call initializeInstance(..) method first.");
-            }
-            return sInstance;
-        }
-
-        public void setValue(String key, String val) {
-            mPref.edit()
-                    .putString(key, val)
-                    .apply();
-        }
-
-        public boolean contains(String key) {
-            return mPref.contains(key);
-        }
-
-        public String getValue(String key) {
-            return mPref.getString(key, "");
-        }
-
-        public void setValue(String key, Map<String, String> val) {
-            // null val deletes preferences enty
-            if (val == null) {
-                remove(key);
-                return;
-            }
-            JSONObject jsonObject = new JSONObject(val);
-            String valStr = jsonObject.toString();
-            setValue(key, valStr);
-        }
-
-        public <T> Map<String, T> getValueAsMap(String key) {
-            Map<String, T> outputMap = new HashMap<>();
-            try {
-                String jsonString = mPref.getString(key, (new JSONObject()).toString());
-                JSONObject jsonObject = new JSONObject(jsonString);
-                Iterator<String> keysItr = jsonObject.keys();
-                while (keysItr.hasNext()) {
-                    String k = keysItr.next();
-                    T _value = (T) jsonObject.get(k);
-                    outputMap.put(k, _value);
-                }
-            } catch (Exception e) {
-                // muted
-            }
-            return outputMap;
-        }
-
-        public void remove(String key) {
-            mPref.edit()
-                    .remove(key)
-                    .apply();
-        }
-
-        public boolean clear() {
-            try {
-                return mPref.edit()
-                        .clear()
-                        .commit();
-            } finally {
-                // add app first time state
-                setValue(PREF_APP_HELLO_WORLD.getValue(), StringUtils.EMPTY);
-            }
-        }
-    }
-
     public static Date stringToDate(String stringDate) {
         Date date = null;
         if (stringDate == null) {
@@ -663,7 +583,6 @@ public class Utils {
         return StringUtils.equalsIgnoreCase(provider, AppConstants.K.via_email_password.name());
     }
 
-
     public static boolean isValidUri(String arg0) {
         try {
             if (StringUtils.isBlank(arg0)) {
@@ -716,21 +635,6 @@ public class Utils {
                 applyBatch(AppConstants.API.CONTENT_AUTHORITY.getValue(), ops);
     }
 
-    public static class State {
-        boolean pendingLoadMore;
-
-        public State() {
-        }
-
-        public boolean isPendingLoadMore() {
-            return pendingLoadMore;
-        }
-
-        public void setPendingLoadMore(boolean pendingLoadMore) {
-            this.pendingLoadMore = pendingLoadMore;
-        }
-    }
-
     public static void startActivityWithAnimation(Intent intent, Activity srcActivity, Integer enterAnimationResId, Integer exitAnimationResId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // let the window animations to kick-in
@@ -750,6 +654,116 @@ public class Utils {
             // back port version
             ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(srcActivity, enterAnimationResId, exitAnimationResId);
             ActivityCompat.startActivityForResult(srcActivity, intent, reqCode, options.toBundle());
+        }
+    }
+
+    public synchronized static String uniqueID() {
+        if (StringUtils.isBlank(uniqueID)) {
+            PreferencesManager prefs = PreferencesManager.getInstance();
+            uniqueID = prefs.getValue(PREF_UNIQUE_ID);
+            if (StringUtils.isBlank(uniqueID)) {
+                uniqueID = UUID.randomUUID().toString();
+                prefs.setValue(PREF_UNIQUE_ID, uniqueID);
+            }
+        }
+        return uniqueID;
+    }
+
+    public static class PreferencesManager {
+
+        private static PreferencesManager sInstance;
+        private final SharedPreferences mPref;
+
+        private PreferencesManager(Context context) {
+            mPref = context.getSharedPreferences(AppConstants.API.SHARED_PREFS_NAME.getValue(), Context.MODE_PRIVATE);
+        }
+
+        public static synchronized void initializeInstance(Context context) {
+            if (sInstance == null) {
+                sInstance = new PreferencesManager(context);
+            }
+        }
+
+        public static synchronized PreferencesManager getInstance() {
+            if (sInstance == null) {
+                throw new IllegalStateException(PreferencesManager.class.getSimpleName() +
+                        " is not initialized, call initializeInstance(..) method first.");
+            }
+            return sInstance;
+        }
+
+        public void setValue(String key, String val) {
+            mPref.edit()
+                    .putString(key, val)
+                    .apply();
+        }
+
+        public boolean contains(String key) {
+            return mPref.contains(key);
+        }
+
+        public String getValue(String key) {
+            return mPref.getString(key, "");
+        }
+
+        public void setValue(String key, Map<String, String> val) {
+            // null val deletes preferences enty
+            if (val == null) {
+                remove(key);
+                return;
+            }
+            JSONObject jsonObject = new JSONObject(val);
+            String valStr = jsonObject.toString();
+            setValue(key, valStr);
+        }
+
+        public <T> Map<String, T> getValueAsMap(String key) {
+            Map<String, T> outputMap = new HashMap<>();
+            try {
+                String jsonString = mPref.getString(key, (new JSONObject()).toString());
+                JSONObject jsonObject = new JSONObject(jsonString);
+                Iterator<String> keysItr = jsonObject.keys();
+                while (keysItr.hasNext()) {
+                    String k = keysItr.next();
+                    T _value = (T) jsonObject.get(k);
+                    outputMap.put(k, _value);
+                }
+            } catch (Exception e) {
+                // muted
+            }
+            return outputMap;
+        }
+
+        public void remove(String key) {
+            mPref.edit()
+                    .remove(key)
+                    .apply();
+        }
+
+        public boolean clear() {
+            try {
+                return mPref.edit()
+                        .clear()
+                        .commit();
+            } finally {
+                // add app first time state
+                setValue(PREF_APP_HELLO_WORLD.getValue(), StringUtils.EMPTY);
+            }
+        }
+    }
+
+    public static class State {
+        boolean pendingLoadMore;
+
+        public State() {
+        }
+
+        public boolean isPendingLoadMore() {
+            return pendingLoadMore;
+        }
+
+        public void setPendingLoadMore(boolean pendingLoadMore) {
+            this.pendingLoadMore = pendingLoadMore;
         }
     }
 }

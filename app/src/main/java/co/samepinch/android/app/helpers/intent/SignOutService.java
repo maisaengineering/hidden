@@ -55,11 +55,10 @@ public class SignOutService extends IntentService {
             logoutReq.setBody(body);
 
             HttpEntity<ReqSetBody> payloadEntity;
-            ResponseEntity<Resp> resp = null;
+
             // call remote
             payloadEntity = new HttpEntity<>(logoutReq, headers);
-            resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.USERS.getValue(), HttpMethod.POST, payloadEntity, Resp.class);
-
+            ResponseEntity<Resp> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.USERS.getValue(), HttpMethod.POST, payloadEntity, Resp.class);
             BusProvider.INSTANCE.getBus().post(new Events.AuthOutEvent(eventData));
         } catch (Exception e) {
             Resp resp = Utils.parseAsRespSilently(e);

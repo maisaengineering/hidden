@@ -167,4 +167,23 @@ public class Events {
             super(metaData);
         }
     }
+
+    public static class AllNotifsUPDATEEvent extends EventBase {
+        public AllNotifsUPDATEEvent(Map<String, String> metaData) {
+            super(metaData);
+        }
+    }
+
+    public static class AllNotifsERROREvent extends EventBase {
+        public AllNotifsERROREvent(Map<String, String> metaData) {
+            super(metaData);
+        }
+    }
+
+    public static class SingleNotifsUPDATEEvent extends EventBase {
+        public SingleNotifsUPDATEEvent(Map<String, String> metaData) {
+            super(metaData);
+        }
+    }
+
 }

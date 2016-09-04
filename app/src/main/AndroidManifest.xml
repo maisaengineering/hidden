@@ -45,6 +45,7 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".MainActivityIn" />
+        <activity android:name=".helpers.NotifsActivityLauncher" />
         <!-- PUSH NOTIFICATIONS ACTIVITY -->
         <activity android:name=".helpers.PushNotificationActivityLauncher" />
 
@@ -122,6 +123,9 @@
 
         <service
             android:name=".helpers.intent.AllNotificationsService"
+            android:exported="false" />
+        <service
+            android:name=".helpers.intent.AllNotificationsUpdateService"
             android:exported="false" />
 
         <meta-data

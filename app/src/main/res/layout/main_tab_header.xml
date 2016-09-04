@@ -14,7 +14,20 @@
         android:src="@drawable/notifications_blue"
         android:background="@color/colorPrimary"
         android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
+        android:paddingRight="10dp"
+        />
+
+    <ImageView
+        android:id="@+id/nav_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/nav_notif"
+        android:layout_toStartOf="@+id/nav_notif"
+        android:layout_alignBaseline="@+id/nav_notif"
+        android:src="@drawable/person"
+        android:layout_centerVertical="true"
+        android:paddingRight="10dp"
+        android:visibility="gone"
         />
 
     <ImageView
@@ -36,7 +49,6 @@
         android:src="@drawable/settings"
         android:background="@color/colorPrimary"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp"
         ></ImageButton>
 
 </RelativeLayout>
