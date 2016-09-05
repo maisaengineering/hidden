@@ -42,9 +42,9 @@ public class AllNotificationsService extends IntentService {
             Map<String, String> reqBody = new HashMap<>();
 //            reqBody.put("last_modified", "");
             Map<String, String> prefParams = Utils.PreferencesManager.getInstance().getValueAsMap(AppConstants.API.PREF_NOTIFS_METADATA.getValue());
-            if(prefParams == null || prefParams.isEmpty()){
+            if (prefParams == null || prefParams.isEmpty()) {
                 reqBody.put(PARAMS.STEP.getValue(), PARAMS.STEP_DFLT.getValue());
-            }else{
+            } else {
                 reqBody.put(PARAMS.STEP.getValue(), PARAMS.STEP_NEXT.getValue());
                 reqBody.putAll(prefParams);
             }
@@ -68,22 +68,22 @@ public class AllNotificationsService extends IntentService {
             ArrayList<ContentProviderOperation> ops = parseResponse(resp.getBody());
 
             // if new, clear local
-            if(reqBody.get(PARAMS.STEP.getValue()) == PARAMS.STEP_DFLT.getValue()){
+            if (reqBody.get(PARAMS.STEP.getValue()) == PARAMS.STEP_DFLT.getValue()) {
                 ArrayList<ContentProviderOperation> delOps = new ArrayList<>();
-                delOps.add(ContentProviderOperation.newDelete(SchemaNotifications.CONTENT_URI).withSelection(SchemaNotifications.COLUMN_UID + " IS NOT NULL", null).build());
+                delOps.add(ContentProviderOperation.newDelete(SchemaNotifications.CONTENT_URI).build());
                 getContentResolver().applyBatch(AppConstants.API.CONTENT_AUTHORITY.getValue(), delOps);
             }
             if (ops != null && ops.size() > 0) {
                 ArrayList<ContentProviderOperation> dbOps = new ArrayList<>();
                 dbOps.addAll(ops);
                 getContentResolver().applyBatch(AppConstants.API.CONTENT_AUTHORITY.getValue(), dbOps);
-                BusProvider.INSTANCE.getBus().post(new Events.AllNotifsUPDATEEvent(eventBody));
             }
 
             eventBody.put(PARAMS.NOTIFS_COUNT.getValue(), resp.getBody().getBody().getNotifsCount());
             eventBody.put(PARAMS.LAST_MODIFIED.getValue(), resp.getBody().getBody().getLastModified());
             eventBody.put(PARAMS.ETAG.getValue(), resp.getBody().getBody().getEtag());
             Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_NOTIFS_METADATA.getValue(), eventBody);
+            BusProvider.INSTANCE.getBus().post(new Events.AllNotifsUPDATEEvent(eventBody));
         } catch (Exception e) {
             // muted
             Resp resp = Utils.parseAsRespSilently(e);
@@ -115,6 +115,7 @@ public class AllNotificationsService extends IntentService {
                     .withValue(SchemaNotifications.COLUMN_VIEWED, notification.getViewed())
                     .build());
         }
+
         return ops;
     }
 

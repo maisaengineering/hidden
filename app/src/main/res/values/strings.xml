@@ -60,7 +60,7 @@
 
     <!-- NOTIFICATIONS -->
     <string name="notifs_title">NOTIFICATIONS</string>
-    <string name="notifs_none">Good job! no more notifications.</string>
+    <string name="notifs_none">Good job! You\u0027re all caught up.</string>
 
     <!-- CHANGE PASSWORD -->
     <string name="change_password_title">Change Password</string>

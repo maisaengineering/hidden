@@ -17,7 +17,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.squareup.otto.Subscribe;
@@ -215,9 +214,7 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
 
     @Override
     public void onPauseFragment() {
-        if (mRefreshLayout.isRefreshing()) {
-            mRefreshLayout.setRefreshing(false);
-        }
+       resetLoading();
     }
 
     @Override
@@ -241,7 +238,7 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
                         mNotifsVS.setDisplayedChild(0);
 
                         mViewAdapter.changeCursor(cursor);
-                        mRecyclerView.invalidate();
+//                        mRecyclerView.invalidate();
                     } else {
                         if (cursor != null && cursor.getCount() == 0) {
                             mNotifsVS.setDisplayedChild(1);
@@ -253,8 +250,7 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
                 } catch (Exception e) {
                     // muted
                 } finally {
-                    mRefreshLayout.setRefreshing(false);
-                    mRecyclerView.setTag("");
+                    resetLoading();
                 }
             }
         });
@@ -262,13 +258,22 @@ public class NotifsFragment extends Fragment implements FragmentLifecycle {
 
     @Subscribe
     public void onAllNotifsUPDATEEvent(final Events.AllNotifsUPDATEEvent event) {
-        this.onAllNotifsRefreshedEvent(null);
+        resetLoading();
     }
 
     @Subscribe
     public void onAllNotifsERROREvent(final Events.AllNotifsERROREvent event) {
-        mRefreshLayout.setRefreshing(false);
-        mRecyclerView.setTag("");
+        resetLoading();
+    }
+
+    private void resetLoading() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRefreshLayout.setRefreshing(false);
+                mRecyclerView.setTag("");
+            }
+        });
     }
 
     @Subscribe
