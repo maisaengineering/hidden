@@ -9,22 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-
-import org.apache.commons.lang3.StringUtils;
-
 import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.samepinch.android.app.R;
-import co.samepinch.android.app.helpers.widget.SIMView;
 
-public class ImageViewFragment extends Fragment {
-    public static final String TAG = "ImageViewFragment";
+public class LoginStep1Fragment extends Fragment {
+    public static final String TAG = "LoginStep1Fragment";
 
     @Bind(R.id.image_container)
     FrameLayout mImgContainer;
@@ -43,30 +36,6 @@ public class ImageViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.imageview, container, false);
         ButterKnife.bind(this, view);
 
-        String imgUrl = getArguments().getString(AppConstants.K.IMAGE_URL.name(), null);
-        if (StringUtils.isBlank(imgUrl)) {
-            handleError("missing url. closing...");
-            return view;
-        }
-        try {
-            GenericDraweeHierarchyBuilder builder =
-                    new GenericDraweeHierarchyBuilder(getResources());
-            GenericDraweeHierarchy hierarchy = builder
-                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .build();
-
-            // load background view
-            SIMView imgView = new SIMView(getActivity().getApplicationContext());
-            imgView.setIsClickDisabled(Boolean.TRUE);
-            imgView.setImageHierarchy(hierarchy);
-            imgView.populateImageViewWithAdjustedAspect(imgUrl);
-            mImgContainer.addView(imgView);
-        } catch (Exception e) {
-            handleError("error opening url. closing...");
-            return view;
-        }
-
-//        mImage.setImageBitmap(Uri.parse(imgUrl));
         return view;
     }
 
@@ -82,10 +51,10 @@ public class ImageViewFragment extends Fragment {
     }
 
     private static final class LocalHandler extends Handler {
-        private final WeakReference<ImageViewFragment> mActivity;
+        private final WeakReference<LoginStep1Fragment> mActivity;
 
-        public LocalHandler(ImageViewFragment parent) {
-            mActivity = new WeakReference<ImageViewFragment>(parent);
+        public LocalHandler(LoginStep1Fragment parent) {
+            mActivity = new WeakReference<LoginStep1Fragment>(parent);
         }
     }
 

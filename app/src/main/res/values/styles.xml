@@ -177,6 +177,14 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
+    <style name="SP_TXT_BTN_2" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:padding">9dp</item>
+        <item name="android:background">@color/transparent_water</item>
+    </style>
+
     <style name="SP_NAV_NAME" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/light_blue_500</item>
         <item name="android:singleLine">true</item>

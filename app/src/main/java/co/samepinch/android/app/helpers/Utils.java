@@ -58,6 +58,7 @@ import co.samepinch.android.app.ActivityFragment;
 import co.samepinch.android.app.R;
 import co.samepinch.android.data.dao.SchemaComments;
 import co.samepinch.android.data.dao.SchemaDots;
+import co.samepinch.android.data.dao.SchemaNotifications;
 import co.samepinch.android.data.dao.SchemaPostDetails;
 import co.samepinch.android.data.dao.SchemaPosts;
 import co.samepinch.android.data.dao.SchemaTags;
@@ -631,6 +632,7 @@ public class Utils {
         ops.add(ContentProviderOperation.newDelete(SchemaDots.CONTENT_URI).build());
         ops.add(ContentProviderOperation.newDelete(SchemaTags.CONTENT_URI).build());
         ops.add(ContentProviderOperation.newDelete(SchemaComments.CONTENT_URI).build());
+        ops.add(ContentProviderOperation.newDelete(SchemaNotifications.CONTENT_URI).build());
         ContentProviderResult[] result = cs.
                 applyBatch(AppConstants.API.CONTENT_AUTHORITY.getValue(), ops);
     }
