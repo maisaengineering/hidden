@@ -55,15 +55,14 @@
             <!--android:layout_gravity="center"-->
             <!--android:paddingTop="5dp" />-->
 
-            <fragment
-                android:id="@+id/fb_fragment"
-                android:name="co.samepinch.android.app.helpers.LoginFBFragment"
-                android:layout_width="wrap_content"
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/divider"
                 android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
-                android:paddingTop="10dp" />
+                android:layout_gravity="center"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

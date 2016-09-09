@@ -30,15 +30,19 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +60,7 @@ import java.util.regex.Pattern;
 
 import co.samepinch.android.app.ActivityFragment;
 import co.samepinch.android.app.R;
+import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.data.dao.SchemaComments;
 import co.samepinch.android.data.dao.SchemaDots;
 import co.samepinch.android.data.dao.SchemaNotifications;
@@ -64,6 +69,7 @@ import co.samepinch.android.data.dao.SchemaPosts;
 import co.samepinch.android.data.dao.SchemaTags;
 import co.samepinch.android.data.dto.CommentDetails;
 import co.samepinch.android.data.dto.Commenter;
+import co.samepinch.android.data.dto.CountryVO;
 import co.samepinch.android.data.dto.Post;
 import co.samepinch.android.data.dto.PostDetails;
 import co.samepinch.android.data.dto.User;
@@ -84,6 +90,32 @@ public class Utils {
     private static final Pattern IMG_PATTERN = Pattern.compile("::(.*?)(::)");
     private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
     private static String uniqueID = null;
+    private static volatile List<CountryVO> countryList;
+
+    public static List<CountryVO> countryList() {
+        if (countryList != null && !countryList.isEmpty()) {
+            return countryList;
+        }
+        Gson gson = new Gson();
+        InputStream inputStream = SPApplication.getContext().getResources().openRawResource(R.raw.country_list);
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            Type listType = new TypeToken<List<CountryVO>>() {
+            }.getType();
+            countryList = gson.fromJson(reader, listType);
+        } catch (Exception e) {
+            //muted
+            try {
+                inputStream.close();
+            } catch (Exception e1) {
+            }
+
+            // empty
+            countryList = new ArrayList<>();
+        }
+
+        return countryList;
+    }
 
     public static User cursorToUserEntity(Cursor cursor) {
         if (cursor == null || !cursor.moveToFirst()) {
@@ -555,7 +587,17 @@ public class Utils {
             }
 
         } catch (Exception e) {
+            // muted
+        }
+    }
 
+    public static void showDialog(ProgressDialog dialog, String msg) {
+        try {
+            // show
+            dialog.setMessage(msg);
+            dialog.show();
+        } catch (Exception e) {
+            // muted
         }
     }
 

@@ -185,6 +185,12 @@
         <item name="android:background">@color/transparent_water</item>
     </style>
 
+    <style name="EditTextCustomHolo" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/apptheme_edit_text_holo_light</item>
+        <item name="android:textColor">@color/grey_900</item>
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
+    </style>
+
     <style name="SP_NAV_NAME" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/light_blue_500</item>
         <item name="android:singleLine">true</item>
@@ -324,5 +330,22 @@
     <!-- For some reason if we dont add the allCapps attribute it is not reflected in all versions -->
     <style name="TextViewButtonAllCaps" parent="TextViewButton">
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
+        <item name="android:textColor">@color/light_blue_500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:singleLine">true</item>
     </style>
 </resources>

@@ -36,7 +36,7 @@
     <string name="loading_with_text">Loading\u2026</string>
     <string name="by">post by\u0009</string>
     <string name="empty" />
-    <string name="login_step1">enter your phone# or email</string>
+    <string name="login_step1">Enter your phone number (or) email</string>
     <string name="login_btn_next">\u3009</string>
     <string name="login_btn_prev">\u3008</string>
 
@@ -138,5 +138,11 @@
     <string name="msg_no_email">Unable to find email application on your device.</string>
     <string name="msg_login_req">Login to post.</string>
     <string name="hint_or">alternatively</string>
-    <string name="must_login">Login with your Facebook account. We respect your privacy.</string>
+    <string name="must_login">help us weed out the trolls</string>
+    <string name="country_login">I live in</string>
+    <string name="dialog_acc_locating">locating your account\r\n%s</string>
+    <string name="dialog_acc_found">AWESOME! found one \r\n:-)</string>
+    <string name="dialog_acc_notfound">Quickly setting up new account\r\n :-)</string>
+    <string name="dialog_acc_lookuperr">error occurred :-(</string>
+    <string name="reqd_login_info">required</string>
 </resources>

@@ -2,30 +2,20 @@ package co.samepinch.android.app;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.squareup.otto.Subscribe;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Map;
-
-import butterknife.ButterKnife;
-import co.samepinch.android.app.helpers.AppConstants;
+import co.samepinch.android.app.helpers.LoginStep1Fragment;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.app.helpers.intent.ParseSyncService;
 import co.samepinch.android.app.helpers.intent.SignOutService;
-import co.samepinch.android.app.helpers.pubsubs.BusProvider;
 import co.samepinch.android.app.helpers.pubsubs.Events;
 
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_APP_ACCESS_STATE;
@@ -33,35 +23,46 @@ import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_APP_A
 public class LoginActivity extends AppCompatActivity {
     public static final String TAG = "LoginActivity";
     ProgressDialog progressDialog;
+    Animation mLoadingAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        ImageView animationTarget = (ImageView) this.findViewById(R.id.spicon);
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point_2);
-        animationTarget.startAnimation(animation);
+        // local values
+        mLoadingAnim = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point_2);
 
-        ButterKnife.bind(LoginActivity.this);
-        BusProvider.INSTANCE.getBus().register(this);
+//        ButterKnife.bind(LoginActivity.this);
+//        BusProvider.INSTANCE.getBus().register(this);
 
-        progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.dialog);
-        progressDialog.setCancelable(Boolean.FALSE);
+//        progressDialog = new ProgressDialog(LoginActivity.this,
+//                R.style.dialog);
+//        progressDialog.setCancelable(Boolean.FALSE);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container, new LoginStep1Fragment())
+                    .commit();
+        }
     }
 
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        return super.onCreateView(name, context, attrs);
+    public void startLoadingAnimation() {
+        if(mLoadingAnim !=null){
+            ((ImageView) this.findViewById(R.id.spicon)).startAnimation(mLoadingAnim);
+        }
+    }
+
+    public void endLoadingAnimation() {
+        ((ImageView) this.findViewById(R.id.spicon)).clearAnimation();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BusProvider.INSTANCE.getBus().unregister(this);
+//        BusProvider.INSTANCE.getBus().unregister(this);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -85,6 +86,11 @@ public class LoginActivity extends AppCompatActivity {
 //                SPApplication.getContext().startService(mServiceIntent);
 //            }
 //        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     @Subscribe
@@ -119,27 +125,27 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @Subscribe
-    public void onAuthFailEvent(final Events.AuthFailEvent event) {
-        final Map<String, String> eventData = event.getMetaData();
-        if (eventData == null) {
-            return;
-        }
-
-        if (StringUtils.equals(eventData.get(AppConstants.K.provider.name()), AppConstants.K.via_email_password.name())) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.dismissSilently(progressDialog);
-//                    mLoginButton.setEnabled(Boolean.TRUE);
-
-                    if (eventData.containsKey(AppConstants.K.MESSAGE.name())) {
-                        Snackbar.make(findViewById(R.id.login_layout), eventData.get(AppConstants.K.MESSAGE.name()), Snackbar.LENGTH_LONG).show();
-                    } else {
-                        Snackbar.make(findViewById(R.id.login_layout), "try again", Snackbar.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
-    }
+//    @Subscribe
+//    public void onAuthFailEvent(final Events.AuthFailEvent event) {
+//        final Map<String, String> eventData = event.getMetaData();
+//        if (eventData == null) {
+//            return;
+//        }
+//
+//        if (StringUtils.equals(eventData.get(AppConstants.K.provider.name()), AppConstants.K.via_email_password.name())) {
+//            LoginActivity.this.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Utils.dismissSilently(progressDialog);
+////                    mLoginButton.setEnabled(Boolean.TRUE);
+//
+//                    if (eventData.containsKey(AppConstants.K.MESSAGE.name())) {
+//                        Snackbar.make(findViewById(R.id.login_layout), eventData.get(AppConstants.K.MESSAGE.name()), Snackbar.LENGTH_LONG).show();
+//                    } else {
+//                        Snackbar.make(findViewById(R.id.login_layout), "try again", Snackbar.LENGTH_SHORT).show();
+//                    }
+//                }
+//            });
+//        }
+//    }
 }

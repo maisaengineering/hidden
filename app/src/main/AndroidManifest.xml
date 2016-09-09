@@ -127,6 +127,9 @@
         <service
             android:name=".helpers.intent.AllNotificationsUpdateService"
             android:exported="false" />
+        <service
+            android:name=".helpers.intent.IPCheckerService"
+            android:exported="false" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

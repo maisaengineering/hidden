@@ -37,7 +37,9 @@ public class AppConstants {
         URL_TERMS_COND("http://www.samepinch.co/t&c"),
         URL_SYS_STATUS("http://www.samepinch.co/systemstatus/"),
         PARSE_APPLICATION_ID("Kk6uWSLLnGCp6xEOPYQq5iGbIz0NiBj5DtH7qdY5"),
-        PARSE_CLIENT_KEY("vdj0zlO0cmgeZwoKvSZ8EfwVz7OEVZbrgs73OeQy"),;
+        PARSE_CLIENT_KEY("vdj0zlO0cmgeZwoKvSZ8EfwVz7OEVZbrgs73OeQy"),
+        IPCHECK_HOST("http://freegeoip.net/json/"),
+        CHECK_USER(BASE.getValue().concat("api/v2/users"));
 
 
         private final String value;

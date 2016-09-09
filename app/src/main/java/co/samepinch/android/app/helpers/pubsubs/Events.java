@@ -186,4 +186,15 @@ public class Events {
         }
     }
 
+    public static class IPCheckerServiceSuccess extends EventBase {
+        public IPCheckerServiceSuccess(Map<String, String> metaData) {
+            super(metaData);
+        }
+    }
+
+    public static class IPCheckerServiceErr extends EventBase {
+        public IPCheckerServiceErr(Map<String, String> metaData) {
+            super(metaData);
+        }
+    }
 }
