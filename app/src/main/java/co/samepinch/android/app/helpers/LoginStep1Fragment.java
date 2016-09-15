@@ -45,6 +45,8 @@ import co.samepinch.android.app.R;
 import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.data.dto.CountryVO;
 import co.samepinch.android.rest.ReqGeneric;
+import co.samepinch.android.rest.ReqLogin;
+import co.samepinch.android.rest.RespEvaluateUser;
 import co.samepinch.android.rest.RestClient;
 
 public class LoginStep1Fragment extends Fragment {
@@ -132,19 +134,19 @@ public class LoginStep1Fragment extends Fragment {
         }
         Utils.showDialog(mProgressDialog, String.format(getString(R.string.dialog_acc_locating), lookupInfo));
 
-        String[] params = new String[3];
-        params[0] = emailOrPhone;
-        params[1] = _selectedCountry == null ? null : _selectedCountry.getCode();
+        ReqLogin loginForm = new ReqLogin();
+        loginForm.setAuthKey(emailOrPhone);
+        loginForm.setCountry(_selectedCountry == null ? null : _selectedCountry.getCode());
 
-        mAccCheckerTask.execute(params);
+        mAccCheckerTask.execute(loginForm);
     }
 
-    private void continueToNext() {
+    private void continueToNext(ReqLogin reqLogin) {
         if (getActivity() instanceof LoginActivity) {
             ((LoginActivity) getActivity()).startLoadingAnimation();
         }
 
-        LoginStep2Fragment step2 = new LoginStep2Fragment();
+        LoginStep2Fragment step2 = LoginStep2Fragment.newInstance(reqLogin);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Transition exit = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_right);
             Transition enter = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_left);
@@ -178,9 +180,9 @@ public class LoginStep1Fragment extends Fragment {
     /**
      * Account Checking task
      */
-    private class AccCheckerTask extends AsyncTask<String, Integer, Boolean> {
+    private class AccCheckerTask extends AsyncTask<ReqLogin, Integer, ReqLogin> {
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected ReqLogin doInBackground(ReqLogin... reqLogin) {
             //publishProgress(2);
             try {
                 ReqGeneric<Map<String, String>> req = new ReqGeneric<>();
@@ -189,11 +191,8 @@ public class LoginStep1Fragment extends Fragment {
                 req.setCmd("evaluateUser");
                 // just consider single post for now
                 Map<String, String> body = new HashMap<>();
-                body.put("auth_key", params[0]);
-                if (params.length > 1) {
-                    body.put("country", params[1]);
-                }
-
+                body.put("auth_key", reqLogin[0].getAuthKey());
+                body.put("country", reqLogin[0].getCountry());
                 req.setBody(body);
 
                 //headers
@@ -201,13 +200,15 @@ public class LoginStep1Fragment extends Fragment {
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setAccept(RestClient.INSTANCE.jsonMediaType());
                 HttpEntity<ReqGeneric<Map<String, String>>> payloadEntity = new HttpEntity<>(req, headers);
-                ResponseEntity<Map> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.CHECK_USER.getValue(), HttpMethod.POST, payloadEntity, Map.class);
-                return Boolean.FALSE;
+                ResponseEntity<RespEvaluateUser> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.CHECK_USER.getValue(), HttpMethod.POST, payloadEntity, RespEvaluateUser.class);
+                if (resp != null && resp.getBody() != null) {
+                    reqLogin[0].setIsNewUser(Boolean.toString(resp.getBody().getBody().isNewUser()));
+                    return reqLogin[0];
+                }
             } catch (Exception e) {
-                publishProgress(-1);
+                // muted
             }
-            publishProgress(1);
-
+            publishProgress(-1);
             return null;
         }
 
@@ -230,32 +231,27 @@ public class LoginStep1Fragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(Boolean isNewUser) {
-            super.onPostExecute(isNewUser);
-//            Utils.dismissSilently(mProgressDialog);
-            if (isNewUser == null) {
+        protected void onPostExecute(final ReqLogin reqLogin) {
+            Utils.dismissSilently(mProgressDialog);
+            if (reqLogin == null) {
                 return;
             }
             // new or old?
-            if (isNewUser) {
+            if (Boolean.valueOf(reqLogin.isNewUser())) {
                 Utils.showDialog(mProgressDialog, getString(R.string.dialog_acc_notfound));
             } else {
                 Utils.showDialog(mProgressDialog, getString(R.string.dialog_acc_found));
             }
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.dismissSilently(mProgressDialog);
+                    continueToNext(reqLogin);
+                }
+            }, 2000);
 
-            continueToNext();
         }
     }
-//
-//    private void handleError(String errMsg) {
-//        Snackbar.make(mImgContainer, errMsg, Snackbar.LENGTH_SHORT).show();
-//        mHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                getActivity().finish();
-//            }
-//        }, 999);
-//    }
 
     /**
      * Country pull-up task

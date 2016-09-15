@@ -141,8 +141,18 @@
     <string name="must_login">help us weed out the trolls</string>
     <string name="country_login">I live in</string>
     <string name="dialog_acc_locating">locating your account\r\n%s</string>
-    <string name="dialog_acc_found">AWESOME! found one \r\n:-)</string>
-    <string name="dialog_acc_notfound">Quickly setting up new account\r\n :-)</string>
-    <string name="dialog_acc_lookuperr">error occurred :-(</string>
+    <string name="dialog_acc_found">AWESOME! found...\r\n:-)</string>
+    <string name="dialog_acc_notfound">Quickly creating your account\r\n:-)</string>
+    <string name="dialog_acc_lookuperr">error occurred. try again...</string>
     <string name="reqd_login_info">required</string>
+    <string name="hint_choose_password">choose password</string>
+    <string name="hint_enter_password">enter password</string>
+    <string name="dialog_acc_creating_sing_in_wait">hang in there you\u0027re almost done \r\n:-</string>
+    <string name="dialog_acc_creating_success">Yay, You Did It!\r\nWelcome...Welcome...Welcome</string>
+    <string name="dialog_acc_creating_err">Hmm...something is not right:-(\r\Try again</string>
+    <string name="dialog_acc_signin_success">NAMASTE! Welcome back\r\n:-)</string>
+    <string name="dialog_acc_signin_err">Hmm...login failed:-(\r\Check your details and try again!</string>
+    <string name="phoneverify_enter">Enter your phone number</string>
+    <string name="phoneverify_btn_verify">verify</string>
+    <string name="phoneverify_btn_resend">resend</string>
 </resources>

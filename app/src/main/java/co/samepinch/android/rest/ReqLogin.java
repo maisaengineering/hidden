@@ -1,5 +1,6 @@
 package co.samepinch.android.rest;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,20 +9,19 @@ import co.samepinch.android.app.helpers.Utils;
 /**
  * Created by imaginationcoder on 6/30/15.
  */
-public class ReqLogin extends RestBase<Map<String, String>> {
+public class ReqLogin extends RestBase<Map<String, String>> implements Serializable {
     transient String email;
+    transient String authKey;
+    transient String country;
     transient String password;
     transient String deviceToken;
     transient String platform;
+    transient String isNewUser;
+
 
     @Override
     public Map<String, String> getBody() {
         return body;
-    }
-
-    @Override
-    public void setBody(Map<String, String> body) {
-        this.body = body;
     }
 
     public String getEmail() {
@@ -30,6 +30,22 @@ public class ReqLogin extends RestBase<Map<String, String>> {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAuthKey() {
+        return authKey;
+    }
+
+    public void setAuthKey(String authKey) {
+        this.authKey = authKey;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getPassword() {
@@ -56,13 +72,22 @@ public class ReqLogin extends RestBase<Map<String, String>> {
         this.platform = platform;
     }
 
+    public String isNewUser() {
+        return isNewUser;
+    }
+
+    public void setIsNewUser(String isNewUser) {
+        this.isNewUser = isNewUser;
+    }
+
     public ReqLogin build() {
         Map<String, String> body = new HashMap<>();
         body.put("email", Utils.emptyIfNull(email));
         body.put("password", Utils.emptyIfNull(password));
         body.put("platform", Utils.emptyIfNull(platform));
-        body.put("deviceToken", Utils.emptyIfNull(deviceToken));
-
+        body.put("auth_key", Utils.emptyIfNull(authKey));
+        body.put("country", Utils.emptyIfNull(country));
+        body.put("isNewUser", Utils.emptyIfNull(isNewUser));
         this.setBody(body);
 
         return this;

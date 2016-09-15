@@ -16,7 +16,8 @@
         android:imeOptions="actionDone"
         android:inputType="textNoSuggestions"
         android:singleLine="true"
-        style="@style/EditTextCustomHolo"/>
+        style="@style/EditTextCustomHolo"
+        android:gravity="center"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

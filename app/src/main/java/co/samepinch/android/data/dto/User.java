@@ -30,7 +30,26 @@ public class User {
     Object apnNotify;
     Object emailNotify;
 
+    Boolean verified;
+    String phno;
+
     public User() {
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+    public String getPhno() {
+        return phno;
+    }
+
+    public void setPhno(String phno) {
+        this.phno = phno;
     }
 
     public Long getPostsCount() {

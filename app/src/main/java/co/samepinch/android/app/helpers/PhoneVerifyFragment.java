@@ -34,8 +34,8 @@ import co.samepinch.android.rest.ReqLogin;
 import co.samepinch.android.rest.RespLogin;
 import co.samepinch.android.rest.RestClient;
 
-public class LoginStep2Fragment extends Fragment {
-    public static final String TAG = "LoginStep2Fragment";
+public class PhoneVerifyFragment extends Fragment {
+    public static final String TAG = "PhoneVerifyFragment";
     public static final String REQ_LOGIN = "reqLogin";
 
 
@@ -45,8 +45,8 @@ public class LoginStep2Fragment extends Fragment {
     private LocalHandler mHandler;
     ProgressDialog mProgressDialog;
 
-    public static LoginStep2Fragment newInstance(ReqLogin reqLogin) {
-        LoginStep2Fragment f = new LoginStep2Fragment();
+    public static PhoneVerifyFragment newInstance(ReqLogin reqLogin) {
+        PhoneVerifyFragment f = new PhoneVerifyFragment();
         Bundle args = new Bundle();
         args.putSerializable(REQ_LOGIN, reqLogin);
 
@@ -120,10 +120,10 @@ public class LoginStep2Fragment extends Fragment {
     }
 
     private static final class LocalHandler extends Handler {
-        private final WeakReference<LoginStep2Fragment> mActivity;
+        private final WeakReference<PhoneVerifyFragment> mActivity;
 
-        public LocalHandler(LoginStep2Fragment parent) {
-            mActivity = new WeakReference<LoginStep2Fragment>(parent);
+        public LocalHandler(PhoneVerifyFragment parent) {
+            mActivity = new WeakReference<PhoneVerifyFragment>(parent);
         }
     }
 
