@@ -36,7 +36,7 @@
     <string name="loading_with_text">Loading\u2026</string>
     <string name="by">post by\u0009</string>
     <string name="empty" />
-    <string name="login_step1">Enter your phone number (or) email</string>
+    <string name="login_step1">enter your phone # or email</string>
     <string name="login_btn_next">\u3009</string>
     <string name="login_btn_prev">\u3008</string>
 
@@ -145,14 +145,22 @@
     <string name="dialog_acc_notfound">Quickly creating your account\r\n:-)</string>
     <string name="dialog_acc_lookuperr">error occurred. try again...</string>
     <string name="reqd_login_info">required</string>
-    <string name="hint_choose_password">choose password</string>
-    <string name="hint_enter_password">enter password</string>
+    <string name="hint_choose_password">choose a password</string>
+    <string name="hint_enter_password">enter your password</string>
     <string name="dialog_acc_creating_sing_in_wait">hang in there you\u0027re almost done \r\n:-</string>
     <string name="dialog_acc_creating_success">Yay, You Did It!\r\nWelcome...Welcome...Welcome</string>
     <string name="dialog_acc_creating_err">Hmm...something is not right:-(\r\Try again</string>
     <string name="dialog_acc_signin_success">NAMASTE! Welcome back\r\n:-)</string>
     <string name="dialog_acc_signin_err">Hmm...login failed:-(\r\Check your details and try again!</string>
-    <string name="phoneverify_enter">Enter your phone number</string>
+    <string name="phoneverify_enter">enter phone #</string>
     <string name="phoneverify_btn_verify">verify</string>
     <string name="phoneverify_btn_resend">resend</string>
+    <string name="phoneverify_later">later</string>
+    <string name="phone_pin_verify_enter">enter pin</string>
+    <string name="title_activity_enter_phone">EnterPhoneActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="notice_update_email">Stay informed. Update your email address.</string>
+    <string name="notice_update_phone">Verify account now.</string>
 </resources>

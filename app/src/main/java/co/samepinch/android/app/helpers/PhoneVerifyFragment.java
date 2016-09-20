@@ -1,49 +1,59 @@
 package co.samepinch.android.app.helpers;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.telephony.TelephonyManager;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import co.samepinch.android.app.LoginActivity;
 import co.samepinch.android.app.R;
-import co.samepinch.android.data.dto.User;
-import co.samepinch.android.rest.ReqGeneric;
+import co.samepinch.android.data.dto.CountryVO;
 import co.samepinch.android.rest.ReqLogin;
-import co.samepinch.android.rest.RespLogin;
-import co.samepinch.android.rest.RestClient;
 
 public class PhoneVerifyFragment extends Fragment {
     public static final String TAG = "PhoneVerifyFragment";
     public static final String REQ_LOGIN = "reqLogin";
+    private static Map<String, CountryVO> mCountriesView2VOMap;
 
+    static {
+        mCountriesView2VOMap = new TreeMap<>(new Comparator() {
+            @Override
+            public int compare(Object lhs, Object rhs) {
+                if (lhs == null || rhs == null) {
+                    return 0;
+                }
+                return lhs.toString().compareToIgnoreCase(rhs.toString());
+            }
+        });
+    }
 
-    @Bind(R.id.ip_password)
-    TextView mPasswordView;
+    @Bind(R.id.ip_phone)
+    TextView mPhoneView;
 
-    private LocalHandler mHandler;
-    ProgressDialog mProgressDialog;
+    @Bind(R.id.list_country)
+    Spinner mCountryListView;
+
+    @Bind(R.id.btn_next)
+    TextView mBtnNextView;
 
     public static PhoneVerifyFragment newInstance(ReqLogin reqLogin) {
         PhoneVerifyFragment f = new PhoneVerifyFragment();
@@ -57,60 +67,72 @@ public class PhoneVerifyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHandler = new LocalHandler(this);
-        if (getActivity() instanceof LoginActivity) {
-            ((LoginActivity) getActivity()).endLoadingAnimation();
-        }
-
-
-        // progress dialog properties
-        mProgressDialog = new ProgressDialog(getActivity(),
-                R.style.dialog);
-        mProgressDialog.setCancelable(Boolean.FALSE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.login_step2, container, false);
+        View view = inflater.inflate(R.layout.phone_verify, container, false);
         ButterKnife.bind(this, view);
 
-        ReqLogin reqLogin;
-        try {
-            reqLogin = (ReqLogin) getArguments().get(REQ_LOGIN);
-        } catch (Exception e) {
-            // muted
-            reqLogin = null;
-        }
-        if (reqLogin == null) {
-            onPrevEvent();
-            return view;
-        }
-
-        if (Boolean.valueOf(reqLogin.isNewUser())) {
-            mPasswordView.setHint(getString(R.string.hint_choose_password));
-        } else {
-            mPasswordView.setHint(getString(R.string.hint_enter_password));
-        }
+        // country list view
+        fillCountryListView();
 
         return view;
     }
 
-    @OnClick(R.id.btn_prev)
-    public void onPrevEvent() {
-        getActivity().getSupportFragmentManager().popBackStackImmediate();
+    private void fillCountryListView() {
+        TelephonyManager tm = (TelephonyManager) getContext().getSystemService(getContext().TELEPHONY_SERVICE);
+        String userCountryCode = StringUtils.upperCase(tm.getNetworkCountryIso());
+        String preSelection = null;
+        try {
+            String countryPhonePrefix;
+            for (CountryVO countryVO : Utils.countryList()) {
+                countryPhonePrefix = countryVO.getPhonePrefix();
+                mCountriesView2VOMap.put(countryVO.getPhonePrefix(), countryVO);
+                // track entry
+                if (StringUtils.equals(userCountryCode, countryVO.getCode())) {
+                    preSelection = countryPhonePrefix;
+                }
+            }
+        } catch (Exception e) {
+            // muted
+        }
+
+        List<String> _countries = new ArrayList<>(mCountriesView2VOMap.keySet());
+        // spinner stuff
+        ArrayAdapter<String> mCountryListAdapter = new ArrayAdapter<String>(getActivity(),
+                R.layout.phoneverify_prefix, _countries);
+        mCountryListView.setAdapter(mCountryListAdapter);
+        // default setup
+        if (StringUtils.isNotBlank(preSelection)) {
+            int preSelectionIdx = Collections.binarySearch(_countries, preSelection);
+            mCountryListView.setSelection(preSelectionIdx);
+        }
     }
 
     @OnClick(R.id.btn_next)
     public void onNextEvent() {
-        String password = mPasswordView.getText().toString();
-        if (StringUtils.isBlank(password)) {
-            mPasswordView.setError(getString(R.string.reqd_login_info));
+        String phone = mPhoneView.getText().toString();
+        if (StringUtils.isBlank(phone)) {
+            mPhoneView.setError(getString(R.string.reqd_login_info));
             return;
         }
-        ReqLogin reqLogin = (ReqLogin) getArguments().get(REQ_LOGIN);
-        reqLogin.setPassword(password);
-        new AccCreateOrSignInTask().execute(reqLogin);
+        PhonePINVerifyFragment next = PhonePINVerifyFragment.newInstance(phone);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Transition exit = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_right);
+            Transition enter = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_left);
+            next.setSharedElementEnterTransition(enter);
+            next.setEnterTransition(enter);
+            setExitTransition(exit);
+            next.setSharedElementReturnTransition(exit);
+        }
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .addSharedElement(mBtnNextView, "btn_next")
+                .replace(R.id.container, next)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -118,112 +140,4 @@ public class PhoneVerifyFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
-
-    private static final class LocalHandler extends Handler {
-        private final WeakReference<PhoneVerifyFragment> mActivity;
-
-        public LocalHandler(PhoneVerifyFragment parent) {
-            mActivity = new WeakReference<PhoneVerifyFragment>(parent);
-        }
-    }
-
-    private class AccCreateOrSignInTask extends AsyncTask<ReqLogin, Integer, User> {
-        @Override
-        protected User doInBackground(ReqLogin... params) {
-            publishProgress(0);
-            boolean isNewUser = Boolean.TRUE;
-            try {
-                ReqLogin reqLogin = params[0];
-
-                ReqGeneric<Map<String, String>> req = new ReqGeneric<>();
-                // set base args
-                req.setToken(Utils.getAppToken(true));
-                isNewUser = Boolean.valueOf(reqLogin.isNewUser());
-                if (isNewUser) {
-                    req.setCmd("create");
-                } else {
-                    req.setCmd("signIn");
-                }
-                // body
-                Map<String, String> body = new HashMap<>();
-                body.put("auth_key", reqLogin.getAuthKey());
-                body.put("password", reqLogin.getPassword());
-                body.put("country", reqLogin.getCountry());
-                req.setBody(body);
-
-                //headers
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setAccept(RestClient.INSTANCE.jsonMediaType());
-                HttpEntity<ReqGeneric<Map<String, String>>> payloadEntity = new HttpEntity<>(req, headers);
-                ResponseEntity<RespLogin> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.CHECK_USER.getValue(), HttpMethod.POST, payloadEntity, RespLogin.class);
-                if (resp != null && resp.getBody() != null && resp.getBody().getBody() !=null) {
-                    if(isNewUser){
-                        publishProgress(1);
-                    }else{
-                        publishProgress(2);
-                    }
-                    return resp.getBody().getBody();
-                }
-            } catch (Exception e) {
-                // muted
-            }
-
-            if(isNewUser){
-                publishProgress(-1);
-            }else{
-                publishProgress(-2);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            Utils.dismissSilently(mProgressDialog);
-            switch (values[0]) {
-                case 0:
-                    Utils.showDialog(mProgressDialog, getString(R.string.dialog_acc_creating_sing_in_wait));
-                    break;
-                case -1:
-                    Utils.showDialog(mProgressDialog, getString(R.string.dialog_acc_creating_err));
-                    break;
-                case -2:
-                    Utils.showDialog(mProgressDialog, getString(R.string.dialog_acc_signin_err));
-                    break;
-                case 1:
-                    Utils.showDialog(mProgressDialog, getString(R.string.dialog_acc_creating_success));
-                    break;
-                case 2:
-                    Utils.showDialog(mProgressDialog, getString(R.string.dialog_acc_signin_success));
-                    break;
-                default:
-                    Utils.dismissSilently(mProgressDialog);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final User user) {
-            if(user == null){
-                // get rid of any logins
-                Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_AUTH_PROVIDER.getValue());
-                Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_AUTH_USER.getValue());
-                Utils.dismissSilently(mProgressDialog);
-                return;
-            }
-
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.dismissSilently(mProgressDialog);
-                    Gson gson = new Gson();
-                    String userStr = gson.toJson(user);
-                    Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_PROVIDER.getValue(), AppConstants.K.via_email_password.name());
-                    Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), userStr);
-                    getActivity().finish();
-                }
-            }, 2000);
-        }
-    }
-
 }

@@ -39,6 +39,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="Theme.SPJustDialog" parent="Theme.AppCompat.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
     <style name="Widget.MyApp.ActionBar" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">?colorPrimary</item>
         <item name="theme">@style/ThemeOverlay.MyApp.ActionBar</item>
@@ -180,15 +185,29 @@
     <style name="SP_TXT_BTN_2" parent="@android:style/TextAppearance">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/blue_500</item>
-        <item name="android:textSize">25sp</item>
-        <item name="android:padding">9dp</item>
-        <item name="android:background">@color/transparent_water</item>
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
+    </style>
+    <style name="SP_TXT_BTN_3" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
+    </style>
+
+    <style name="SP_NOTICE_TEXT" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
     </style>
 
     <style name="EditTextCustomHolo" parent="android:Widget.EditText">
         <item name="android:background">@drawable/apptheme_edit_text_holo_light</item>
         <item name="android:textColor">@color/grey_900</item>
         <item name="fontPath">fonts/Roboto-Light.ttf</item>
+    </style>
+
+    <style name="EditTextCustomHolo2" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/apptheme_edit_text_holo_light</item>
+        <item name="android:textColor">@color/transparent_water</item>
     </style>
 
     <style name="SP_NAV_NAME" parent="@android:style/TextAppearance">

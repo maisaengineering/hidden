@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:id="@+id/pinenter_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/ip_phone_pin"
+            style="@style/EditTextCustomHolo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center|center_horizontal"
+            android:hint="@string/phone_pin_verify_enter"
+            android:imeOptions="actionNone"
+            android:inputType="phone"
+            android:textColorHint="@color/grey_900" />
+    </LinearLayout>
+
+    <ViewSwitcher
+        android:id="@+id/resend_vs"
+        android:layout_below="@+id/pinenter_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="25dp">
+        <TextView
+            android:id="@+id/btn_resend_ctr"
+            style="@style/SP_TXT_BTN_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/grey_500"
+            android:text="@string/empty" />
+        <TextView
+            android:id="@+id/btn_resend"
+            style="@style/SP_TXT_BTN_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/phoneverify_btn_resend" />
+    </ViewSwitcher>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/resend_vs"
+        android:orientation="horizontal"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+        <TextView
+            android:id="@+id/btn_later"
+            style="@style/SP_TXT_BTN_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="@string/phoneverify_later"/>
+        <TextView
+            android:id="@+id/btn_next"
+            style="@style/SP_TXT_BTN_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/phoneverify_btn_verify"
+            android:transitionName="btn_next"
+            android:textAllCaps="true"/>
+    </LinearLayout>
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_below="@+id/resend_vs"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/btn_next"-->
+            <!--style="@style/SP_TXT_BTN_2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="right"-->
+            <!--android:text="@string/phoneverify_btn_verify"-->
+            <!--android:textAllCaps="true"-->
+            <!--android:transitionName="btn_next" />-->
+    <!--</LinearLayout>-->
+</RelativeLayout>

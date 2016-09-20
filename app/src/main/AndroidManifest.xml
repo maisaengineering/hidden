@@ -10,7 +10,11 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <permission android:protectionLevel="signature" android:name="co.samepinch.android.app.permission.C2D_MESSAGE" />
+
+    <permission
+        android:name="co.samepinch.android.app.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="co.samepinch.android.app.permission.C2D_MESSAGE" />
 
     <application
@@ -26,6 +30,7 @@
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -35,9 +40,9 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <!--<provider android:authorities="com.facebook.app.FacebookContentProvider1234"-->
-            <!--android:name="com.facebook.FacebookContentProvider"-->
-            <!--android:exported="true" />-->
+        <!-- <provider android:authorities="com.facebook.app.FacebookContentProvider1234" -->
+        <!-- android:name="com.facebook.FacebookContentProvider" -->
+        <!-- android:exported="true" /> -->
         <activity android:name=".PostDetailActivity" />
         <activity android:name=".ActivityFragment" />
         <activity android:name=".LoginActivity" />
@@ -46,30 +51,37 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".MainActivityIn" />
         <activity android:name=".helpers.NotifsActivityLauncher" />
+        <activity
+            android:name=".EnterPhoneActivity"
+            android:theme="@style/Theme.SPJustDialog" />
         <!-- PUSH NOTIFICATIONS ACTIVITY -->
         <activity android:name=".helpers.PushNotificationActivityLauncher" />
 
         <!-- DEEP LINKING ACTIVITY -->
         <activity
             android:name=".helpers.Web2AppActivityLauncher"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
-                <data android:scheme="http"
+                <data
                     android:host="@string/deeplink_name_with_host"
-                    android:pathPrefix="@string/deeplink_open"/>
-                <data android:scheme="https"
+                    android:pathPrefix="@string/deeplink_open"
+                    android:scheme="http" />
+                <data
                     android:host="@string/deeplink_name_with_host"
-                    android:pathPrefix="@string/deeplink_open"/>
-                <data android:scheme="@string/deeplink_name"
-                    android:host="@string/deeplink_open" />
-                <!-- note that the leading "/" is required for pathPrefix-->
+                    android:pathPrefix="@string/deeplink_open"
+                    android:scheme="https" />
+                <data
+                    android:host="@string/deeplink_open"
+                    android:scheme="@string/deeplink_name" />
+                <!-- note that the leading "/" is required for pathPrefix -->
                 <!-- Accepts URIs that begin with "example://gizmos” -->
-                <!--<data android:scheme="@string/deeplink_name"-->
-                    <!--android:host="@string/deeplink_open" />-->
+                <!-- <data android:scheme="@string/deeplink_name" -->
+                <!-- android:host="@string/deeplink_open" /> -->
 
             </intent-filter>
         </activity>
@@ -116,11 +128,9 @@
         <service
             android:name=".helpers.intent.PostMetaUpdateService"
             android:exported="false" />
-
         <service
             android:name=".helpers.intent.ParseSyncService"
             android:exported="false" />
-
         <service
             android:name=".helpers.intent.AllNotificationsService"
             android:exported="false" />
@@ -161,9 +171,7 @@
             </intent-filter>
         </service>
 
-        <!--
-            Cds Content Provider
-         -->
+        <!--             Cds Content Provider -->
         <provider
             android:name="com.aviary.android.feather.cds.AviaryCdsProvider"
             android:authorities="co.samepinch.android.app.AviaryCdsProvider"
@@ -180,19 +188,27 @@
         </receiver>
         <!-- AVIARY SETTINGS :: END -->
 
+
         <!-- PARSE SETTINGS :: START -->
         <service android:name="com.parse.PushService" />
-        <receiver android:name="com.parse.GcmBroadcastReceiver"
+
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="co.samepinch.android.app" />
             </intent-filter>
         </receiver>
 
-        <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/icon"/>
-        <receiver android:name=".helpers.misc.SPParsePushBroadcastReceiver"
+        <meta-data
+            android:name="com.parse.push.notification_icon"
+            android:resource="@drawable/icon" />
+
+        <receiver
+            android:name=".helpers.misc.SPParsePushBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
@@ -201,6 +217,6 @@
             </intent-filter>
         </receiver>
         <!-- PARSE SETTINGS :: END -->
-
     </application>
+
 </manifest>

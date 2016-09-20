@@ -91,6 +91,9 @@ public class MainActivityIn extends AppCompatActivity {
     @Bind(R.id.nav_view)
     NavigationView mNavigationView;
 
+    @Bind(R.id.wall_notice)
+    TextView mWallNotice;
+
     NavViews nv;
     private LocalHandler mHandler;
     private User mUser;
@@ -174,6 +177,37 @@ public class MainActivityIn extends AppCompatActivity {
         Intent intentNotifs =
                 new Intent(getApplicationContext(), AllNotificationsService.class);
         startService(intentNotifs);
+
+        // user reminders
+        if (mUser.getVerified() == null || !mUser.getVerified()) {
+            mWallNotice.setText(R.string.notice_update_phone);
+            mWallNotice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), EnterPhoneActivity.class);
+                    startActivity(intent);
+                }
+            });
+            mWallNotice.setVisibility(View.VISIBLE);
+        } else if (StringUtils.isBlank(mUser.getEmail())) {
+            mWallNotice.setText(R.string.notice_update_email);
+            mWallNotice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle args = new Bundle();
+                    // target
+                    args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_DOTEDIT.name());
+
+                    // intent
+                    Intent intent = new Intent(getApplicationContext(), ActivityFragment.class);
+                    intent.putExtras(args);
+                    startActivity(intent);
+                }
+            });
+            mWallNotice.setVisibility(View.VISIBLE);
+        }else{
+            mWallNotice.setVisibility(View.GONE);
+        }
     }
 
     private void setupSettingsHandler(View view) {

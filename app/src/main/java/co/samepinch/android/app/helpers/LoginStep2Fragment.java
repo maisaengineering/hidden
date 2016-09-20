@@ -2,9 +2,12 @@ package co.samepinch.android.app.helpers;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,12 +41,14 @@ public class LoginStep2Fragment extends Fragment {
     public static final String TAG = "LoginStep2Fragment";
     public static final String REQ_LOGIN = "reqLogin";
 
+    private LocalHandler mHandler;
+    ProgressDialog mProgressDialog;
 
     @Bind(R.id.ip_password)
     TextView mPasswordView;
 
-    private LocalHandler mHandler;
-    ProgressDialog mProgressDialog;
+    @Bind(R.id.btn_next)
+    TextView mBtnNextView;
 
     public static LoginStep2Fragment newInstance(ReqLogin reqLogin) {
         LoginStep2Fragment f = new LoginStep2Fragment();
@@ -220,7 +225,29 @@ public class LoginStep2Fragment extends Fragment {
                     String userStr = gson.toJson(user);
                     Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_PROVIDER.getValue(), AppConstants.K.via_email_password.name());
                     Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), userStr);
-                    getActivity().finish();
+//                    LoginStep1Fragment.
+//                    getActivity().finish();
+                    Fragment next;
+                    if(StringUtils.isNotBlank(user.getPhno()) && user.getVerified() !=null && !user.getVerified()){
+                        next = PhonePINVerifyFragment.newInstance(user.getPhno());
+                    }else{
+                        getActivity().finish();
+                        return;
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Transition exit = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_right);
+                        Transition enter = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_left);
+                        next.setSharedElementEnterTransition(enter);
+                        next.setEnterTransition(enter);
+                        setExitTransition(exit);
+                        next.setSharedElementReturnTransition(exit);
+                    }
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .addSharedElement(mBtnNextView, "btn_next")
+                            .replace(R.id.container, next)
+                            .addToBackStack(null)
+                            .commit();
                 }
             }, 2000);
         }

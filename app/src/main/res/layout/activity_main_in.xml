@@ -19,6 +19,5 @@
             android:layout_gravity="start"
             app:headerLayout="@layout/drawer_dot_details"
             app:menu="@menu/drawer_view_logged_in" />
-
     </android.support.v4.widget.DrawerLayout>
 </com.flipboard.bottomsheet.BottomSheetLayout>
