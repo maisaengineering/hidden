@@ -164,9 +164,7 @@ public class MainActivityIn extends AppCompatActivity {
 
         // handler
         mHandler = new LocalHandler(this);
-
         setupViewPager();
-        showNotice();
 
         //update user details
         Bundle iArgs = new Bundle();
@@ -183,11 +181,6 @@ public class MainActivityIn extends AppCompatActivity {
     }
 
     private void showNotice() {
-         //clean up
-        mWallNotice.clearAnimation();
-        mWallNotice.setAlpha(0.0f);
-        mWallNotice.setVisibility(View.GONE);
-
         View.OnClickListener clickListener = null;
         Integer textToShow = null;
         // user reminders
@@ -216,10 +209,10 @@ public class MainActivityIn extends AppCompatActivity {
                 }
             };
         }
-        if(clickListener !=null && textToShow !=null){
+        if (clickListener != null && textToShow != null) {
             mWallNotice.animate()
                     .alpha(1.0f)
-                    .setDuration(5000)
+                    .setDuration(2500)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -513,6 +506,10 @@ public class MainActivityIn extends AppCompatActivity {
             }
         }
 
+        // notice clean up
+        mWallNotice.clearAnimation();
+        mWallNotice.setAlpha(0.0f);
+
         mNavigationView.getMenu().getItem(0).setChecked(true);
         //update user details
         Bundle iArgs = new Bundle();
@@ -539,7 +536,6 @@ public class MainActivityIn extends AppCompatActivity {
         }
         // remove if there is one
         Utils.PreferencesManager.getInstance().remove(AppConstants.APP_INTENT.KEY_FRESH_WALL_FLAG.getValue());
-        showNotice();
     }
 
     @Override
@@ -593,35 +589,42 @@ public class MainActivityIn extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Cursor cursor = null;
                 try {
-                    cursor = getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{mUser.getUid()}, null);
-                    if (cursor.moveToFirst()) {
-                        User updatedUser = Utils.cursorToUserEntity(cursor);
 
-                        Gson gson = new Gson();
-                        // update stored user info
-                        String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
-                        User user = gson.fromJson(userStr, User.class);
-                        user.setFname(updatedUser.getFname());
-                        user.setLname(updatedUser.getLname());
-                        user.setSummary(updatedUser.getSummary());
-                        user.setBlog(updatedUser.getBlog());
-                        user.setBadges(updatedUser.getBadges());
-                        user.setPhoto(updatedUser.getPhoto());
-                        user.setImageKey(updatedUser.getImageKey());
-                        user.setPostsCount(updatedUser.getPostsCount());
-                        user.setFollowersCount(updatedUser.getFollowersCount());
-                        Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), gson.toJson(user));
-                        invalidateOptionsMenu();
-                        setupDrawerContent(user, false);
+
+                    Cursor cursor = null;
+                    try {
+                        cursor = getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{mUser.getUid()}, null);
+                        if (cursor.moveToFirst()) {
+                            User updatedUser = Utils.cursorToUserEntity(cursor);
+
+                            Gson gson = new Gson();
+                            // update stored user info
+                            String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
+                            User user = gson.fromJson(userStr, User.class);
+                            user.setFname(updatedUser.getFname());
+                            user.setLname(updatedUser.getLname());
+                            user.setSummary(updatedUser.getSummary());
+                            user.setBlog(updatedUser.getBlog());
+                            user.setBadges(updatedUser.getBadges());
+                            user.setPhoto(updatedUser.getPhoto());
+                            user.setImageKey(updatedUser.getImageKey());
+                            user.setPostsCount(updatedUser.getPostsCount());
+                            user.setFollowersCount(updatedUser.getFollowersCount());
+                            Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), gson.toJson(user));
+                            invalidateOptionsMenu();
+                            setupDrawerContent(user, false);
+                        }
+                    } catch (Exception e) {
+                        //e.printStackTrace();
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
                     }
+                    showNotice();
                 } catch (Exception e) {
-                    //e.printStackTrace();
-                } finally {
-                    if (cursor != null) {
-                        cursor.close();
-                    }
+                    // muted
                 }
             }
         });

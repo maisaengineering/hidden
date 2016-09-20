@@ -349,8 +349,14 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab)
     public void onClickFAB() {
-        Toast.makeText(MainActivity.this, SPApplication.getContext().getString(R.string.msg_login_req), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, SPApplication.getContext().getString(R.string.msg_login_req), Toast.LENGTH_LONG).show();
 
+        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivityForResult(loginIntent, INTENT_LOGIN);
+    }
+
+    @OnClick(R.id.wall_notice)
+    public void onClickNotice() {
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivityForResult(loginIntent, INTENT_LOGIN);
     }

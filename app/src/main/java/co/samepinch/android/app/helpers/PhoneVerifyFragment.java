@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.samepinch.android.app.R;
 import co.samepinch.android.data.dto.CountryVO;
+import co.samepinch.android.data.dto.User;
 import co.samepinch.android.rest.ReqLogin;
 
 public class PhoneVerifyFragment extends Fragment {
@@ -55,6 +58,8 @@ public class PhoneVerifyFragment extends Fragment {
     @Bind(R.id.btn_next)
     TextView mBtnNextView;
 
+    User mUser;
+
     public static PhoneVerifyFragment newInstance(ReqLogin reqLogin) {
         PhoneVerifyFragment f = new PhoneVerifyFragment();
         Bundle args = new Bundle();
@@ -67,6 +72,14 @@ public class PhoneVerifyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            Gson gson = new Gson();
+            // update stored user info
+            String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
+            mUser = gson.fromJson(userStr, User.class);
+        } catch (Exception e) {
+            // muted
+        }
     }
 
     @Override
@@ -78,12 +91,25 @@ public class PhoneVerifyFragment extends Fragment {
         // country list view
         fillCountryListView();
 
+        fillPhoneNumber();
         return view;
     }
 
+    private void fillPhoneNumber() {
+        if (mUser != null && StringUtils.isNotBlank(mUser.getPhno())) {
+            mPhoneView.setText(mUser.getPhno());
+        }
+    }
+
     private void fillCountryListView() {
-        TelephonyManager tm = (TelephonyManager) getContext().getSystemService(getContext().TELEPHONY_SERVICE);
-        String userCountryCode = StringUtils.upperCase(tm.getNetworkCountryIso());
+        String userCountryCode;
+        if (mUser != null && StringUtils.isNotBlank(mUser.getCountry())) {
+            userCountryCode = mUser.getCountry();
+        } else {
+            TelephonyManager tm = (TelephonyManager) getContext().getSystemService(getContext().TELEPHONY_SERVICE);
+            userCountryCode = StringUtils.upperCase(tm.getNetworkCountryIso());
+        }
+
         String preSelection = null;
         try {
             String countryPhonePrefix;
@@ -118,7 +144,7 @@ public class PhoneVerifyFragment extends Fragment {
             mPhoneView.setError(getString(R.string.reqd_login_info));
             return;
         }
-        Object countrySelection  = mCountryListView.getSelectedItem();
+        Object countrySelection = mCountryListView.getSelectedItem();
         CountryVO selectedCountryVO = mCountriesView2VOMap.get(countrySelection.toString());
         PhonePINVerifyFragment next = PhonePINVerifyFragment.newInstance(phone, selectedCountryVO == null ? "" : selectedCountryVO.getCode());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

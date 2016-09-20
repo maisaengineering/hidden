@@ -147,7 +147,7 @@
     <string name="reqd_login_info">required</string>
     <string name="hint_choose_password">choose a password</string>
     <string name="hint_enter_password">enter your password</string>
-    <string name="dialog_acc_creating_sing_in_wait">hang in there you\u0027re almost done \r\n:-</string>
+    <string name="dialog_acc_creating_sing_in_wait">hang in there\r\nyou\u0027re almost done...</string>
     <string name="dialog_acc_creating_success">Yay, You Did It!\r\nWelcome...Welcome...Welcome</string>
     <string name="dialog_acc_creating_err">Hmm...something is not right:-(\r\Try again</string>
     <string name="dialog_acc_signin_success">NAMASTE! Welcome back\r\n:-)</string>
@@ -163,6 +163,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="notice_update_email">stay informed. stay connected.\r\nUPDATE EMAIL</string>
-    <string name="notice_update_phone">your account unverified\r\nVERIFY NOW</string>
+    <string name="notice_update_email">stay informed. stay connected.\nUPDATE EMAIL</string>
+    <string name="notice_update_phone">your account unverified\nVERIFY NOW</string>
+    <string name="notice_login">NAMASTE\nlet\u0027s get started quickly</string>
 </resources>

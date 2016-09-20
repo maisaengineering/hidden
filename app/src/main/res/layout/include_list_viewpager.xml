@@ -30,11 +30,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/plus_white"/>
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="bottom">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/plus_white" />
+
+        <TextView
+            android:id="@+id/wall_notice"
+            style="@style/SP_NOTICE_TEXT"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/fab"
+            android:layout_alignTop="@+id/fab"
+            android:layout_toLeftOf="@+id/fab"
+            android:layout_toStartOf="@+id/fab"
+            android:background="@drawable/notice"
+            android:gravity="center"
+            android:text="@string/notice_login" />
+    </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>
