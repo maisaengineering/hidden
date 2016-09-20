@@ -229,7 +229,7 @@ public class LoginStep2Fragment extends Fragment {
 //                    getActivity().finish();
                     Fragment next;
                     if(StringUtils.isNotBlank(user.getPhno()) && user.getVerified() !=null && !user.getVerified()){
-                        next = PhonePINVerifyFragment.newInstance(user.getPhno());
+                        next = PhonePINVerifyFragment.newInstance(user.getPhno(), user.getCountry());
                     }else{
                         getActivity().finish();
                         return;

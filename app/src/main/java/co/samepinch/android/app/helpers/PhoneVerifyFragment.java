@@ -118,7 +118,9 @@ public class PhoneVerifyFragment extends Fragment {
             mPhoneView.setError(getString(R.string.reqd_login_info));
             return;
         }
-        PhonePINVerifyFragment next = PhonePINVerifyFragment.newInstance(phone);
+        Object countrySelection  = mCountryListView.getSelectedItem();
+        CountryVO selectedCountryVO = mCountriesView2VOMap.get(countrySelection.toString());
+        PhonePINVerifyFragment next = PhonePINVerifyFragment.newInstance(phone, selectedCountryVO == null ? "" : selectedCountryVO.getCode());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Transition exit = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_right);
             Transition enter = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_left);

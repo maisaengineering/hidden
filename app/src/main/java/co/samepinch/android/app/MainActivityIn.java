@@ -183,9 +183,10 @@ public class MainActivityIn extends AppCompatActivity {
     }
 
     private void showNotice() {
+         //clean up
         mWallNotice.clearAnimation();
-        mWallNotice.setVisibility(View.GONE);
         mWallNotice.setAlpha(0.0f);
+        mWallNotice.setVisibility(View.GONE);
 
         View.OnClickListener clickListener = null;
         Integer textToShow = null;
@@ -223,24 +224,12 @@ public class MainActivityIn extends AppCompatActivity {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
-                            mWallNotice.animate().setListener(null);
                             mWallNotice.setVisibility(View.VISIBLE);
+                            mWallNotice.animate().setListener(null);
                         }
                     });
             mWallNotice.setOnClickListener(clickListener);
             mWallNotice.setText(textToShow);
-        }else{
-            mWallNotice.animate()
-                    .alpha(0.0f)
-                    .setDuration(2000)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            mWallNotice.animate().setListener(null);
-                            mWallNotice.setVisibility(View.GONE);
-                        }
-                    });
         }
     }
 

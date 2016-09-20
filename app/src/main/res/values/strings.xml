@@ -152,7 +152,9 @@
     <string name="dialog_acc_creating_err">Hmm...something is not right:-(\r\Try again</string>
     <string name="dialog_acc_signin_success">NAMASTE! Welcome back\r\n:-)</string>
     <string name="dialog_acc_signin_err">Hmm...login failed:-(\r\Check your details and try again!</string>
-    <string name="phoneverify_enter">enter phone #</string>
+    <string name="phoneverify_enter">your phone number</string>
+    <string name="phoneverify_general_err">Hmm...something is not right. try again.</string>
+    <string name="phoneverify_seccess">successfully verified your account</string>
     <string name="phoneverify_btn_verify">verify</string>
     <string name="phoneverify_btn_resend">resend</string>
     <string name="phoneverify_later">later</string>

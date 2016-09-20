@@ -7,4 +7,5 @@
     android:layout_height="wrap_content"
     android:gravity="center|right"
     android:layout_gravity="center|right"
+    android:background="@color/white"
     />

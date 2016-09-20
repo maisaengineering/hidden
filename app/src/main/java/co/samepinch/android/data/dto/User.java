@@ -33,7 +33,17 @@ public class User {
     Boolean verified;
     String phno;
 
+    String country;
+
     public User() {
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public Boolean getVerified() {
