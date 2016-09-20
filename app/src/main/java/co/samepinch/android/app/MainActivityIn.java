@@ -1,5 +1,7 @@
 package co.samepinch.android.app;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -164,6 +166,7 @@ public class MainActivityIn extends AppCompatActivity {
         mHandler = new LocalHandler(this);
 
         setupViewPager();
+        showNotice();
 
         //update user details
         Bundle iArgs = new Bundle();
@@ -177,21 +180,28 @@ public class MainActivityIn extends AppCompatActivity {
         Intent intentNotifs =
                 new Intent(getApplicationContext(), AllNotificationsService.class);
         startService(intentNotifs);
+    }
 
+    private void showNotice() {
+        mWallNotice.clearAnimation();
+        mWallNotice.setVisibility(View.GONE);
+        mWallNotice.setAlpha(0.0f);
+
+        View.OnClickListener clickListener = null;
+        Integer textToShow = null;
         // user reminders
         if (mUser.getVerified() == null || !mUser.getVerified()) {
-            mWallNotice.setText(R.string.notice_update_phone);
-            mWallNotice.setOnClickListener(new View.OnClickListener() {
+            textToShow = R.string.notice_update_phone;
+            clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getApplicationContext(), EnterPhoneActivity.class);
                     startActivity(intent);
                 }
-            });
-            mWallNotice.setVisibility(View.VISIBLE);
+            };
         } else if (StringUtils.isBlank(mUser.getEmail())) {
-            mWallNotice.setText(R.string.notice_update_email);
-            mWallNotice.setOnClickListener(new View.OnClickListener() {
+            textToShow = R.string.notice_update_email;
+            clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle args = new Bundle();
@@ -203,10 +213,34 @@ public class MainActivityIn extends AppCompatActivity {
                     intent.putExtras(args);
                     startActivity(intent);
                 }
-            });
-            mWallNotice.setVisibility(View.VISIBLE);
+            };
+        }
+        if(clickListener !=null && textToShow !=null){
+            mWallNotice.animate()
+                    .alpha(1.0f)
+                    .setDuration(5000)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mWallNotice.animate().setListener(null);
+                            mWallNotice.setVisibility(View.VISIBLE);
+                        }
+                    });
+            mWallNotice.setOnClickListener(clickListener);
+            mWallNotice.setText(textToShow);
         }else{
-            mWallNotice.setVisibility(View.GONE);
+            mWallNotice.animate()
+                    .alpha(0.0f)
+                    .setDuration(2000)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mWallNotice.animate().setListener(null);
+                            mWallNotice.setVisibility(View.GONE);
+                        }
+                    });
         }
     }
 
@@ -516,6 +550,7 @@ public class MainActivityIn extends AppCompatActivity {
         }
         // remove if there is one
         Utils.PreferencesManager.getInstance().remove(AppConstants.APP_INTENT.KEY_FRESH_WALL_FLAG.getValue());
+        showNotice();
     }
 
     @Override
