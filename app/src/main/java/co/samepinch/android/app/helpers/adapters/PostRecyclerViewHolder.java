@@ -3,6 +3,7 @@ package co.samepinch.android.app.helpers.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -24,6 +26,7 @@ import butterknife.OnClick;
 import co.samepinch.android.app.ActivityFragment;
 import co.samepinch.android.app.PostDetailActivity;
 import co.samepinch.android.app.R;
+import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.app.helpers.AppConstants;
 import co.samepinch.android.app.helpers.TimeUtils;
 import co.samepinch.android.app.helpers.Utils;
@@ -35,56 +38,49 @@ import co.samepinch.android.data.dto.User;
  * Created by imaginationcoder on 7/2/15.
  */
 public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
-    public static final String DFLT_ZERO = "0";
-
+    static String[] BG_COLORS = SPApplication.getContext().getResources().getStringArray(R.array.post_colors);
+    private static AtomicInteger BG_COLOR_INDEX = new AtomicInteger();
+    @Bind(R.id.layout_post_item)
+    View mLayout;
     @Bind(R.id.avatar_image_vs)
     ViewSwitcher mAvatarImgVS;
-
     @Bind(R.id.avatar)
     SimpleDraweeView mAvatarView;
-
     @Bind(R.id.avatar_name)
     TextView mAvatarName;
-
     @Bind(R.id.wall_post_dot)
     TextView mWallPostDotView;
-
     @Bind(R.id.wall_pinch_handle)
     TextView mWallPinchHandleView;
-
     @Bind(R.id.wall_post_images)
     SimpleDraweeView mWallPostImages;
-
     @Bind(R.id.wall_post_content)
     TextView mWallPostContentView;
-
     @Bind(R.id.wall_tags)
     TextView mWallTags;
-
     @Bind(R.id.wall_post_commenters)
     LinearLayout mWallPostCommentersLayout;
-
     @Bind(R.id.wall_commenters_count)
     TextView mCommentersCount;
-
     @Bind(R.id.wall_post_views)
     TextView mWallPostViewsView;
-
     @Bind(R.id.wall_post_upvote)
     TextView mWallPostUpvoteView;
-
     @Bind(R.id.wall_post_date)
     TextView mWallPostDateView;
-
     Context mContext;
     Post mPost;
 
     public PostRecyclerViewHolder(final Context context, View itemView) {
         super(itemView);
-        setIsRecyclable(Boolean.TRUE);
+        setIsRecyclable(Boolean.FALSE);
 
         this.mContext = context;
         ButterKnife.bind(this, itemView);
+
+        // post bg color
+        BG_COLOR_INDEX.compareAndSet(BG_COLORS.length, 0);
+        mLayout.setBackgroundColor(Color.parseColor(BG_COLORS[BG_COLOR_INDEX.getAndIncrement()]));
     }
 
     public void onBindViewHolderImpl(final Cursor cursor) {
@@ -118,7 +114,11 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
         Integer commentCnt = mPost.getCommentCount();
         mWallPostViewsView.setText(StringUtils.defaultString(viewsCnt == null ? null : viewsCnt.toString(), StringUtils.EMPTY));
         mWallPostUpvoteView.setText(StringUtils.defaultString(voteCnt == null ? null : voteCnt.toString(), StringUtils.EMPTY));
-        mCommentersCount.setText(StringUtils.defaultString(commentCnt == null ? null : commentCnt.toString(), StringUtils.EMPTY));
+        String commentsCnt = StringUtils.defaultString(commentCnt == null ? null : commentCnt.toString(), StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(commentsCnt) && commentsCnt != "0") {
+            mCommentersCount.setText(commentsCnt);
+        }
+
 
         mWallPostDateView.setText(StringUtils.defaultString(TimeUtils.toHumanRelativePeriod(mPost.getCreatedAt()), StringUtils.EMPTY));
         mWallPostContentView.setText(StringUtils.defaultString(mPost.getWallContent(), StringUtils.EMPTY));

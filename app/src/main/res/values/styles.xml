@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.AppTheme" parent="Base.Theme.AppTheme"></style>
+    <style name="Theme.AppTheme" parent="Base.Theme.AppTheme">
+        <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>
+        <item name="android:buttonStyle">@style/AppTheme.Widget.ButtonView</item>
+    </style>
+
+    <style name="AppTheme.Widget"/>
+
+    <style name="AppTheme.Widget.TextView" parent="android:Widget.Holo.Light.TextView">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
+
+    <style name="AppTheme.Widget.ButtonView" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">fonts/Roboto-Medium.ttf</item>
+    </style>
 
     <style name="Base.Theme.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -115,10 +128,13 @@
     <style name="SP_TEXT.BODY.WALL_POST">
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">5</item>
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
     </style>
 
     <style name="SP_TEXT.SUB_HEADING.DOT">
         <item name="android:textColor">@color/blue_500</item>
+        <item name="fontPath">fonts/Roboto-Light.ttf</item>
+
     </style>
 
     <style name="SP_TEXT.BODY.DISABLED">
