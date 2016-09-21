@@ -35,7 +35,7 @@
     <string name="loading">\u2026</string>
     <string name="loading_with_text">Loading\u2026</string>
     <string name="by">post by\u0020</string>
-    <string name="empty" />
+    <string name="empty"/>
     <string name="login_step1">enter your phone # or email</string>
     <string name="login_btn_next">\u3009</string>
     <string name="login_btn_prev">\u3008</string>

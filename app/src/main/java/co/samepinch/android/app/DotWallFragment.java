@@ -1,6 +1,7 @@
 package co.samepinch.android.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,7 +13,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,7 +51,6 @@ import co.samepinch.android.app.helpers.adapters.EndlessRecyclerOnScrollListener
 import co.samepinch.android.app.helpers.adapters.PostCursorRecyclerViewAdapter;
 import co.samepinch.android.app.helpers.intent.DotDetailsService;
 import co.samepinch.android.app.helpers.intent.PostsPullService;
-import co.samepinch.android.app.helpers.intent.TagsPullService;
 import co.samepinch.android.app.helpers.pubsubs.BusProvider;
 import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.app.helpers.widget.SIMView;
@@ -65,8 +64,6 @@ import co.samepinch.android.rest.RestClient;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_BY;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_KEY;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POSTS_USER;
-import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_TAGS_PULL_FAV;
-import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_TAGS_PULL_TYPE;
 import static co.samepinch.android.app.helpers.AppConstants.K;
 
 public class DotWallFragment extends Fragment {
@@ -120,6 +117,9 @@ public class DotWallFragment extends Fragment {
     @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+
     PostCursorRecyclerViewAdapter mViewAdapter;
     LinearLayoutManager mLayoutManager;
 
@@ -129,6 +129,16 @@ public class DotWallFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new LocalHandler(this);
+    }
+
+    public Activity mActivity;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            mActivity = (Activity) context;
+        }
     }
 
     @Override
@@ -143,7 +153,7 @@ public class DotWallFragment extends Fragment {
             public void run() {
                 if (mViewAdapter != null) {
                     String dotUid = getArguments().getString(K.KEY_DOT.name());
-                    Cursor cursor = getActivity().getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_OWNER + "=?", new String[]{dotUid}, null);
+                    Cursor cursor = mActivity.getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_OWNER + "=?", new String[]{dotUid}, null);
                     if (cursor.moveToFirst()) {
                         mViewAdapter.changeCursor(cursor);
                     } else {
@@ -171,9 +181,9 @@ public class DotWallFragment extends Fragment {
                 Bundle iArgs = new Bundle();
                 iArgs.putString(AppConstants.K.DOT.name(), dotUid);
                 Intent serviceIntent =
-                        new Intent(getActivity(), DotDetailsService.class);
+                        new Intent(mActivity, DotDetailsService.class);
                 serviceIntent.putExtras(iArgs);
-                getActivity().startService(serviceIntent);
+                mActivity.startService(serviceIntent);
             }
         }
     }
@@ -188,22 +198,21 @@ public class DotWallFragment extends Fragment {
         // clear session data
         Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_POSTS_LIST_USER.getValue());
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        ((AppCompatActivity) mActivity).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) mActivity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) mActivity).getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_arrow);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // hack to get click working
-                getActivity().onBackPressed();
+                mActivity.onBackPressed();
             }
         });
 
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.TransparentText);
 
         // user posts
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager, AppConstants.KV.LOAD_MORE.getIntValue()) {
             @Override
             public void onLoadMore(RecyclerView rv, int current_page) {
@@ -213,9 +222,9 @@ public class DotWallFragment extends Fragment {
 
         // grab dot
         final String dotUid = getArguments().getString(K.KEY_DOT.name());
-        Cursor cursor = getActivity().getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{dotUid}, null);
+        Cursor cursor = mActivity.getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{dotUid}, null);
         if (!cursor.moveToFirst()) {
-            getActivity().finish();
+            mActivity.finish();
         }
         final User user = Utils.cursorToUserEntity(cursor);
         cursor.close();
@@ -244,14 +253,14 @@ public class DotWallFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         String dotUid = getArguments().getString(K.KEY_DOT.name());
-        Cursor cursor = getActivity().getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_OWNER + "=?", new String[]{dotUid}, null);
-        if(cursor.moveToFirst()){
-            mViewAdapter = new PostCursorRecyclerViewAdapter(getActivity(), cursor);
-        }else{
-            if(cursor !=null && !cursor.isClosed()){
+        Cursor cursor = mActivity.getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_OWNER + "=?", new String[]{dotUid}, null);
+        if (cursor.moveToFirst()) {
+            mViewAdapter = new PostCursorRecyclerViewAdapter(mActivity, cursor);
+        } else {
+            if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            mViewAdapter = new PostCursorRecyclerViewAdapter(getActivity(), null);
+            mViewAdapter = new PostCursorRecyclerViewAdapter(mActivity, null);
         }
 
         mViewAdapter.setHasStableIds(Boolean.TRUE);
@@ -265,9 +274,9 @@ public class DotWallFragment extends Fragment {
         Bundle iArgs = new Bundle();
         iArgs.putString(AppConstants.K.DOT.name(), dotUid);
         Intent intent =
-                new Intent(getActivity(), DotDetailsService.class);
+                new Intent(mActivity, DotDetailsService.class);
         intent.putExtras(iArgs);
-        getActivity().startService(intent);
+        mActivity.startService(intent);
     }
 
     private void callForRemotePosts(boolean isPaginating) {
@@ -302,9 +311,9 @@ public class DotWallFragment extends Fragment {
 
         // call for intent
         Intent mServiceIntent =
-                new Intent(getActivity(), PostsPullService.class);
+                new Intent(mActivity, PostsPullService.class);
         mServiceIntent.putExtras(iArgs);
-        getActivity().startService(mServiceIntent);
+        mActivity.startService(mServiceIntent);
     }
 
     @Subscribe
@@ -318,11 +327,11 @@ public class DotWallFragment extends Fragment {
         pref.setValue(AppConstants.API.PREF_POSTS_LIST_USER.getValue(), event.getMetaData());
 
         final String dotUid = getArguments().getString(K.KEY_DOT.name());
-        getActivity().runOnUiThread(new Runnable() {
+        mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Cursor cursor = getActivity().getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_OWNER + "=?", new String[]{dotUid}, null);
+                    Cursor cursor = mActivity.getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_OWNER + "=?", new String[]{dotUid}, null);
                     mViewAdapter.changeCursor(cursor);
                 } catch (Exception e) {
                     // muted
@@ -346,7 +355,7 @@ public class DotWallFragment extends Fragment {
         if (user == null) {
             return;
         }
-        String pinchHandle = String.format(getActivity().getApplicationContext().getString(R.string.pinch_handle), user.getPinchHandle());
+        String pinchHandle = String.format(mActivity.getApplicationContext().getString(R.string.pinch_handle), user.getPinchHandle());
         mCollapsingToolbarLayout.setTitle(pinchHandle);
 
         String fName = user.getFname();
@@ -378,7 +387,7 @@ public class DotWallFragment extends Fragment {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Bitmap blurredBitmap = ImageUtils.blur(getActivity().getApplicationContext(), bitmap);
+                            Bitmap blurredBitmap = ImageUtils.blur(mActivity.getApplicationContext(), bitmap);
                             mBackdrop.setImageBitmap(blurredBitmap);
 
                             Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
@@ -445,7 +454,7 @@ public class DotWallFragment extends Fragment {
                         args.putString(AppConstants.K.TARGET_FRAGMENT.name(), K.FRAGMENT_DOTEDIT.name());
 
                         // intent
-                        Intent intent = new Intent(getActivity().getApplicationContext(), ActivityFragment.class);
+                        Intent intent = new Intent(mActivity.getApplicationContext(), ActivityFragment.class);
                         intent.putExtras(args);
                         startActivityForResult(intent, AppConstants.KV.REQUEST_EDIT_DOT.getIntValue());
                     }
@@ -482,10 +491,10 @@ public class DotWallFragment extends Fragment {
     }
 
     private void doLogin() {
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        Intent intent = new Intent(mActivity, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        getActivity().finish();
+        mActivity.finish();
     }
 
 
@@ -505,14 +514,14 @@ public class DotWallFragment extends Fragment {
 
     @Subscribe
     public void onDotDetailsRefreshEvent(final Events.DotDetailsRefreshEvent event) {
-        getActivity().runOnUiThread(new Runnable() {
+        mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     String dotUid = getArguments().getString(K.KEY_DOT.name());
-                    Cursor cursor = getActivity().getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{dotUid}, null);
+                    Cursor cursor = mActivity.getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{dotUid}, null);
                     if (!cursor.moveToFirst()) {
-                        getActivity().finish();
+                        mActivity.finish();
                     }
                     User user = Utils.cursorToUserEntity(cursor);
                     cursor.close();
@@ -526,7 +535,7 @@ public class DotWallFragment extends Fragment {
 
     @Subscribe
     public void onDotDetailsRefreshFailEvent(final Events.DotDetailsRefreshFailEvent event) {
-        this.getActivity().runOnUiThread(new Runnable() {
+        this.mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -587,9 +596,9 @@ public class DotWallFragment extends Fragment {
                 String dotUid = getArguments().getString(K.KEY_DOT.name());
                 iArgs.putString(AppConstants.K.DOT.name(), dotUid);
                 Intent intent =
-                        new Intent(getActivity(), DotDetailsService.class);
+                        new Intent(mActivity, DotDetailsService.class);
                 intent.putExtras(iArgs);
-                getActivity().startService(intent);
+                mActivity.startService(intent);
             }
         }
     }

@@ -251,7 +251,7 @@ public class TagWallFragment extends Fragment {
         if (cursor.moveToFirst()) {
             mViewAdapter = new PostCursorRecyclerViewAdapter(getActivity(), cursor);
         } else {
-            if(cursor !=null && !cursor.isClosed()){
+            if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
             mViewAdapter = new PostCursorRecyclerViewAdapter(getActivity(), null);
