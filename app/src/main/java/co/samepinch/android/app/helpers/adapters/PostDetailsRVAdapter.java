@@ -2,15 +2,20 @@ package co.samepinch.android.app.helpers.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Point;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import co.samepinch.android.app.PostDetailActivity;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import co.samepinch.android.app.R;
+import co.samepinch.android.app.SPApplication;
 
 public class PostDetailsRVAdapter extends CursorRecyclerViewAdapter<PostDetailsRVHolder> {
+    static String[] BG_COLORS = SPApplication.getContext().getResources().getStringArray(R.array.post_colors);
+    private static AtomicInteger BG_COLOR_INDEX = new AtomicInteger();
+
     private final Context context;
 
     private static final int TYPE_HEADER = 0;
@@ -51,6 +56,10 @@ public class PostDetailsRVAdapter extends CursorRecyclerViewAdapter<PostDetailsR
                 Thread.dumpStack();
                 throw new IllegalStateException("un-known viewType=" + viewType);
         }
+
+        // post bg color
+        BG_COLOR_INDEX.compareAndSet(BG_COLORS.length, 0);
+        v.setBackgroundColor(Color.parseColor(BG_COLORS[BG_COLOR_INDEX.getAndIncrement()]));
 
         return viewHolder;
     }

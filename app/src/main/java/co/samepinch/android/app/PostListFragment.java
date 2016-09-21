@@ -261,7 +261,7 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
 
     @Override
     public void onPauseFragment() {
-        if (mRefreshLayout.isRefreshing()) {
+        if (mRefreshLayout !=null && mRefreshLayout.isRefreshing()) {
             mRefreshLayout.setRefreshing(false);
         }
     }

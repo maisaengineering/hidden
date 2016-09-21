@@ -19,7 +19,6 @@ public class ActivityFragment extends AppCompatActivity {
     ViewPager mPager;
     Adapter mPagerAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
