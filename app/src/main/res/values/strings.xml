@@ -80,6 +80,7 @@
     <string name="dialog_post">Create a POST.\u000A\u000ASamePinch\u0027ers around the globe are here to help you\u0021\u000A\u000AWhat are you waiting for\u003F</string>
     <string name="dialog_ok">DISMISS</string>
     <string name="hint_email">Email</string>
+    <string name="hint_phno">Phone</string>
     <string name="hint_password">Password</string>
     <string name="btn_login">Login</string>
     <string name="hint_acc_create">No account yet? Create one</string>
@@ -154,6 +155,7 @@
     <string name="dialog_acc_signin_err">Hmm...login failed:-(\r\Check your details and try again!</string>
     <string name="phoneverify_enter">your phone number</string>
     <string name="phoneverify_general_err">Hmm...something is not right. try again.</string>
+    <string name="phoneverify_sms_sent">we\u0027ve sent you your pin</string>
     <string name="phoneverify_seccess">successfully verified your account</string>
     <string name="phoneverify_btn_verify">verify</string>
     <string name="phoneverify_btn_resend">resend</string>
@@ -165,5 +167,5 @@
     <string name="action_settings">Settings</string>
     <string name="notice_update_email">stay informed. stay connected.\nUPDATE EMAIL</string>
     <string name="notice_update_phone">your account unverified\nVERIFY NOW</string>
-    <string name="notice_login">NAMASTE\nlet\u0027s get started quickly</string>
+    <string name="notice_login">let\u0027s get started</string>
 </resources>

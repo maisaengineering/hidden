@@ -181,48 +181,58 @@ public class MainActivityIn extends AppCompatActivity {
     }
 
     private void showNotice() {
-        View.OnClickListener clickListener = null;
-        Integer textToShow = null;
-        // user reminders
-        if (mUser.getVerified() == null || !mUser.getVerified()) {
-            textToShow = R.string.notice_update_phone;
-            clickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getApplicationContext(), EnterPhoneActivity.class);
-                    startActivity(intent);
-                }
-            };
-        } else if (StringUtils.isBlank(mUser.getEmail())) {
-            textToShow = R.string.notice_update_email;
-            clickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle args = new Bundle();
-                    // target
-                    args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_DOTEDIT.name());
+        try {
 
-                    // intent
-                    Intent intent = new Intent(getApplicationContext(), ActivityFragment.class);
-                    intent.putExtras(args);
-                    startActivity(intent);
-                }
-            };
-        }
-        if (clickListener != null && textToShow != null) {
-            mWallNotice.animate()
-                    .alpha(1.0f)
-                    .setDuration(2500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            mWallNotice.setVisibility(View.VISIBLE);
-                            mWallNotice.animate().setListener(null);
-                        }
-                    });
-            mWallNotice.setOnClickListener(clickListener);
-            mWallNotice.setText(textToShow);
+            String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
+            Gson gson = new Gson();
+            User _user = gson.fromJson(userStr, User.class);
+
+            View.OnClickListener clickListener = null;
+            Integer textToShow = null;
+            // user reminders
+            if (_user.getVerified() == null || !_user.getVerified()) {
+                textToShow = R.string.notice_update_phone;
+                clickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getApplicationContext(), EnterPhoneActivity.class);
+                        startActivity(intent);
+                    }
+                };
+            } else if (StringUtils.isBlank(_user.getEmail())) {
+                textToShow = R.string.notice_update_email;
+                clickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle args = new Bundle();
+                        // target
+                        args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_DOTEDIT.name());
+
+                        // intent
+                        Intent intent = new Intent(getApplicationContext(), ActivityFragment.class);
+                        intent.putExtras(args);
+                        startActivity(intent);
+                    }
+                };
+            }
+            if (clickListener != null && textToShow != null) {
+                mWallNotice.animate()
+                        .alpha(1.0f)
+                        .setDuration(2500)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mWallNotice.setVisibility(View.VISIBLE);
+                                mWallNotice.animate().setListener(null);
+                            }
+                        });
+                mWallNotice.setOnClickListener(clickListener);
+                mWallNotice.setText(textToShow);
+            }
+
+        } catch (Exception e) {
+            // muted
         }
     }
 
@@ -611,6 +621,9 @@ public class MainActivityIn extends AppCompatActivity {
                             user.setImageKey(updatedUser.getImageKey());
                             user.setPostsCount(updatedUser.getPostsCount());
                             user.setFollowersCount(updatedUser.getFollowersCount());
+                            user.setPhno(updatedUser.getPhno());
+                            user.setVerified(updatedUser.getVerified());
+
                             Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), gson.toJson(user));
                             invalidateOptionsMenu();
                             setupDrawerContent(user, false);

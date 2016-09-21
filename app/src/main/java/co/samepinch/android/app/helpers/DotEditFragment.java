@@ -90,8 +90,8 @@ public class DotEditFragment extends Fragment {
     @Bind(R.id.input_email)
     EditText mEmailText;
 
-    @Bind(R.id.input_pinchHandle)
-    EditText mPinchHandle;
+    @Bind(R.id.input_phno)
+    EditText mPhoneNumber;
 //
 //    @Bind(R.id.input_password)
 //    EditText mPasswordText;
@@ -234,7 +234,7 @@ public class DotEditFragment extends Fragment {
         mFNameText.setText(user.getFname());
         mLNameText.setText(user.getLname());
         mEmailText.setText(user.getEmail());
-        mPinchHandle.setText(user.getPinchHandle());
+        mPhoneNumber.setText(user.getPhno());
         mAboutMe.setText(user.getSummary());
         mBlogUrl.setText(user.getBlog());
     }
@@ -270,6 +270,12 @@ public class DotEditFragment extends Fragment {
         if (!StringUtils.equals(lName, mUser.getLname())) {
             hasChanges = true;
             user.setLname(lName);
+        }
+
+        String phno = mPhoneNumber.getText().toString();
+        if (!StringUtils.equals(phno, mUser.getEmail())) {
+            hasChanges = true;
+            user.setPhno(phno);
         }
 
         String email = mEmailText.getText().toString();
@@ -430,6 +436,8 @@ public class DotEditFragment extends Fragment {
                     user.setBlog(updatedUser.getBlog());
                     user.setBadges(updatedUser.getBadges());
                     user.setPhoto(updatedUser.getPhoto());
+                    user.setPhno(updatedUser.getPhno());
+                    user.setVerified(updatedUser.getVerified());
                     user.setImageKey(updatedUser.getImageKey());
                     Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), gson.toJson(user));
 

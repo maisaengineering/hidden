@@ -89,6 +89,38 @@
                     </android.support.design.widget.TextInputLayout>
                 </RelativeLayout>
 
+
+                <!-- Phone Number -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:id="@+id/strut3"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_centerHorizontal="true" />
+
+                    <!--  Email Label -->
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignRight="@+id/strut3"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp">
+
+                        <EditText
+                            android:id="@+id/input_phno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/hint_phno"
+                            android:inputType="phone"
+                            android:singleLine="true" />
+                    </android.support.design.widget.TextInputLayout>
+
+                </RelativeLayout>
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -118,26 +150,6 @@
                     </android.support.design.widget.TextInputLayout>
 
                 </RelativeLayout>
-
-
-                <!-- Pinch Handle Label -->
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="8dp">
-
-                    <EditText
-                        android:id="@+id/input_pinchHandle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:enabled="false"
-                        android:hint="@string/hint_pinch_handle"
-                        android:singleLine="true"
-                        android:visibility="gone"/>
-                </android.support.design.widget.TextInputLayout>
-
 
                 <!-- About Label -->
                 <android.support.design.widget.TextInputLayout

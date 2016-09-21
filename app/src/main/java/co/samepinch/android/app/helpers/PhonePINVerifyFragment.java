@@ -38,6 +38,8 @@ public class PhonePINVerifyFragment extends Fragment {
     public static final String TAG = "PhonePINVerifyFragment";
     public static final String REQ_PHONE = "reqPhone";
     public static final String REQ_COUNTRY_CODE = "reqCountryCode";
+    public static final String REQ_ENABLE_RESEND = "reqEnableResend";
+
     public static final String CTR_FORMAT = "%02d:%02d";
 
     @Bind(R.id.ip_phone_pin)
@@ -51,14 +53,19 @@ public class PhonePINVerifyFragment extends Fragment {
     private LocalHandler mHandler;
     private ProgressDialog mProgressDialog;
 
-    public static PhonePINVerifyFragment newInstance(String phone, String countryCOde) {
+    public static PhonePINVerifyFragment newInstance(String phone, String countryCOde, boolean enableResend) {
         PhonePINVerifyFragment f = new PhonePINVerifyFragment();
         Bundle args = new Bundle();
         args.putString(REQ_PHONE, phone);
         args.putString(REQ_COUNTRY_CODE, countryCOde);
+        args.putBoolean(REQ_ENABLE_RESEND, enableResend);
 
         f.setArguments(args);
         return f;
+    }
+
+    public static PhonePINVerifyFragment newInstance(String phone, String countryCOde) {
+        return newInstance(phone, countryCOde, Boolean.TRUE);
     }
 
     @Override
@@ -71,33 +78,38 @@ public class PhonePINVerifyFragment extends Fragment {
         mProgressDialog.setCancelable(Boolean.FALSE);
         mHandler = new LocalHandler(this);
 
-        // 2minutes timer
-        new CountDownTimer(120000, 1000) {
-            public void onTick(long elapsed) {
-                try {
-                    String elapsedStr = String.format(CTR_FORMAT,
-                            TimeUnit.MILLISECONDS.toMinutes(elapsed) - TimeUnit.HOURS.toMinutes(
-                                    TimeUnit.MILLISECONDS.toHours(elapsed)),
-                            TimeUnit.MILLISECONDS.toSeconds(elapsed) - TimeUnit.MINUTES.toSeconds(
-                                    TimeUnit.MILLISECONDS.toMinutes(elapsed)));
-                    mBtnResendCTRView.setText(elapsedStr);
-                } catch (Exception e) {
-                    // muted
-                }
-
-            }
-
-            public void onFinish() {
-                try {
-                    mBtnResendCTRView.setText(R.string.empty);
-                    mResendVSView.setDisplayedChild(1);
-                } catch (Exception e) {
-                    // muted
-                }
-            }
-        }.start();
-
         Bundle args = getArguments();
+
+        // cond. enanbled resend option
+        if(args.getBoolean(REQ_ENABLE_RESEND, Boolean.TRUE)) {
+            // 2minutes timer
+            new CountDownTimer(120000, 1000) {
+                public void onTick(long elapsed) {
+                    try {
+                        String elapsedStr = String.format(CTR_FORMAT,
+                                TimeUnit.MILLISECONDS.toMinutes(elapsed) - TimeUnit.HOURS.toMinutes(
+                                        TimeUnit.MILLISECONDS.toHours(elapsed)),
+                                TimeUnit.MILLISECONDS.toSeconds(elapsed) - TimeUnit.MINUTES.toSeconds(
+                                        TimeUnit.MILLISECONDS.toMinutes(elapsed)));
+                        mBtnResendCTRView.setText(elapsedStr);
+                    } catch (Exception e) {
+                        // muted
+                    }
+
+                }
+
+                public void onFinish() {
+                    try {
+                        mBtnResendCTRView.setText(R.string.empty);
+                        mResendVSView.setDisplayedChild(1);
+                    } catch (Exception e) {
+                        // muted
+                    }
+                }
+            }.start();
+        }
+
+        // phone confirm task
         new ConfirmPhoneNumberTask().execute(args.getString(REQ_PHONE, StringUtils.EMPTY), args.getString(REQ_COUNTRY_CODE, StringUtils.EMPTY));
     }
 
@@ -228,6 +240,8 @@ public class PhonePINVerifyFragment extends Fragment {
                         getActivity().getSupportFragmentManager().popBackStackImmediate();
                     }
                 }, 2000);
+            }else{
+                Toast.makeText(getContext(), SPApplication.getContext().getText(R.string.phoneverify_sms_sent), Toast.LENGTH_SHORT).show();
             }
         }
     }

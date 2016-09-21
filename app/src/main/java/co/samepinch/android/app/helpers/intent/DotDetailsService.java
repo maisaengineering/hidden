@@ -13,7 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,6 +69,8 @@ public class DotDetailsService extends IntentService {
                 values.put(SchemaDots.COLUMN_BLOG, user.getBlog());
                 values.put(SchemaDots.COLUMN_SUMMARY, user.getSummary());
                 values.put(SchemaDots.COLUMN_FOLLOW, user.getFollow());
+                values.put(SchemaDots.COLUMN_PHNO, user.getPhno());
+                values.put(SchemaDots.COLUMN_VERIFIED, user.getVerified() == null ? "false" : Boolean.toString(user.getVerified()) );
 
                 Uri dbResult = getContentResolver().insert(SchemaDots.CONTENT_URI, values);
                 BusProvider.INSTANCE.getBus().post(new Events.DotDetailsRefreshEvent(null));

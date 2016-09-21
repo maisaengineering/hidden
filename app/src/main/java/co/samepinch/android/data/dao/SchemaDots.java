@@ -23,6 +23,9 @@ public interface SchemaDots extends BaseColumns {
     String COLUMN_SUMMARY = "summary";
     String COLUMN_BLOG = "blog";
     String COLUMN_FOLLOW = "follow";
+    String COLUMN_VERIFIED = "verified";
+    String COLUMN_PHNO = "phno";
+
 
     String TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
             + TABLE_NAME
@@ -38,6 +41,8 @@ public interface SchemaDots extends BaseColumns {
             + COLUMN_FOLLOWERS_COUNT + " INTEGER, "
             + COLUMN_SUMMARY + " TEXT, "
             + COLUMN_BLOG + " TEXT, "
+            + COLUMN_VERIFIED + " TEXT, "
+            + COLUMN_PHNO + " TEXT, "
             + COLUMN_FOLLOW + " INTEGER DEFAULT 0"
             + ")";
     String TABLE_DROP = "DROP TABLE IF EXISTS "
@@ -47,7 +52,7 @@ public interface SchemaDots extends BaseColumns {
             _ID, COLUMN_UID, COLUMN_FNAME, COLUMN_LNAME,
             COLUMN_PREF_NAME, COLUMN_PINCH_HANDLE, COLUMN_PHOTO_URL,
             COLUMN_POSTS_COUNT, COLUMN_FOLLOWERS_COUNT, COLUMN_SUMMARY,
-            COLUMN_BLOG, COLUMN_FOLLOW
+            COLUMN_BLOG, COLUMN_FOLLOW, COLUMN_VERIFIED, COLUMN_PHNO
     };
 
     // provider related stuff

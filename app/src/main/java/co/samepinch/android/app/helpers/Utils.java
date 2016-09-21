@@ -167,6 +167,17 @@ public class Utils {
         if ((followIndex = cursor.getColumnIndex(SchemaDots.COLUMN_FOLLOW)) != -1) {
             user.setFollow(cursor.getInt(followIndex) == 1);
         }
+
+        int phNoIndex;
+        if ((phNoIndex = cursor.getColumnIndex(SchemaDots.COLUMN_PHNO)) != -1) {
+            user.setPhno(cursor.getString(phNoIndex));
+        }
+
+        int verifiedIndex;
+        if ((verifiedIndex = cursor.getColumnIndex(SchemaDots.COLUMN_VERIFIED)) != -1) {
+            user.setVerified(Boolean.valueOf(cursor.getString(verifiedIndex)));
+        }
+
         return user;
     }
 
