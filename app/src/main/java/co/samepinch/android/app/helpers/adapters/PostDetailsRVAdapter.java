@@ -2,7 +2,6 @@ package co.samepinch.android.app.helpers.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,8 +57,8 @@ public class PostDetailsRVAdapter extends CursorRecyclerViewAdapter<PostDetailsR
         }
 
         // post bg color
-        BG_COLOR_INDEX.compareAndSet(BG_COLORS.length, 0);
-        v.setBackgroundColor(Color.parseColor(BG_COLORS[BG_COLOR_INDEX.getAndIncrement()]));
+//        BG_COLOR_INDEX.compareAndSet(BG_COLORS.length, 0);
+//        v.setBackgroundColor(Color.parseColor(BG_COLORS[BG_COLOR_INDEX.getAndIncrement()]));
 
         return viewHolder;
     }
