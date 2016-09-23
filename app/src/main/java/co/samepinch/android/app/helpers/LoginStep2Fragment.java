@@ -81,6 +81,22 @@ public class LoginStep2Fragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // update holding activity graphic
+        if (getActivity() instanceof LoginActivity) {
+            try{
+                ((LoginActivity) getActivity()).changeIcon(getResources().getDrawable(R.drawable.ic_lock_outline_black_100dp));
+                ((LoginActivity) getActivity()).changeHint(null);
+
+            }catch (Exception e){
+                // muted
+            }
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.login_step2, container, false);

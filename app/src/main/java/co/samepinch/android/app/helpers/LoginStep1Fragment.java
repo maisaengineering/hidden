@@ -115,6 +115,21 @@ public class LoginStep1Fragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // update holding activity graphic
+        if (getActivity() instanceof LoginActivity) {
+            try{
+                ((LoginActivity) getActivity()).changeIcon(getResources().getDrawable(R.drawable.icon));
+                ((LoginActivity) getActivity()).changeHint(getResources().getString(R.string.must_login));
+            }catch(Exception e){
+                // muted
+            }
+
+        }
+    }
 
     @OnClick(R.id.btn_next)
     public void onNextEvent(View btnView) {

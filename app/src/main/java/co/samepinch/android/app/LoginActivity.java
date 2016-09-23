@@ -3,12 +3,15 @@ package co.samepinch.android.app;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
@@ -29,17 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-
         // local values
         mLoadingAnim = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center_point_2);
-
-//        ButterKnife.bind(LoginActivity.this);
-//        BusProvider.INSTANCE.getBus().register(this);
-
-//        progressDialog = new ProgressDialog(LoginActivity.this,
-//                R.style.dialog);
-//        progressDialog.setCancelable(Boolean.FALSE);
-
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -49,14 +43,47 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void startLoadingAnimation() {
-        if(mLoadingAnim !=null){
-            ((ImageView) this.findViewById(R.id.spicon)).startAnimation(mLoadingAnim);
+        if (mLoadingAnim != null) {
+            try {
+                ((ImageView) this.findViewById(R.id.spicon)).startAnimation(mLoadingAnim);
+            } catch (Exception e) {
+                // muted
+            }
         }
     }
 
     public void endLoadingAnimation() {
-        ((ImageView) this.findViewById(R.id.spicon)).clearAnimation();
+        try {
+            ((ImageView) this.findViewById(R.id.spicon)).clearAnimation();
+        } catch (Exception e) {
+            // muted
+        }
     }
+
+    public void changeIcon(Drawable aDrawable) {
+        try {
+            ((ImageView) this.findViewById(R.id.spicon)).setImageDrawable(aDrawable);
+        } catch (Exception e) {
+            // muted
+        }
+    }
+
+
+    public void changeHint(String aHint) {
+        try {
+            TextView _hintView = ((TextView) this.findViewById(R.id.sphint));
+            if(aHint == null){
+                _hintView.setVisibility(View.GONE);
+            }else{
+                _hintView.setVisibility(View.VISIBLE);
+                _hintView.setText(aHint);
+            }
+
+        } catch (Exception e) {
+            // muted
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -67,25 +94,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == AppConstants.KV.REQUEST_SIGNUP.getIntValue()) {
-//            if (resultCode == RESULT_OK) {
-//                setResult(RESULT_OK);
-//                finish();
-//            }
-//        }
-//
-//        if (RESULT_OK == resultCode) {
-//            try {
-//                Utils.clearDB(getContentResolver());
-//                finish();
-//            } catch (Exception e) {
-//                // muted
-//                // signout
-//                Intent mServiceIntent =
-//                        new Intent(this, SignOutService.class);
-//                SPApplication.getContext().startService(mServiceIntent);
-//            }
-//        }
     }
 
     @Override
@@ -124,28 +132,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-//    @Subscribe
-//    public void onAuthFailEvent(final Events.AuthFailEvent event) {
-//        final Map<String, String> eventData = event.getMetaData();
-//        if (eventData == null) {
-//            return;
-//        }
-//
-//        if (StringUtils.equals(eventData.get(AppConstants.K.provider.name()), AppConstants.K.via_email_password.name())) {
-//            LoginActivity.this.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Utils.dismissSilently(progressDialog);
-////                    mLoginButton.setEnabled(Boolean.TRUE);
-//
-//                    if (eventData.containsKey(AppConstants.K.MESSAGE.name())) {
-//                        Snackbar.make(findViewById(R.id.login_layout), eventData.get(AppConstants.K.MESSAGE.name()), Snackbar.LENGTH_LONG).show();
-//                    } else {
-//                        Snackbar.make(findViewById(R.id.login_layout), "try again", Snackbar.LENGTH_SHORT).show();
-//                    }
-//                }
-//            });
-//        }
-//    }
 }

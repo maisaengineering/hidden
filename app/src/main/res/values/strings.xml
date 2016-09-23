@@ -137,9 +137,10 @@
     <string name="btn_try_again">try again</string>
     <string name="hint_more">More options</string>
     <string name="msg_no_email">Unable to find email application on your device.</string>
-    <string name="msg_login_req">Login to post.</string>
+    <string name="msg_login_req">please login to seek an advice</string>
     <string name="hint_or">alternatively</string>
     <string name="must_login">help us weed out the trolls</string>
+    <string name="pin_verify_hint">we genuinely care about you</string>
     <string name="country_login">I live in</string>
     <string name="dialog_acc_locating">locating your account\r\n%s</string>
     <string name="dialog_acc_found">AWESOME! found...\r\n:-)</string>
@@ -163,7 +164,7 @@
     <string name="phoneverify_btn_verify">verify</string>
     <string name="phoneverify_btn_resend">resend</string>
     <string name="phoneverify_later">later</string>
-    <string name="phone_pin_verify_enter">enter pin</string>
+    <string name="phone_pin_verify_enter">enter your pin</string>
     <string name="title_activity_enter_phone">EnterPhoneActivity</string>
 
     <string name="hello_world">Hello world!</string>

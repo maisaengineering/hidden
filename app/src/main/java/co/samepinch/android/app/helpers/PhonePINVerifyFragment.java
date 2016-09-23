@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import co.samepinch.android.app.LoginActivity;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.rest.ReqGeneric;
@@ -81,7 +82,7 @@ public class PhonePINVerifyFragment extends Fragment {
         Bundle args = getArguments();
 
         // cond. enanbled resend option
-        if(args.getBoolean(REQ_ENABLE_RESEND, Boolean.TRUE)) {
+        if (args.getBoolean(REQ_ENABLE_RESEND, Boolean.TRUE)) {
             // 2minutes timer
             new CountDownTimer(120000, 1000) {
                 public void onTick(long elapsed) {
@@ -121,6 +122,21 @@ public class PhonePINVerifyFragment extends Fragment {
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // update holding activity graphic
+        if (getActivity() instanceof LoginActivity) {
+            try{
+                ((LoginActivity) getActivity()).changeIcon(getResources().getDrawable(R.drawable.ic_phone_black_100dp));
+                ((LoginActivity) getActivity()).changeHint(getResources().getString(R.string.pin_verify_hint));
+            }catch(Exception e){
+             // muted
+            }
+        }
+    }
 
     @OnClick(R.id.btn_later)
     public void onLaterEvent() {
@@ -240,7 +256,7 @@ public class PhonePINVerifyFragment extends Fragment {
                         getActivity().getSupportFragmentManager().popBackStackImmediate();
                     }
                 }, 2000);
-            }else{
+            } else {
                 Toast.makeText(getContext(), SPApplication.getContext().getText(R.string.phoneverify_sms_sent), Toast.LENGTH_SHORT).show();
             }
         }
