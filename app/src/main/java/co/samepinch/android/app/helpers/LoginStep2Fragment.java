@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -31,6 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.samepinch.android.app.LoginActivity;
 import co.samepinch.android.app.R;
+import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.data.dto.User;
 import co.samepinch.android.rest.ReqGeneric;
 import co.samepinch.android.rest.ReqLogin;
@@ -276,11 +278,11 @@ public class LoginStep2Fragment extends Fragment {
         }
     }
 
-    private class ResetPassword extends AsyncTask<ReqLogin, Integer, Boolean> {
+    private class ResetPassword extends AsyncTask<ReqLogin, Integer, Resp> {
         @Override
-        protected Boolean doInBackground(ReqLogin... args0) {
+        protected Resp doInBackground(ReqLogin... args0) {
             publishProgress(0);
-            if(args0 == null || args0.length < 1){
+            if (args0 == null || args0.length < 1) {
                 return null;
             }
 
@@ -303,11 +305,12 @@ public class LoginStep2Fragment extends Fragment {
                 headers.setAccept(RestClient.INSTANCE.jsonMediaType());
                 HttpEntity<ReqGeneric<Map<String, String>>> payloadEntity = new HttpEntity<>(req, headers);
                 ResponseEntity<Resp> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.CHECK_USER.getValue(), HttpMethod.POST, payloadEntity, Resp.class);
+                return resp.getBody();
             } catch (Exception e) {
                 // muted
             }
 
-
+            publishProgress(-1);
             return null;
         }
 
@@ -318,24 +321,37 @@ public class LoginStep2Fragment extends Fragment {
                 case 0:
                     Utils.showDialog(mProgressDialog, getString(R.string.dialog_pass_reset_wait));
                     break;
+                case -1:
+                    Utils.showDialog(mProgressDialog, getString(R.string.dialog_pass_general_err));
+                    break;
                 default:
                     Utils.dismissSilently(mProgressDialog);
             }
         }
 
         @Override
-        protected void onPostExecute(final Boolean aBoolean) {
+        protected void onPostExecute(final Resp aResp) {
+            if (aResp != null && aResp.getStatus() == 200) {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.dismissSilently(mProgressDialog);
+                        Toast.makeText(SPApplication.getContext(), aResp.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }, 1);
+            }
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Utils.dismissSilently(mProgressDialog);
-
-                    mBtnPassResetView.setEnabled(Boolean.TRUE);
-                    if (aBoolean != null && aBoolean.booleanValue()) {
+                    if (aResp != null && aResp.getStatus() == 200) {
                         mBtnPassResetView.setVisibility(View.GONE);
+                    } else {
+                        mBtnPassResetView.setEnabled(Boolean.TRUE);
+                        mBtnPassResetView.setVisibility(View.VISIBLE);
                     }
                 }
-            }, 1000);
+            }, 2000);
         }
     }
 

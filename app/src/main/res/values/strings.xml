@@ -151,9 +151,10 @@
     <string name="password_reset">reset password</string>
     <string name="dialog_acc_creating_sing_in_wait">hang in there\r\nyou\u0027re almost done...</string>
     <string name="dialog_pass_reset_wait">hang in there\r\nresetting your password...</string>
+    <string name="dialog_pass_general_err">Hmm...something is not right. try again.</string>
     <string name="dialog_acc_creating_success">Yay, You Did It!\r\nWelcome...Welcome...Welcome</string>
     <string name="dialog_acc_creating_err">Hmm...something is not right:-(\r\Try again</string>
-    <string name="dialog_acc_signin_success">NAMASTE! Welcome back\r\n:-)</string>
+    <string name="dialog_acc_signin_success">NAMASTE\r\nwelcome back!</string>
     <string name="dialog_acc_signin_err">Hmm...login failed:-(\r\nCheck your details and try again!</string>
     <string name="phoneverify_enter">your phone number</string>
     <string name="phoneverify_general_err">Hmm...something is not right. try again.</string>
