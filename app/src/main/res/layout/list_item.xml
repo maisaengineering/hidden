@@ -69,7 +69,7 @@
 
         <TextView
             android:id="@+id/wall_post_views"
-            style="@style/SP_TEXT.BODY.DISABLED"
+            style="@style/SP_TEXT.BODY.DISABLED.EXTRA_SMALL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -83,7 +83,7 @@
 
         <TextView
             android:id="@+id/wall_post_upvote"
-            style="@style/SP_TEXT.BODY.DISABLED"
+            style="@style/SP_TEXT.BODY.DISABLED.EXTRA_SMALL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -246,11 +246,11 @@
 
         <TextView
             android:id="@+id/wall_commenters_count"
-            style="@style/SP_TEXT.BODY.DISABLED"
+            style="@style/SP_TEXT.BODY.DISABLED.EXTRA_SMALL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bubble_gray"
             android:gravity="center"
-            android:text="@string/empty" />
+            android:text="@string/q_mark" />
     </LinearLayout>
 </RelativeLayout>

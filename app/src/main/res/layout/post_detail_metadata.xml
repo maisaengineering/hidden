@@ -12,20 +12,19 @@
         android:gravity="center|bottom"
         android:orientation="horizontal" >
         <TextView
-            style="@style/SP_TEXT.BODY.DISABLED"
+            style="@style/SP_TEXT.METADATA.THIN"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/by"
-            android:textStyle="italic"
-            android:gravity="center|bottom"/>
+            android:gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/post_dot_name"
-            style="@style/SP_TEXT.SUB_HEADING"
+            style="@style/SP_TEXT.METADATA.LINK"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/loading"
-            android:gravity="center|bottom"/>
+            android:gravity="center_vertical"/>
     </LinearLayout>
 
     <LinearLayout

@@ -39,6 +39,7 @@
     <string name="login_step1">enter your phone # or email</string>
     <string name="login_btn_next">\u3009</string>
     <string name="login_btn_prev">\u3008</string>
+    <string name="q_mark">\u003F</string>
 
     <string name="settings_notifs">Push Notifications</string>
     <string name="settings_notifs_subline">set when you want to get notified</string>
