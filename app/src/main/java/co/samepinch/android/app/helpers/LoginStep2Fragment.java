@@ -34,6 +34,7 @@ import co.samepinch.android.app.R;
 import co.samepinch.android.data.dto.User;
 import co.samepinch.android.rest.ReqGeneric;
 import co.samepinch.android.rest.ReqLogin;
+import co.samepinch.android.rest.Resp;
 import co.samepinch.android.rest.RespLogin;
 import co.samepinch.android.rest.RestClient;
 
@@ -41,14 +42,17 @@ public class LoginStep2Fragment extends Fragment {
     public static final String TAG = "LoginStep2Fragment";
     public static final String REQ_LOGIN = "reqLogin";
 
-    private LocalHandler mHandler;
-    ProgressDialog mProgressDialog;
-
     @Bind(R.id.ip_password)
     TextView mPasswordView;
 
     @Bind(R.id.btn_next)
     TextView mBtnNextView;
+
+    @Bind(R.id.btn_pass_reset)
+    TextView mBtnPassResetView;
+
+    private ProgressDialog mProgressDialog;
+    private LocalHandler mHandler;
 
     public static LoginStep2Fragment newInstance(ReqLogin reqLogin) {
         LoginStep2Fragment f = new LoginStep2Fragment();
@@ -106,6 +110,14 @@ public class LoginStep2Fragment extends Fragment {
         getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 
+    @OnClick(R.id.btn_pass_reset)
+    public void onPassReset() {
+        mBtnPassResetView.setEnabled(Boolean.FALSE);
+        ReqLogin reqLogin = (ReqLogin) getArguments().get(REQ_LOGIN);
+        new ResetPassword().execute(reqLogin);
+    }
+
+
     @OnClick(R.id.btn_next)
     public void onNextEvent() {
         String password = mPasswordView.getText().toString();
@@ -142,7 +154,7 @@ public class LoginStep2Fragment extends Fragment {
 
                 ReqGeneric<Map<String, String>> req = new ReqGeneric<>();
                 // set base args
-                req.setToken(Utils.getAppToken(true));
+                req.setToken(Utils.getAppToken(false));
                 isNewUser = Boolean.valueOf(reqLogin.isNewUser());
                 if (isNewUser) {
                     req.setCmd("create");
@@ -162,24 +174,24 @@ public class LoginStep2Fragment extends Fragment {
                 headers.setAccept(RestClient.INSTANCE.jsonMediaType());
                 HttpEntity<ReqGeneric<Map<String, String>>> payloadEntity = new HttpEntity<>(req, headers);
                 ResponseEntity<RespLogin> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.CHECK_USER.getValue(), HttpMethod.POST, payloadEntity, RespLogin.class);
-                if (resp != null && resp.getBody() != null && resp.getBody().getBody() !=null) {
-                    if(isNewUser){
+                if (resp != null && resp.getBody() != null && resp.getBody().getBody() != null) {
+                    if (isNewUser) {
                         publishProgress(1);
-                    }else{
+                    } else {
                         publishProgress(2);
                     }
                     return resp.getBody().getBody();
                 }
             } catch (Exception e) {
                 // muted
+                Resp resp = Utils.parseAsRespSilently(e);
+                if (resp != null && resp.getStatus() == 400) {
+                    publishProgress(-2);
+                    return null;
+                }
             }
 
-            if(isNewUser){
-                publishProgress(-1);
-            }else{
-                publishProgress(-2);
-            }
-
+            publishProgress(-1);
             return null;
         }
 
@@ -209,47 +221,121 @@ public class LoginStep2Fragment extends Fragment {
 
         @Override
         protected void onPostExecute(final User user) {
-            if(user == null){
-                // get rid of any logins
-                Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_AUTH_PROVIDER.getValue());
-                Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_AUTH_USER.getValue());
-                Utils.dismissSilently(mProgressDialog);
-                return;
+            if (user == null) {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // get rid of any logins
+                        Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_AUTH_PROVIDER.getValue());
+                        Utils.PreferencesManager.getInstance().remove(AppConstants.API.PREF_AUTH_USER.getValue());
+                        Utils.dismissSilently(mProgressDialog);
+
+                        // reset button
+                        mBtnPassResetView.setEnabled(Boolean.TRUE);
+                        ReqLogin reqLogin = (ReqLogin) getArguments().get(REQ_LOGIN);
+                        if (!Boolean.valueOf(reqLogin.isNewUser())) {
+                            mBtnPassResetView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }, 1000);
+            } else {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.dismissSilently(mProgressDialog);
+                        Gson gson = new Gson();
+                        String userStr = gson.toJson(user);
+                        Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_PROVIDER.getValue(), AppConstants.K.via_email_password.name());
+                        Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), userStr);
+//                    LoginStep1Fragment.
+//                    getActivity().finish();
+                        Fragment next;
+                        if (StringUtils.isNotBlank(user.getPhno()) && user.getVerified() != null && !user.getVerified()) {
+                            next = PhonePINVerifyFragment.newInstance(user.getPhno(), user.getCountry(), Boolean.FALSE);
+                        } else {
+                            getActivity().finish();
+                            return;
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            Transition exit = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_right);
+                            Transition enter = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_left);
+                            next.setSharedElementEnterTransition(enter);
+                            next.setEnterTransition(enter);
+                            setExitTransition(exit);
+                            next.setSharedElementReturnTransition(exit);
+                        }
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .addSharedElement(mBtnNextView, "btn_next")
+                                .replace(R.id.container, next)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }, 2000);
+            }
+        }
+    }
+
+    private class ResetPassword extends AsyncTask<ReqLogin, Integer, Boolean> {
+        @Override
+        protected Boolean doInBackground(ReqLogin... args0) {
+            publishProgress(0);
+            if(args0 == null || args0.length < 1){
+                return null;
             }
 
+            try {
+                ReqLogin reqLogin = args0[0];
+
+                ReqGeneric<Map<String, String>> req = new ReqGeneric<>();
+                // set base args
+                req.setToken(Utils.getAppToken(false));
+                req.setCmd("forgot_password");
+                // body
+                Map<String, String> body = new HashMap<>();
+                body.put("auth_key", reqLogin.getAuthKey());
+                body.put("country", reqLogin.getCountry());
+                req.setBody(body);
+
+                //headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(RestClient.INSTANCE.jsonMediaType());
+                HttpEntity<ReqGeneric<Map<String, String>>> payloadEntity = new HttpEntity<>(req, headers);
+                ResponseEntity<Resp> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.CHECK_USER.getValue(), HttpMethod.POST, payloadEntity, Resp.class);
+            } catch (Exception e) {
+                // muted
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Utils.dismissSilently(mProgressDialog);
+            switch (values[0]) {
+                case 0:
+                    Utils.showDialog(mProgressDialog, getString(R.string.dialog_pass_reset_wait));
+                    break;
+                default:
+                    Utils.dismissSilently(mProgressDialog);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean aBoolean) {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Utils.dismissSilently(mProgressDialog);
-                    Gson gson = new Gson();
-                    String userStr = gson.toJson(user);
-                    Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_PROVIDER.getValue(), AppConstants.K.via_email_password.name());
-                    Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), userStr);
-//                    LoginStep1Fragment.
-//                    getActivity().finish();
-                    Fragment next;
-                    if(StringUtils.isNotBlank(user.getPhno()) && user.getVerified() !=null && !user.getVerified()){
-                        next = PhonePINVerifyFragment.newInstance(user.getPhno(), user.getCountry(), Boolean.FALSE);
-                    }else{
-                        getActivity().finish();
-                        return;
+
+                    mBtnPassResetView.setEnabled(Boolean.TRUE);
+                    if (aBoolean != null && aBoolean.booleanValue()) {
+                        mBtnPassResetView.setVisibility(View.GONE);
                     }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Transition exit = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_right);
-                        Transition enter = TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_left);
-                        next.setSharedElementEnterTransition(enter);
-                        next.setEnterTransition(enter);
-                        setExitTransition(exit);
-                        next.setSharedElementReturnTransition(exit);
-                    }
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .addSharedElement(mBtnNextView, "btn_next")
-                            .replace(R.id.container, next)
-                            .addToBackStack(null)
-                            .commit();
                 }
-            }, 2000);
+            }, 1000);
         }
     }
 
