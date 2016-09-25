@@ -3,7 +3,6 @@ package co.samepinch.android.app;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
-import com.facebook.FacebookSdk;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.karumi.dexter.Dexter;
 import com.parse.Parse;
@@ -28,7 +27,6 @@ public class SPApplication extends MultiDexApplication {
         // others
         Utils.PreferencesManager.initializeInstance(mContext);
         Fresco.initialize(mContext);
-        FacebookSdk.sdkInitialize(mContext);
 
         // parse hash
         Parse.initialize(this, AppConstants.API.PARSE_APPLICATION_ID.getValue(), AppConstants.API.PARSE_CLIENT_KEY.getValue());

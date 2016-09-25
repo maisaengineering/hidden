@@ -3,9 +3,6 @@ package co.samepinch.android.app.helpers.intent;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.facebook.login.LoginManager;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -77,9 +74,5 @@ public class SignOutService extends IntentService {
 
     public void logOutLocally() {
         String currProvider = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_PROVIDER.getValue());
-        if (StringUtils.equalsIgnoreCase(currProvider, AppConstants.K.facebook.name())) {
-            // fb
-            LoginManager.getInstance().logOut();
-        }
     }
 }

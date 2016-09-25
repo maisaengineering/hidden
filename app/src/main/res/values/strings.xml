@@ -174,10 +174,18 @@
     <string name="notice_update_phone">your account unverified\nVERIFY NOW</string>
     <string name="notice_login">let\u0027s get started</string>
     <string-array name="post_colors">
-        <item>#84FFFF</item>
-        <item>#A7FFEB</item>
-        <item>#B9F6CA</item>
-        <item>#FFD180</item>
-        <item>#FF9E80</item>
+        <item>#FFEB3B</item>
+        <item>#DDA95A96</item>
+        <item>#CDDC39</item>
+        <item>#EA8B00</item>
+
+        <!--<item>#F062Ω92</item>-->
+
+        <!--<item>#BA68C8</item>-->
+        <!--<item>#FFFFFF</item>-->
+         <!--<item>#B9F6CA</item>-->
+        <!--<item>#FFD180</item>-->
+        <!--<item>#FF9E80</item>-->
+        <!--<item>#FF9E80</item>-->
     </string-array>
 </resources>

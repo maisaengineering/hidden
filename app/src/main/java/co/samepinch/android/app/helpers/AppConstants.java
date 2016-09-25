@@ -172,7 +172,6 @@ public class AppConstants {
         DOT,
         COMMENT,
         COMMAND,
-        facebook,
         google,
         via_email_password,
         provider,

@@ -21,7 +21,6 @@ import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.facebook.appevents.AppEventsLogger;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,16 +51,6 @@ public class RootActivity extends AppCompatActivity {
     public static final String FROM_ROOT = "from_root";
 
     private LocalHandler mHandler;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        try {
-            AppEventsLogger.activateApp(RootActivity.this);
-        } catch (Exception e) {
-            // muted
-        }
-    }
 
     @Override
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -246,17 +235,6 @@ public class RootActivity extends AppCompatActivity {
 
         public LocalHandler(RootActivity parent) {
             mActivity = new WeakReference<RootActivity>(parent);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        try {
-            // Logs 'app deactivate' App Event.
-            AppEventsLogger.deactivateApp(this);
-        } catch (Exception e) {
-            // muted
         }
     }
 
