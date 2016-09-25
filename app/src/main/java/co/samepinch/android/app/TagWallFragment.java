@@ -46,6 +46,7 @@ import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_NAME;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POSTS_TAG;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_TAGS_PULL_FAV;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_TAGS_PULL_TYPE;
+import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_UID;
 import static co.samepinch.android.app.helpers.AppConstants.K;
 
 public class TagWallFragment extends Fragment {
@@ -202,6 +203,16 @@ public class TagWallFragment extends Fragment {
                 Utils.setupLoadingImageHolder(mBackdrop, imgStr);
             }
 
+            Map<String, String> userInfo = Utils.PreferencesManager.getInstance().getValueAsMap(AppConstants.API.PREF_AUTH_USER.getValue());
+            String currUserId = userInfo == null ? null : userInfo.get(KEY_UID.getValue());
+            String tagUserId = cursor.getString(cursor.getColumnIndex(SchemaTags.COLUMN_USER_ID));
+
+            // checked state
+            if(StringUtils.equals(tagUserId, currUserId)){
+                mFab.setImageResource(R.drawable.favorite_white_line);
+            }else{
+                mFab.setImageResource(R.drawable.favorite_fill_white);
+            }
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
