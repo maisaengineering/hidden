@@ -17,7 +17,7 @@
     <dimen name="detail_backdrop_height">256dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="list_item_avatar_size">55dp</dimen>
+    <dimen name="list_item_avatar_size">56dp</dimen>
     <dimen name="signup_avatar_size">99dp</dimen>
 
     <dimen name="wall_commenter_size">25dp</dimen>

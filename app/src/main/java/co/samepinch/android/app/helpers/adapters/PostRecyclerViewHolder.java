@@ -28,7 +28,6 @@ import co.samepinch.android.app.PostDetailActivity;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.app.helpers.AppConstants;
-import co.samepinch.android.app.helpers.TimeUtils;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.data.dto.Commenter;
 import co.samepinch.android.data.dto.Post;
@@ -50,8 +49,8 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
     TextView mAvatarName;
     @Bind(R.id.wall_post_dot)
     TextView mWallPostDotView;
-    @Bind(R.id.wall_pinch_handle)
-    TextView mWallPinchHandleView;
+//    @Bind(R.id.wall_pinch_handle)
+//    TextView mWallPinchHandleView;
     @Bind(R.id.wall_post_images)
     SimpleDraweeView mWallPostImages;
     @Bind(R.id.wall_post_content)
@@ -66,8 +65,8 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
     TextView mWallPostViewsView;
     @Bind(R.id.wall_post_upvote)
     TextView mWallPostUpvoteView;
-    @Bind(R.id.wall_post_date)
-    TextView mWallPostDateView;
+//    @Bind(R.id.wall_post_date)
+//    TextView mWallPostDateView;
     Context mContext;
     Post mPost;
 
@@ -121,7 +120,7 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
         }
 
 
-        mWallPostDateView.setText(StringUtils.defaultString(TimeUtils.toHumanRelativePeriod(mPost.getCreatedAt()), StringUtils.EMPTY));
+//        mWallPostDateView.setText(StringUtils.defaultString(TimeUtils.toHumanRelativePeriod(mPost.getCreatedAt()), StringUtils.EMPTY));
         mWallPostContentView.setText(StringUtils.defaultString(mPost.getWallContent(), StringUtils.EMPTY));
 
         // hide needed ones
@@ -178,7 +177,7 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    @OnClick({R.id.avatar, R.id.avatar_name, R.id.wall_post_dot, R.id.wall_pinch_handle})
+    @OnClick({R.id.avatar, R.id.avatar_name, R.id.wall_post_dot})
     public void doOpenDotWall() {
         if (mPost.getAnonymous() != null && mPost.getAnonymous().booleanValue()) {
             return;
