@@ -73,7 +73,7 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public PostRecyclerViewHolder(final Context context, View itemView) {
         super(itemView);
-        setIsRecyclable(Boolean.FALSE);
+        setIsRecyclable(Boolean.TRUE);
 
         this.mContext = context;
         ButterKnife.bind(this, itemView);
@@ -82,6 +82,7 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
         BG_COLOR_INDEX.compareAndSet(BG_COLORS.length, 0);
         mLayout.setBackgroundColor(Color.parseColor(BG_COLORS[BG_COLOR_INDEX.getAndIncrement()]));
     }
+
 
     public void onBindViewHolderImpl(final Cursor cursor) {
 //        Long contentId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
