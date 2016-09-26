@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -49,8 +50,6 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
     TextView mAvatarName;
     @Bind(R.id.wall_post_dot)
     TextView mWallPostDotView;
-//    @Bind(R.id.wall_pinch_handle)
-//    TextView mWallPinchHandleView;
     @Bind(R.id.wall_post_images)
     SimpleDraweeView mWallPostImages;
     @Bind(R.id.wall_post_content)
@@ -58,15 +57,14 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.wall_tags)
     TextView mWallTags;
     @Bind(R.id.wall_post_commenters)
-    LinearLayout mWallPostCommentersLayout;
-    @Bind(R.id.wall_commenters_count)
-    TextView mCommentersCount;
+    LinearLayout mCommentersLayout;
     @Bind(R.id.wall_post_views)
     TextView mWallPostViewsView;
     @Bind(R.id.wall_post_upvote)
     TextView mWallPostUpvoteView;
-//    @Bind(R.id.wall_post_date)
-//    TextView mWallPostDateView;
+    @Bind(R.id.wall_commenters_count)
+    TextView mCommentersCountView;
+
     Context mContext;
     Post mPost;
 
@@ -84,9 +82,6 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
 
 
     public void onBindViewHolderImpl(final Cursor cursor) {
-//        Long contentId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
-//        Uri contentUri = ContentUris.withAppendedId(SchemaPosts.CONTENT_URI, contentId);
-//        cursor.setNotificationUri( this.mContext.getContentResolver(), contentUri);
         mPost = Utils.cursorToPostEntity(cursor);
 
         final User user = mPost.getOwner();
@@ -115,55 +110,56 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
         mWallPostViewsView.setText(StringUtils.defaultString(viewsCnt == null ? null : viewsCnt.toString(), StringUtils.EMPTY));
         mWallPostUpvoteView.setText(StringUtils.defaultString(voteCnt == null ? null : voteCnt.toString(), StringUtils.EMPTY));
         String commentsCnt = StringUtils.defaultString(commentCnt == null ? null : commentCnt.toString(), StringUtils.EMPTY);
-        if (StringUtils.isNotBlank(commentsCnt) && commentsCnt != "0") {
-            mCommentersCount.setText(commentsCnt);
-        }
+//        if (StringUtils.isNotBlank(commentsCnt) && commentsCnt != "0") {
+//            mCommentersCount.setText(commentsCnt);
+//        }
 
 
 //        mWallPostDateView.setText(StringUtils.defaultString(TimeUtils.toHumanRelativePeriod(mPost.getCreatedAt()), StringUtils.EMPTY));
         mWallPostContentView.setText(StringUtils.defaultString(mPost.getWallContent(), StringUtils.EMPTY));
 
         // hide needed ones
-        int commentViewsCount = mWallPostCommentersLayout.getChildCount();
-        for (int i = 0; i < commentViewsCount; i++) {
-            View child = mWallPostCommentersLayout.getChildAt(i);
-            if (child instanceof SimpleDraweeView) {
-                child.setVisibility(View.GONE);
-            }
-        }
+//        int commentViewsCount = mWallPostCommentersLayout.getChildCount();
+//        for (int i = 0; i < commentViewsCount; i++) {
+//            View child = mWallPostCommentersLayout.getChildAt(i);
+//            if (child instanceof SimpleDraweeView) {
+//                child.setVisibility(View.GONE);
+//            }
+//        }
 
-        List<Commenter> commenters = mPost.getCommenters();
-        if (commenters != null) {
+        // clear all
+        mCommentersLayout.removeAllViews();
+        List<Commenter> _commenters = mPost.getCommenters();
+        if (_commenters != null && _commenters.size() > 0) {
+            // set count
+            mCommentersCountView.setText(Integer.toString(_commenters.size()));
+
+            // set images stuff
             String anonyImg = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_ANONYMOUS_IMG.getValue());
-
-            int iViewIndex = 0;
-            // 1 less to accomodate text view
-            int totalPlaceholderCnt = mWallPostCommentersLayout.getChildCount() - 1;
-            String commenterImg;
-            View child;
-            for (Commenter commenter : commenters) {
-                // check if more than placeholder image reached
-                if (iViewIndex == totalPlaceholderCnt) {
-                    break;
-                }
-
-                if (commenter.getAnonymous() != null && commenter.getAnonymous().booleanValue()) {
-                    commenterImg = anonyImg;
-                } else if (Utils.isValidUri(commenter.getPhoto())) {
-                    commenterImg = commenter.getPhoto();
+            String _commenterImg;
+            int _commenterViewIdx = 0;
+            for (Commenter _commenter : _commenters) {
+                if (_commenter.getAnonymous() != null && _commenter.getAnonymous().booleanValue()) {
+                    _commenterImg = anonyImg;
+                } else if (Utils.isValidUri(_commenter.getPhoto())) {
+                    _commenterImg = _commenter.getPhoto();
                 } else {
                     continue;
                 }
 
-                child = mWallPostCommentersLayout.getChildAt(iViewIndex);
-                if (child instanceof SimpleDraweeView) {
-                    SimpleDraweeView cImageView = (SimpleDraweeView) child;
-                    Utils.setupLoadingImageHolder(cImageView, commenterImg);
-                    cImageView.setVisibility(View.VISIBLE);
-                }
-                iViewIndex += 1;
+                // add to parent
+                LayoutInflater.from(mContext).inflate(R.layout.img_commenter, mCommentersLayout);
+                // get recently added
+                SimpleDraweeView _commenterView = (SimpleDraweeView) mCommentersLayout.getChildAt(_commenterViewIdx);
+                Utils.setupLoadingImageHolder(_commenterView, _commenterImg);
+                _commenterViewIdx += 1;
             }
+        }else{
+            mCommentersCountView.setText(R.string.q_mark);
         }
+
+        // count
+//        LayoutInflater.from(mContext).inflate(R.layout.text_commenters_count, mCommentersLayout);
 
         if (CollectionUtils.isEmpty(mPost.getWallImages())) {
             mWallPostImages.setVisibility(View.GONE);
