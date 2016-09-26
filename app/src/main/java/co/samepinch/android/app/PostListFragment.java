@@ -77,30 +77,32 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (mViewAdapter != null) {
-                    Cursor cursor = getActivity().getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_SRC_WALL + "=?", new String[]{"1"}, BaseColumns._ID + " ASC");
-                    if (cursor.getCount() > 0) {
-                        int beforeIdx = mLayoutManager.findFirstVisibleItemPosition();
-                        mViewAdapter.changeCursor(cursor);
-                        try {
-                            int afterIdx = mLayoutManager.findFirstVisibleItemPosition();
-                            int total = mLayoutManager.getItemCount();
-                            if (beforeIdx <= total && beforeIdx != afterIdx) {
-                                mLayoutManager.scrollToPosition(beforeIdx);
-                            }
-                        } catch (Exception e) {
-                            // muted
-                        }
-
-                    } else {
-                        if (!cursor.isClosed()) {
-                            cursor.close();
-                        }
-                        callForRemotePosts(false);
-                    }
-                }
+                reQueryLocal();
             }
         });
+    }
+
+    private void reQueryLocal() {
+        try {
+            Cursor cursor = getActivity().getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_SRC_WALL + "=?", new String[]{"1"}, BaseColumns._ID + " ASC");
+            if (cursor.getCount() > 0) {
+                int beforeIdx = mLayoutManager.findFirstVisibleItemPosition();
+                mViewAdapter.changeCursor(cursor);
+//                try {
+//                    int afterIdx = mLayoutManager.findFirstVisibleItemPosition();
+//                    int total = mLayoutManager.getItemCount();
+//                    if (beforeIdx <= total && beforeIdx != afterIdx) {
+//                        mLayoutManager.scrollToPosition(beforeIdx);
+//                    }
+//                } catch (Exception e) {
+//                    // muted
+//                }
+            } else {
+                cursor.close();
+            }
+        } catch (Exception e) {
+            // muted;
+        }
     }
 
     @Override
@@ -154,10 +156,10 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
 //                }
 //            });
 //        }
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             mViewAdapter = new PostCursorRecyclerViewAdapter(getActivity(), cursor);
-        }else{
-            if(cursor !=null && !cursor.isClosed()){
+        } else {
+            if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
             mViewAdapter = new PostCursorRecyclerViewAdapter(getActivity(), null);
@@ -261,7 +263,7 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
 
     @Override
     public void onPauseFragment() {
-        if (mRefreshLayout !=null && mRefreshLayout.isRefreshing()) {
+        if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
             mRefreshLayout.setRefreshing(false);
         }
     }
