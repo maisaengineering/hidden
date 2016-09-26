@@ -154,7 +154,7 @@ public class PostRecyclerViewHolder extends RecyclerView.ViewHolder {
                 Utils.setupLoadingImageHolder(_commenterView, _commenterImg);
                 _commenterViewIdx += 1;
             }
-        }else{
+        } else {
             mCommentersCountView.setText(R.string.q_mark);
         }
 
