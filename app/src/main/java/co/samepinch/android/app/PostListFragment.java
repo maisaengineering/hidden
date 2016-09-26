@@ -66,6 +66,8 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new LocalHandler(this);
+
+        callForRemotePosts(false);
     }
 
     @Override

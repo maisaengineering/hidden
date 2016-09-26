@@ -121,10 +121,10 @@ public class LoginStep1Fragment extends Fragment {
 
         // update holding activity graphic
         if (getActivity() instanceof LoginActivity) {
-            try{
+            try {
                 ((LoginActivity) getActivity()).changeIcon(getResources().getDrawable(R.drawable.icon));
                 ((LoginActivity) getActivity()).changeHint(getResources().getString(R.string.must_login));
-            }catch(Exception e){
+            } catch (Exception e) {
                 // muted
             }
 
@@ -136,6 +136,9 @@ public class LoginStep1Fragment extends Fragment {
         String emailOrPhone = mPhoneOrEmailView.getText().toString();
         if (StringUtils.isBlank(emailOrPhone)) {
             mPhoneOrEmailView.setError(getString(R.string.reqd_login_info));
+            return;
+        } else if (!(Utils.isValidPhoneNumber(emailOrPhone) || Utils.isValidEmail(emailOrPhone))) {
+            mPhoneOrEmailView.setError(getString(R.string.reqd_valid_login_info));
             return;
         }
 

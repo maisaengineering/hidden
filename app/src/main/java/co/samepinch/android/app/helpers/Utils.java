@@ -20,6 +20,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -650,7 +651,11 @@ public class Utils {
     }
 
     public static boolean isValidEmail(String arg0) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(arg0).matches();
+        return Patterns.EMAIL_ADDRESS.matcher(arg0).matches();
+    }
+
+    public static boolean isValidPhoneNumber(String arg0) {
+        return Patterns.PHONE.matcher(arg0).matches();
     }
 
     public static float dp2px(Resources resources, float dp) {
