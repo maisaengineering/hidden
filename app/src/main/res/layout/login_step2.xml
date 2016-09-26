@@ -7,51 +7,62 @@
 
     <EditText
         android:id="@+id/ip_password"
+        style="@style/EditTextCustomHolo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
         android:imeOptions="actionDone"
         android:inputType="textNoSuggestions"
-        android:singleLine="true"
-        style="@style/EditTextCustomHolo"
-        android:gravity="center"/>
+        android:singleLine="true" />
+
     <TextView
         android:id="@+id/btn_pass_reset"
         style="@style/SP_TXT_BTN_3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_below="@+id/ip_password"
+        android:gravity="center"
         android:text="@string/password_reset"
         android:textColor="@drawable/enable_disable_text"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_pass_reset"
-        android:orientation="horizontal"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btn_pass_reset">
+
+        <View
+            android:id="@+id/strut1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true" />
+
         <TextView
             android:id="@+id/btn_prev"
             style="@style/SP_TXT_BTN_2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="left"
-            android:text="@string/login_btn_prev"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignRight="@+id/strut1"
+            android:text="@string/login_btn_prev" />
+
         <TextView
             android:id="@+id/btn_next"
             style="@style/SP_TXT_BTN_2"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/strut1"
+            android:layout_alignParentRight="true"
             android:gravity="right"
             android:text="@string/login_btn_next"
-            android:transitionName="btn_next"/>
-    </LinearLayout>
+            android:transitionName="btn_next" />
+    </RelativeLayout>
 </RelativeLayout>
