@@ -380,8 +380,6 @@ public class MainActivityIn extends AppCompatActivity {
         }
 
         nv.mDotName.setText(StringUtils.join(new String[]{fName, lName}, " "));
-        String pinchHandle = String.format(getApplicationContext().getString(R.string.pinch_handle), user.getPinchHandle());
-        nv.mDotHandle.setText(pinchHandle);
         if (user.getFollowersCount() != null) {
             nv.mDotFollowersCnt.setText(Long.toString(user.getFollowersCount()));
         } else {
@@ -669,8 +667,8 @@ public class MainActivityIn extends AppCompatActivity {
         @Bind(R.id.dot_wall_name)
         TextView mDotName;
 
-        @Bind(R.id.dot_wall_handle)
-        TextView mDotHandle;
+//        @Bind(R.id.dot_wall_handle)
+//        TextView mDotHandle;
 
         @Bind(R.id.dot_wall_about)
         TextView mDotAbout;

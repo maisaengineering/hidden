@@ -78,8 +78,8 @@ public class DotWallFragment extends Fragment {
     @Bind(R.id.dot_wall_name)
     TextView mDotName;
 
-    @Bind(R.id.dot_wall_handle)
-    TextView mDotHandle;
+//    @Bind(R.id.dot_wall_handle)
+//    TextView mDotHandle;
 
     @Bind(R.id.dot_wall_about)
     TextView mDotAbout;
@@ -355,8 +355,8 @@ public class DotWallFragment extends Fragment {
         if (user == null) {
             return;
         }
-        String pinchHandle = String.format(mActivity.getApplicationContext().getString(R.string.pinch_handle), user.getPinchHandle());
-        mCollapsingToolbarLayout.setTitle(pinchHandle);
+//        String pinchHandle = String.format(mActivity.getApplicationContext().getString(R.string.pinch_handle), user.getPinchHandle());
+        mCollapsingToolbarLayout.setTitle(StringUtils.join(user.getFname(), user.getLname(), StringUtils.SPACE));
 
         String fName = user.getFname();
         String lName = user.getLname();
@@ -409,7 +409,6 @@ public class DotWallFragment extends Fragment {
         }
 
         mDotName.setText(StringUtils.join(new String[]{fName, lName}, " "));
-        mDotHandle.setText(pinchHandle);
         if (user.getFollowersCount() != null) {
             mDotFollowersCnt.setText(Long.toString(user.getFollowersCount()));
         } else {
