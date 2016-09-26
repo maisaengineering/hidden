@@ -38,6 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnFocusChange;
 import co.samepinch.android.app.helpers.AppConstants;
 import co.samepinch.android.app.helpers.Utils;
+import co.samepinch.android.app.helpers.intent.PostDetailsService;
 import co.samepinch.android.app.helpers.module.DaggerStorageComponent;
 import co.samepinch.android.app.helpers.module.StorageComponent;
 import co.samepinch.android.data.dao.SchemaComments;
@@ -244,6 +245,8 @@ public class CommentFragment extends Fragment implements android.support.v7.widg
                 // wall refresh needs to happen
                 Utils.PreferencesManager.getInstance().setValue(AppConstants.APP_INTENT.KEY_FRESH_WALL_FLAG.getValue(), Boolean.TRUE.toString());
 
+                callToRrefreshPost();
+
                 Intent resultIntent = new Intent();
                 getActivity().setResult(Activity.RESULT_OK, resultIntent);
                 getActivity().finish();
@@ -306,6 +309,7 @@ public class CommentFragment extends Fragment implements android.support.v7.widg
         protected void onPostExecute(Boolean result) {
             Utils.dismissSilently(progressDialog);
             if (result != null && result.booleanValue()) {
+                callToRrefreshPost();
                 Intent resultIntent = new Intent();
                 getActivity().setResult(Activity.RESULT_OK, resultIntent);
                 getActivity().finish();
@@ -314,4 +318,17 @@ public class CommentFragment extends Fragment implements android.support.v7.widg
             }
         }
     }
+
+    private void callToRrefreshPost(){
+        Bundle iArgs = new Bundle();
+        String postId = getArguments().getString(AppConstants.K.POST.name());
+        iArgs.putString(AppConstants.K.POST.name(), postId);
+
+        // call for refresh
+        Intent postRefreshIntent =
+                new Intent(SPApplication.getContext(), PostDetailsService.class);
+        postRefreshIntent.putExtras(iArgs);
+        SPApplication.getContext().startService(postRefreshIntent);
+    }
+
 }

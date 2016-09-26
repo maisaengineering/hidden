@@ -88,6 +88,7 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
             if (cursor.getCount() > 0) {
                 int beforeIdx = mLayoutManager.findFirstVisibleItemPosition();
                 mViewAdapter.changeCursor(cursor);
+                mViewAdapter.notifyDataSetChanged();
 //                try {
 //                    int afterIdx = mLayoutManager.findFirstVisibleItemPosition();
 //                    int total = mLayoutManager.getItemCount();
@@ -147,15 +148,6 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
         mRecyclerView.setHasFixedSize(true);
 
         Cursor cursor = getActivity().getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_SRC_WALL + "=?", new String[]{"1"}, BaseColumns._ID + " ASC");
-//        if(cursor == null || cursor.getCount() <=0){
-//            // refresh
-//            mHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    callForRemotePosts(false);
-//                }
-//            });
-//        }
         if (cursor.moveToFirst()) {
             mViewAdapter = new PostCursorRecyclerViewAdapter(getActivity(), cursor);
         } else {
