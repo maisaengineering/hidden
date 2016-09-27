@@ -197,9 +197,6 @@ public class PostEditFragment extends Fragment implements PopupMenu.OnMenuItemCl
                 postAsPopUp.setOnMenuItemClickListener(this);
                 postAsPopUp.show();
                 break;
-            case R.id.menuitem_post_del:
-                deletePrompt();
-                break;
         }
 
 
