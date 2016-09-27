@@ -129,7 +129,8 @@
     </style>
 
     <style name="SP_TEXT.SUB_HEADING.WALL">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/grey_100</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="SP_TEXT.BODY.WALL_POST">

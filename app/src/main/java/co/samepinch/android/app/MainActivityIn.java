@@ -167,17 +167,28 @@ public class MainActivityIn extends AppCompatActivity {
         setupViewPager();
 
         //update user details
-        Bundle iArgs = new Bundle();
-        iArgs.putString(AppConstants.K.DOT.name(), mUser.getUid());
-        Intent intent =
-                new Intent(getApplicationContext(), DotDetailsService.class);
-        intent.putExtras(iArgs);
-        startService(intent);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Bundle iArgs = new Bundle();
+                iArgs.putString(AppConstants.K.DOT.name(), mUser.getUid());
+                Intent intent =
+                        new Intent(getApplicationContext(), DotDetailsService.class);
+                intent.putExtras(iArgs);
+                startService(intent);
+            }
+        }, 99);
 
-        // refresh user notifications
-        Intent intentNotifs =
-                new Intent(getApplicationContext(), AllNotificationsService.class);
-        startService(intentNotifs);
+        //update user details
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // refresh user notifications
+                Intent intentNotifs =
+                        new Intent(getApplicationContext(), AllNotificationsService.class);
+                startService(intentNotifs);
+            }
+        }, 100);
     }
 
     private void showNotice() {
@@ -310,7 +321,6 @@ public class MainActivityIn extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
         // setup tabs
@@ -324,7 +334,7 @@ public class MainActivityIn extends AppCompatActivity {
     }
 
     public View getCustomTabView(int position) {
-        View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.custom_tab_main, null);
+        View v = LayoutInflater.from(SPApplication.getContext()).inflate(R.layout.custom_tab_main, null);
         ViewSwitcher vs = (ViewSwitcher) v.findViewById(R.id.tab_main_switch);
         vs.setDisplayedChild(position);
         return v;
@@ -536,8 +546,8 @@ public class MainActivityIn extends AppCompatActivity {
             setupDrawerContent(gson.fromJson(userStr, User.class), false);
 
             // body
-            TabItemAdapter adapter = (TabItemAdapter) mViewPager.getAdapter();
-            adapter.notifyDataSetChanged();
+//            TabItemAdapter adapter = (TabItemAdapter) mViewPager.getAdapter();
+//            adapter.notifyDataSetChanged();
 
             // invalidate menu too?
             invalidateOptionsMenu();
@@ -598,8 +608,6 @@ public class MainActivityIn extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
-
                     Cursor cursor = null;
                     try {
                         cursor = getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{mUser.getUid()}, null);
@@ -697,7 +705,7 @@ public class MainActivityIn extends AppCompatActivity {
         }
     }
 
-    public class TabItemAdapter extends SmartFragmentStatePagerAdapter {
+    public static class TabItemAdapter extends SmartFragmentStatePagerAdapter {
         private final int itemCount;
 
         public TabItemAdapter(FragmentManager fm, int itemCount) {
@@ -727,9 +735,10 @@ public class MainActivityIn extends AppCompatActivity {
             }
             return fragment;
         }
-//
-//        public int getItemPosition(Object object) {
-//            return POSITION_NONE;
-//        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            super.notifyDataSetChanged();
+        }
     }
 }
