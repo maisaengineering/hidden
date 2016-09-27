@@ -148,6 +148,9 @@
     <string name="dialog_acc_notfound">Quickly creating your account\r\n:-)</string>
     <string name="dialog_acc_lookuperr">error occurred. try again...</string>
     <string name="reqd_login_info">required</string>
+    <string name="reqd_err">required</string>
+    <string name="pass_must_match">passwords must match</string>
+
     <string name="reqd_valid_login_info">invalid format</string>
     <string name="hint_choose_password">choose a password</string>
     <string name="hint_enter_password">enter your password</string>

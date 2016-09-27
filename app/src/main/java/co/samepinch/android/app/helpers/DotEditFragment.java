@@ -106,11 +106,10 @@ public class DotEditFragment extends Fragment {
     EditText mBlogUrl;
 
     ProgressDialog progressDialog;
-    private LocalHandler mHandler;
-
     User mUser;
     Map<String, String> mImageTaskMap;
     View mView;
+    private LocalHandler mHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -239,21 +238,6 @@ public class DotEditFragment extends Fragment {
         mBlogUrl.setText(user.getBlog());
     }
 
-    private class UpdateDotTask extends AsyncTask<String, Integer, Boolean> {
-        @Override
-        protected Boolean doInBackground(String... tags) {
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean status) {
-            if (isRemoving()) {
-                return;
-            }
-            Utils.dismissSilently(progressDialog);
-        }
-    }
-
     public void saveAction(final int delay) {
         if (!validate()) {
             return;
@@ -370,11 +354,122 @@ public class DotEditFragment extends Fragment {
         return valid;
     }
 
+    @OnClick(R.id.input_change_password)
+    public void changePasswordClick() {
+        View passwordChangeView = LayoutInflater.from(getContext()).inflate(R.layout.change_password, null);
+        final EditText currPassView = (EditText) passwordChangeView.findViewById(R.id.input_password_curr);
+        final EditText newPassView = (EditText) passwordChangeView.findViewById(R.id.input_password_new);
+        final EditText confirmPassView = (EditText) passwordChangeView.findViewById(R.id.input_password_new_confirm);
+
+        new MaterialDialog.Builder(getContext())
+                .theme(Theme.LIGHT)
+                .title(R.string.change_password_title)
+                .customView(passwordChangeView, Boolean.TRUE)
+                .positiveText(R.string.change_password_positive)
+                .negativeText(R.string.change_password_negative)
+                .autoDismiss(false)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog dialog, DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog dialog, DialogAction which) {
+                        boolean hasErr = false;
+
+                        String curr = currPassView.getText().toString();
+                        String nev = newPassView.getText().toString();
+                        String confirm = confirmPassView.getText().toString();
+
+                        // validate
+                        if (StringUtils.isBlank(curr)) {
+                            currPassView.setError(getString(R.string.reqd_err));
+                            hasErr = true;
+                        } else if (StringUtils.isBlank(nev)) {
+                            newPassView.setError(getString(R.string.reqd_err));
+                            hasErr = true;
+                        } else if (StringUtils.isBlank(confirm)) {
+                            confirmPassView.setError(getString(R.string.reqd_err));
+                            hasErr = true;
+                        } else if (!StringUtils.equals(nev, confirm)) {
+                            newPassView.setError(getString(R.string.pass_must_match));
+                            confirmPassView.setError(getString(R.string.pass_must_match));
+                            hasErr = true;
+                        }
+
+                        if (!hasErr) {
+                            //continue
+                            new ChangePasswordTask().execute(curr, nev, confirm);
+                            dialog.dismiss();
+                            progressDialog.setMessage("changing password...");
+                            progressDialog.show();
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @OnClick(R.id.view_avatar)
+    public void openImageIntent() {
+        Permissions.askPermission(new Permissions.OnActionPermitted() {
+            @Override
+            public void onPermitted() {
+                // Determine Uri of camera image to save.
+                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "SamePinch" + File.separator);
+                root.mkdirs();
+                final String fname = Utils.getUniqueImageFilename();
+                final File sdImageMainDirectory = new File(root, fname);
+                outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+                // Camera.
+                final List<Intent> cameraIntents = new ArrayList<>();
+                final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                final PackageManager packageManager = getActivity().getPackageManager();
+                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+                for (ResolveInfo res : listCam) {
+                    final String packageName = res.activityInfo.packageName;
+                    final Intent intent = new Intent(captureIntent);
+                    intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    intent.setPackage(packageName);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                    cameraIntents.add(intent);
+                }
+
+                // Filesystem.
+                final Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                // Chooser of filesystem options.
+                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Choose Picture...");
+
+                // Add the camera options.
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+                startActivityForResult(chooserIntent, AppConstants.KV.REQUEST_CHOOSE_PICTURE.getIntValue());
+            }
+        }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
     private static final class LocalHandler extends Handler {
         private final WeakReference<DotEditFragment> mActivity;
 
         public LocalHandler(DotEditFragment parent) {
             mActivity = new WeakReference<DotEditFragment>(parent);
+        }
+    }
+
+    private class UpdateDotTask extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... tags) {
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean status) {
+            if (isRemoving()) {
+                return;
+            }
+            Utils.dismissSilently(progressDialog);
         }
     }
 
@@ -464,105 +559,6 @@ public class DotEditFragment extends Fragment {
             }
             Snackbar.make(mView, AppConstants.APP_INTENT.KEY_MSG_GENERIC_ERR.getValue(), Snackbar.LENGTH_LONG).show();
         }
-    }
-
-    @OnClick(R.id.input_change_password)
-    public void changePasswordClick() {
-        View passwordChangeView = LayoutInflater.from(getContext()).inflate(R.layout.change_password, null);
-        final EditText currPassView = (EditText) passwordChangeView.findViewById(R.id.input_password_curr);
-        final EditText newPassView = (EditText) passwordChangeView.findViewById(R.id.input_password_new);
-        final EditText confirmPassView = (EditText) passwordChangeView.findViewById(R.id.input_password_new_confirm);
-
-        new MaterialDialog.Builder(getContext())
-                .theme(Theme.LIGHT)
-                .title(R.string.change_password_title)
-                .customView(passwordChangeView, Boolean.TRUE)
-                .positiveText(R.string.change_password_positive)
-                .negativeText(R.string.change_password_negative)
-                .autoDismiss(false)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(MaterialDialog dialog, DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(MaterialDialog dialog, DialogAction which) {
-                        boolean hasErr = false;
-
-                        String curr = currPassView.getText().toString();
-                        String nev = newPassView.getText().toString();
-                        String confirm = confirmPassView.getText().toString();
-
-                        // validate
-                        if (curr.length() < 6) {
-                            currPassView.setError("minimum 6 characters required");
-                            hasErr = true;
-                        }
-                        if (nev.length() < 6) {
-                            newPassView.setError("minimum 6 characters required");
-                            hasErr = true;
-                        }
-                        if (confirm.length() < 6) {
-                            confirmPassView.setError("minimum 6 characters required");
-                            hasErr = true;
-                        }
-
-                        if (nev.length() >= 6 && !StringUtils.equals(nev, confirm)) {
-                            confirmPassView.setError("must match with new password");
-                            hasErr = true;
-                        }
-
-                        if (!hasErr) {
-                            //continue
-                            new ChangePasswordTask().execute(curr, nev, confirm);
-                            dialog.dismiss();
-                            progressDialog.setMessage("changing password...");
-                            progressDialog.show();
-                        }
-                    }
-                })
-                .show();
-    }
-
-    @OnClick(R.id.view_avatar)
-    public void openImageIntent() {
-        Permissions.askPermission(new Permissions.OnActionPermitted() {
-            @Override
-            public void onPermitted() {
-                // Determine Uri of camera image to save.
-                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "SamePinch" + File.separator);
-                root.mkdirs();
-                final String fname = Utils.getUniqueImageFilename();
-                final File sdImageMainDirectory = new File(root, fname);
-                outputFileUri = Uri.fromFile(sdImageMainDirectory);
-
-                // Camera.
-                final List<Intent> cameraIntents = new ArrayList<>();
-                final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                final PackageManager packageManager = getActivity().getPackageManager();
-                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-                for (ResolveInfo res : listCam) {
-                    final String packageName = res.activityInfo.packageName;
-                    final Intent intent = new Intent(captureIntent);
-                    intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                    intent.setPackage(packageName);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                    cameraIntents.add(intent);
-                }
-
-                // Filesystem.
-                final Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                // Chooser of filesystem options.
-                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Choose Picture...");
-
-                // Add the camera options.
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
-                startActivityForResult(chooserIntent, AppConstants.KV.REQUEST_CHOOSE_PICTURE.getIntValue());
-            }
-        }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     class ChangePasswordTask extends AsyncTask<String, Integer, String> {
