@@ -472,9 +472,9 @@ public class DotWallFragment extends Fragment {
         }
 
         if (user.getFollow()) {
-            mFab.setImageDrawable(ContextCompat.getDrawable(SPApplication.getContext(), R.drawable.favorite_white_line));
-        } else {
             mFab.setImageDrawable(ContextCompat.getDrawable(SPApplication.getContext(), R.drawable.favorite_fill_white));
+        } else {
+            mFab.setImageDrawable(ContextCompat.getDrawable(SPApplication.getContext(), R.drawable.favorite_white_line));
         }
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override

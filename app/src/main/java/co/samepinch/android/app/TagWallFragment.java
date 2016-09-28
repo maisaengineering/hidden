@@ -119,6 +119,7 @@ public class TagWallFragment extends Fragment {
             }
         });
         mToolbarLayout.setExpandedTitleTextAppearance(R.style.TransparentText);
+        mToolbarLayout.setCollapsedTitleTextAppearance(R.style.Grey900Text);
 
         // tag name
         String tag = getArguments().getString(K.KEY_TAG.name());

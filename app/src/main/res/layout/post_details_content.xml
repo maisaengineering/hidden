@@ -6,9 +6,9 @@
     android:layout_gravity="center"
     android:clipChildren="false"
     android:clipToPadding="false"
+    card_view:cardBackgroundColor="@android:color/white"
     card_view:cardElevation="0dp"
-    card_view:cardPreventCornerOverlap="true"
-    card_view:cardBackgroundColor="@android:color/white">
+    card_view:cardPreventCornerOverlap="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,12 +23,17 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"></LinearLayout>
 
+
         <TextView
             android:id="@+id/post_details_tags"
             style="@style/SP_TagTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/post_details_content"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:background="@color/light_green_100"
+            android:gravity="center" />
+
     </RelativeLayout>
 </android.support.v7.widget.CardView>
