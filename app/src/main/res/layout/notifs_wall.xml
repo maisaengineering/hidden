@@ -39,8 +39,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:textColor="@color/light_blue_500"
-                    android:text="@string/notifs_none"/>
+                    android:text="@string/notifs_none"
+                    android:textColor="@color/light_blue_500" />
             </ViewSwitcher>
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
