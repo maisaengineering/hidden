@@ -109,25 +109,8 @@ public class MainActivityIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            if (Utils.isLoggedIn()) {
-                String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
-                Gson gson = new Gson();
-                mUser = gson.fromJson(userStr, User.class);
-            } else {
-                throw new IllegalStateException("failed to load user.");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage() == null ? "" : e.getMessage(), e);
-            Intent intent = new Intent(this, RootActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            if (!this.isFinishing()) {
-                finish();
-            }
-        }
+        // logout if needed
+        conditionallyLogout();
 
         setContentView(R.layout.activity_main_in);
         ButterKnife.bind(MainActivityIn.this);
@@ -189,6 +172,28 @@ public class MainActivityIn extends AppCompatActivity {
                 startService(intentNotifs);
             }
         }, 100);
+    }
+
+    private void conditionallyLogout() {
+        try {
+            if (Utils.isLoggedIn()) {
+                String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
+                Gson gson = new Gson();
+                mUser = gson.fromJson(userStr, User.class);
+            } else {
+                throw new IllegalStateException("failed to load user.");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage() == null ? "" : e.getMessage(), e);
+            Intent intent = new Intent(this, RootActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            if (!this.isFinishing()) {
+                finish();
+            }
+        }
     }
 
     private void showNotice() {
@@ -512,17 +517,7 @@ public class MainActivityIn extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (!Utils.isLoggedIn()) {
-            Intent intent = new Intent(this, RootActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            if (!this.isFinishing()) {
-                finish();
-            }
-        }
+        conditionallyLogout();
 
         // notice clean up
         mWallNotice.clearAnimation();

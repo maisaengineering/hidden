@@ -48,9 +48,11 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
 
     @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    RecyclerView.OnScrollListener mRecyclerViewScrollListener;
 
     LinearLayoutManager mLayoutManager;
     PostCursorRecyclerViewAdapter mViewAdapter;
+
 
     private LocalHandler mHandler;
 
@@ -66,7 +68,7 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new LocalHandler(this);
-
+        // call fresh data
         callForRemotePosts(false);
     }
 
@@ -80,6 +82,9 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
             @Override
             public void run() {
                 reQueryLocal();
+                if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
+                    callForRemotePosts(false);
+                }
             }
         });
     }
@@ -91,15 +96,6 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
                 int beforeIdx = mLayoutManager.findFirstVisibleItemPosition();
                 mViewAdapter.changeCursor(cursor);
                 mViewAdapter.notifyDataSetChanged();
-//                try {
-//                    int afterIdx = mLayoutManager.findFirstVisibleItemPosition();
-//                    int total = mLayoutManager.getItemCount();
-//                    if (beforeIdx <= total && beforeIdx != afterIdx) {
-//                        mLayoutManager.scrollToPosition(beforeIdx);
-//                    }
-//                } catch (Exception e) {
-//                    // muted
-//                }
             } else {
                 cursor.close();
             }
@@ -122,18 +118,6 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
         ButterKnife.bind(this, view);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager, AppConstants.KV.LOAD_MORE.getIntValue()) {
-            @Override
-            public void onLoadMore(RecyclerView rv, int current_page) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callForRemotePosts(true);
-                    }
-                });
-            }
-        });
-
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -143,6 +127,30 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
         setupRecyclerView();
 
         return view;
+    }
+
+    private void reInitializeScrollListener(RecyclerView rv) {
+        try {
+             // buggy code
+            rv.removeOnScrollListener(mRecyclerViewScrollListener);
+            mRecyclerViewScrollListener = new EndlessRecyclerOnScrollListener(mLayoutManager, AppConstants.KV.LOAD_MORE.getIntValue()) {
+                @Override
+                public void onLoadMore(RecyclerView rv, int current_page) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callForRemotePosts(Boolean.TRUE);
+                        }
+                    });
+                }
+
+            };
+            rv.addOnScrollListener(mRecyclerViewScrollListener);
+        } catch (Exception e) {
+            // muted
+//            e.printStackTrace();
+        }
+
     }
 
     private void setupRecyclerView() {
@@ -161,6 +169,21 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
 
         mViewAdapter.setHasStableIds(Boolean.TRUE);
         mRecyclerView.setAdapter(mViewAdapter);
+
+        // scroll listerer on recycle view
+        mRecyclerViewScrollListener = new EndlessRecyclerOnScrollListener(mLayoutManager, AppConstants.KV.LOAD_MORE.getIntValue()) {
+            @Override
+            public void onLoadMore(RecyclerView rv, int current_page) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callForRemotePosts(Boolean.TRUE);
+                    }
+                });
+            }
+
+        };
+        reInitializeScrollListener(mRecyclerView);
 
         // STYLE :: ANIMATIONS
 //        ScaleInAnimationAdapter wrapperAdapter = new ScaleInAnimationAdapter(new AlphaInAnimationAdapter(mViewAdapter));
@@ -182,6 +205,7 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
             // prevent unnecessary traffic
             if (_state != null && (_state instanceof Utils.State)) {
                 if (((Utils.State) _state).isPendingLoadMore()) {
+                    // call prevented
                     return;
                 }
             }
@@ -215,44 +239,44 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
 
         Utils.PreferencesManager pref = Utils.PreferencesManager.getInstance();
         pref.setValue(AppConstants.API.PREF_POSTS_LIST.getValue(), event.getMetaData());
-        getActivity().runOnUiThread(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
                     Cursor cursor = getActivity().getContentResolver().query(SchemaPosts.CONTENT_URI, null, SchemaPosts.COLUMN_SRC_WALL + "=?", new String[]{"1"}, BaseColumns._ID + " ASC");
-                    mViewAdapter.changeCursor(cursor);
+                    if (cursor.getCount() > 0) {
+                        int beforeIdx = mLayoutManager.findFirstVisibleItemPosition();
+                        mViewAdapter.changeCursor(cursor);
+                        mViewAdapter.notifyDataSetChanged();
+                    } else {
+                        cursor.close();
+                    }
+
                 } catch (Exception e) {
                     //muted
                 } finally {
-                    if (mRefreshLayout.isRefreshing()) {
-                        mRefreshLayout.setRefreshing(false);
-                        mRecyclerView.clearOnScrollListeners();
-                        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager, AppConstants.KV.LOAD_MORE.getIntValue()) {
-                            @Override
-                            public void onLoadMore(RecyclerView rv, int current_page) {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        callForRemotePosts(true);
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    Object _state = mRecyclerView.getTag();
-                    // prevent unnecessary traffic
-                    if (_state != null && (_state instanceof Utils.State)) {
-                        ((Utils.State) _state).setPendingLoadMore(false);
-                    } else {
-                        Utils.State state = new Utils.State();
-                        state.setPendingLoadMore(false);
-                        _state = state;
-                    }
-                    mRecyclerView.setTag(_state);
+                    resetUILoadingState();
                 }
             }
-        });
+        }, 500);
+    }
+
+    private void resetUILoadingState() {
+        if (mRefreshLayout.isRefreshing()) {
+            mRefreshLayout.setRefreshing(false);
+        }
+
+        Object _state = mRecyclerView.getTag();
+        // prevent unnecessary traffic
+        if (_state != null && (_state instanceof Utils.State)) {
+            ((Utils.State) _state).setPendingLoadMore(false);
+        } else {
+            Utils.State state = new Utils.State();
+            state.setPendingLoadMore(false);
+            _state = state;
+        }
+        mRecyclerView.setTag(_state);
+        reInitializeScrollListener(mRecyclerView);
     }
 
     @Override
@@ -263,11 +287,13 @@ public class PostListFragment extends Fragment implements FragmentLifecycle {
     }
 
     @Override
-    public void onResumeFragment() {
+    public void onRefreshFragment() {
+
     }
 
     @Override
-    public void onRefreshFragment() {
+    public void onResumeFragment() {
+
     }
 
     private static final class LocalHandler extends Handler {

@@ -59,6 +59,65 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.viewpager)
     ViewPager mViewPager;
 
+    protected static void doSpreadIt(final Activity activity, final BottomSheetLayout bs) {
+        final String subject = activity.getString(R.string.share_subject);
+        final String body = activity.getString(R.string.share_body);
+        // prepare menu options
+        View menu = LayoutInflater.from(activity).inflate(R.layout.bs_menu, bs, false);
+        final LinearLayout layout = (LinearLayout) menu.findViewById(R.id.layout_menu_list);
+        // email
+        TextView viaEmail = (TextView) LayoutInflater.from(activity).inflate(R.layout.bs_raw_email, null);
+        viaEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bs.isSheetShowing()) {
+                    bs.dismissSheet();
+                }
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("message/rfc822");
+                intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                intent.putExtra(Intent.EXTRA_TEXT, body);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    activity.startActivity(intent);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(activity, SPApplication.getContext().getString(R.string.msg_no_email), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        layout.addView(viaEmail);
+
+        // others
+        TextView viaOther = (TextView) LayoutInflater.from(activity).inflate(R.layout.bs_raw_via_other, null);
+        viaOther.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // sms
+                final Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                shareIntent.putExtra(Intent.EXTRA_TITLE, subject);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, body);
+
+                shareIntent.setType("text/plain");
+                IntentPickerSheetView sheetView = new IntentPickerSheetView(activity, shareIntent, StringUtils.EMPTY, new IntentPickerSheetView.OnIntentPickedListener() {
+                    @Override
+                    public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
+                        if (bs.isSheetShowing()) {
+                            bs.dismissSheet();
+                        }
+                        activity.startActivity(activityInfo.getConcreteIntent(shareIntent));
+                    }
+                });
+                layout.removeAllViews();
+                layout.addView(sheetView);
+            }
+        });
+        layout.addView(viaOther);
+        bs.showWithSheetView(menu);
+    }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -67,31 +126,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (Utils.isLoggedIn()) {
-            Intent intent = new Intent(this, RootActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            if (!this.isFinishing()) {
-                finish();
-            }
-        }
+        conditionallyLogin();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Utils.isLoggedIn()) {
-            Intent intent = new Intent(this, RootActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            if (!this.isFinishing()) {
-                finish();
-            }
-        }
+        conditionallyLogin();
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(MainActivity.this);
@@ -133,6 +174,20 @@ public class MainActivity extends AppCompatActivity {
             tab.setCustomView(SPFragmentPagerAdapter.getTabView(getApplicationContext(), i));
         }
     }
+
+    private void conditionallyLogin() {
+        if (Utils.isLoggedIn()) {
+            Intent intent = new Intent(this, RootActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            if (!this.isFinishing()) {
+                finish();
+            }
+        }
+    }
+
     private void setupLoginHandler(View view) {
         view.setVisibility(View.VISIBLE);
         view.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void setupInAppNotifsHandler(View view) {
         view.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     protected void onDestroy() {
@@ -270,69 +323,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
-    protected static void doSpreadIt(final Activity activity, final BottomSheetLayout bs) {
-        final String subject = activity.getString(R.string.share_subject);
-        final String body = activity.getString(R.string.share_body);
-        // prepare menu options
-        View menu = LayoutInflater.from(activity).inflate(R.layout.bs_menu, bs, false);
-        final LinearLayout layout = (LinearLayout) menu.findViewById(R.id.layout_menu_list);
-        // email
-        TextView viaEmail = (TextView) LayoutInflater.from(activity).inflate(R.layout.bs_raw_email, null);
-        viaEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(bs.isSheetShowing()){
-                    bs.dismissSheet();
-                }
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-                intent.setType("message/rfc822");
-                intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-                intent.putExtra(Intent.EXTRA_TEXT, body);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                try {
-                    activity.startActivity(intent);
-                } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(activity, SPApplication.getContext().getString(R.string.msg_no_email), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        layout.addView(viaEmail);
-
-        // others
-        TextView viaOther = (TextView) LayoutInflater.from(activity).inflate(R.layout.bs_raw_via_other, null);
-        viaOther.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // sms
-                final Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-                shareIntent.putExtra(Intent.EXTRA_TITLE, subject);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, body);
-
-                shareIntent.setType("text/plain");
-                IntentPickerSheetView sheetView = new IntentPickerSheetView(activity, shareIntent, StringUtils.EMPTY, new IntentPickerSheetView.OnIntentPickedListener() {
-                    @Override
-                    public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
-                        if(bs.isSheetShowing()){
-                            bs.dismissSheet();
-                        }
-                        activity.startActivity(activityInfo.getConcreteIntent(shareIntent));
-                    }
-                });
-                layout.removeAllViews();
-                layout.addView(sheetView);
-            }
-        });
-        layout.addView(viaOther);
-        bs.showWithSheetView(menu);
-    }
-
     private void doFeedback() {
         final String subject = SPApplication.getContext().getString(R.string.feedback_subject);
-        final String to =SPApplication.getContext().getString(R.string.feedback_to);
+        final String to = SPApplication.getContext().getString(R.string.feedback_to);
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
