@@ -402,6 +402,10 @@ public class Utils {
         if ((permissionsIndex = cursor.getColumnIndex(SchemaComments.COLUMN_PERMISSIONS)) != -1) {
             dto.setPermissionsFromDB(cursor.getString(permissionsIndex));
         }
+        int urlIndex;
+        if ((urlIndex = cursor.getColumnIndex(SchemaComments.COLUMN_URL)) != -1) {
+            dto.setUrl(cursor.getString(urlIndex));
+        }
 
         // commenter related
         Commenter commenterDto = new Commenter();

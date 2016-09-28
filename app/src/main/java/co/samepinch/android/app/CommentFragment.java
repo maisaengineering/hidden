@@ -293,6 +293,7 @@ public class CommentFragment extends Fragment implements android.support.v7.widg
                     values.put(SchemaComments.COLUMN_UPVOTE_COUNT, commentDetails.getUpvoteCount());
                     values.put(SchemaComments.COLUMN_UPVOTED, commentDetails.getUpvoted());
                     values.put(SchemaComments.COLUMN_PERMISSIONS, commentDetails.getPermissionsForDB());
+                    values.put(SchemaComments.COLUMN_URL, commentDetails.getUrl());
 
                     int dbResult = getActivity().getContentResolver().update(SchemaComments.CONTENT_URI, values, SchemaComments.COLUMN_UID + "=?", new String[]{commentUID});
                     if (dbResult > 0) {

@@ -23,7 +23,6 @@ import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.data.dao.SchemaComments;
 import co.samepinch.android.data.dto.CommentDetails;
 import co.samepinch.android.rest.ReqGeneric;
-import co.samepinch.android.rest.Resp;
 import co.samepinch.android.rest.RespCommentDetails;
 import co.samepinch.android.rest.RestClient;
 
@@ -73,6 +72,7 @@ public class CommentUpdateService extends IntentService {
                 values.put(SchemaComments.COLUMN_UPVOTE_COUNT, commentDetails.getUpvoteCount());
                 values.put(SchemaComments.COLUMN_UPVOTED, commentDetails.getUpvoted());
                 values.put(SchemaComments.COLUMN_PERMISSIONS, commentDetails.getPermissionsForDB());
+                values.put(SchemaComments.COLUMN_URL, commentDetails.getUrl());
 
                 int dbResult = getContentResolver().update(SchemaComments.CONTENT_URI, values, SchemaComments.COLUMN_UID + "=?", new String[]{commentUID});
                 if (dbResult > 0) {

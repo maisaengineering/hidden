@@ -85,7 +85,7 @@ public class LogoutActivity extends AppCompatActivity {
                     finish();
                 }catch (Exception e){
                     // muted
-                    mLogoutText.setText("something went wrong. try again.");
+                    mLogoutText.setText("something went wrong. try again. OR\r\ninstall latest version of the app.");
                     mTryAgain.setVisibility(View.VISIBLE);
                 }
             }

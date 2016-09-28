@@ -1,5 +1,6 @@
 package co.samepinch.android.app.helpers.adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.flipboard.bottomsheet.BottomSheetLayout;
+import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import co.samepinch.android.app.ActivityFragment;
 import co.samepinch.android.app.LoginActivity;
+import co.samepinch.android.app.PostDetailActivity;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.app.helpers.AppConstants;
@@ -44,6 +47,8 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
 
     public static final String DFLT_ZERO = "0";
 
+    private final Context context;
+
     @Bind(R.id.comment_item_layout)
     View mCommentVew;
 
@@ -59,17 +64,15 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
     @Bind(R.id.comment_upvote)
     TextView mCommentUpvote;
 
-    @Bind(R.id.comment_date)
-    TextView mCommentDate;
-
     @Bind(R.id.comment)
     TextView mComment;
 
     @Bind(R.id.comment_menu)
     ImageView commentMenu;
 
-    public PostCommentsRVHolder(View itemView) {
+    public PostCommentsRVHolder(Context context, View itemView) {
         super(itemView);
+        this.context = context;
         ButterKnife.bind(this, itemView);
     }
 
@@ -131,7 +134,7 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
         mCommentUpvote.setText(StringUtils.defaultString(Integer.toString(commentDetails.getUpvoteCount()), DFLT_ZERO));
 
         // setup date
-        mCommentDate.setText(TimeUtils.toHumanRelativePeriod(commentDetails.getCreatedAt()));
+//        mCommentDate.setText(TimeUtils.toHumanRelativePeriod(commentDetails.getCreatedAt()));
 
         // setup comment
         mComment.setText(commentDetails.getText());
@@ -144,12 +147,6 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
             public void onClick(View v) {
                 commentActionPrompt(commentDetails, commentUID, permissions);
 
-            }
-        });
-        mCommentDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                commentActionPrompt(commentDetails, commentUID, permissions);
             }
         });
 
@@ -183,6 +180,37 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
             layout.addView(voteView);
             new MenuItemClickListener(voteView, "upvote", commentUID, bs);
         }
+
+
+        // show share
+        final TextView shareView = (TextView) LayoutInflater.from(mView.getContext()).inflate(R.layout.bs_raw_share, null);
+        shareView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (context instanceof PostDetailActivity) {
+                    if (bs.isSheetShowing()) {
+                        bs.dismissSheet();
+                    }
+//                    bs.dismissSheet();
+
+                    final Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, commentDetails.getUrl());
+                    shareIntent.setType("text/plain");
+                    IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(mView.getContext(), shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
+                        @Override
+                        public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
+                            if (bs.isSheetShowing()) {
+                                bs.dismissSheet();
+                            }
+                            context.startActivity(activityInfo.getConcreteIntent(shareIntent));
+                        }
+                    });
+                    bs.showWithSheetView(intentPickerSheet);
+                }
+            }
+        });
+        layout.addView(shareView);
 
         if (permissions.contains("edit")) {
             final TextView editView = (TextView) LayoutInflater.from(mView.getContext()).inflate(R.layout.bs_raw_edit, null);
@@ -222,7 +250,6 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
                 }
             });
         }
-
 
         bs.showWithSheetView(menu);
     }

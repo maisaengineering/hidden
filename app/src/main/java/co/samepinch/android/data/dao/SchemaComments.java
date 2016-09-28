@@ -19,6 +19,7 @@ public interface SchemaComments extends BaseColumns {
     String COLUMN_UPVOTED = "upvoted";
     String COLUMN_UPVOTE_COUNT = "upvote_count";
     String COLUMN_PERMISSIONS = "permissions";
+    String COLUMN_URL = "url";
 
     String COLUMN_DOT_UID = "dot_uid";
     String COLUMN_DOT_FNAME = "dot_first_name";
@@ -41,12 +42,13 @@ public interface SchemaComments extends BaseColumns {
             + COLUMN_UPVOTED + " INTEGER DEFAULT 0, "
             + COLUMN_UPVOTE_COUNT + " INTEGER DEFAULT 0, "
             + COLUMN_PERMISSIONS + " TEXT DEFAULT '', "
+            + COLUMN_URL + " TEXT, "
             + COLUMN_DOT_UID + " TEXT NOT NULL, "
             + COLUMN_DOT_FNAME + " TEXT DEFAULT '', "
             + COLUMN_DOT_LNAME + " TEXT DEFAULT '', "
             + COLUMN_DOT_PINCH_HANDLE + " TEXT DEFAULT '', "
             + COLUMN_DOT_PREF_NAME + " TEXT DEFAULT '', "
-            + COLUMN_DOT_PHOTO_URL + " TEXT , "
+            + COLUMN_DOT_PHOTO_URL + " TEXT, "
             + COLUMN_POST_DETAILS + " TEXT NOT NULL, "
             + "FOREIGN KEY(post_details_uid) REFERENCES "
             + String.format("%s(%s)", SchemaPostDetails.TABLE_NAME, SchemaPostDetails.COLUMN_UID)
@@ -58,7 +60,7 @@ public interface SchemaComments extends BaseColumns {
     String[] TAG_COLUMNS = new String[]{
             _ID, COLUMN_UID, COLUMN_TEXT, COLUMN_CREATED_AT, COLUMN_ANONYMOUS, COLUMN_UPVOTED, COLUMN_UPVOTE_COUNT,
             COLUMN_DOT_UID, COLUMN_DOT_FNAME, COLUMN_DOT_LNAME, COLUMN_DOT_PREF_NAME,  COLUMN_DOT_PHOTO_URL,
-            COLUMN_POST_DETAILS, COLUMN_DOT_PINCH_HANDLE, COLUMN_PERMISSIONS
+            COLUMN_POST_DETAILS, COLUMN_DOT_PINCH_HANDLE, COLUMN_PERMISSIONS, COLUMN_URL
     };
 
     // provider related stuff

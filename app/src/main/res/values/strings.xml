@@ -93,6 +93,7 @@
     <string name="hint_dislike">dislike</string>
     <string name="hint_edit">edit</string>
     <string name="hint_flag">flag</string>
+    <string name="hint_share">share</string>
     <string name="hint_sms">SMS</string>
     <string name="hint_unflag">un-flag</string>
     <string name="hint_like">like</string>

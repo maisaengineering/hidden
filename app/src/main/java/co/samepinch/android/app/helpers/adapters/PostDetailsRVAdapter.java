@@ -48,11 +48,10 @@ public class PostDetailsRVAdapter extends CursorRecyclerViewAdapter<PostDetailsR
             case TYPE_ITEM:
                 v = LayoutInflater.from(context)
                         .inflate(R.layout.post_comment_item, parent, false);
-                viewHolder = new PostCommentsRVHolder(v);
+                viewHolder = new PostCommentsRVHolder(context, v);
                 break;
 
             default:
-                Thread.dumpStack();
                 throw new IllegalStateException("un-known viewType=" + viewType);
         }
 

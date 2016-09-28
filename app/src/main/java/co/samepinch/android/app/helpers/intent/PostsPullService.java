@@ -29,6 +29,7 @@ import co.samepinch.android.data.dao.SchemaComments;
 import co.samepinch.android.data.dao.SchemaDots;
 import co.samepinch.android.data.dao.SchemaPostDetails;
 import co.samepinch.android.data.dao.SchemaPosts;
+import co.samepinch.android.data.dao.SchemaTags;
 import co.samepinch.android.data.dto.Post;
 import co.samepinch.android.data.dto.User;
 import co.samepinch.android.rest.ReqPosts;
@@ -103,6 +104,7 @@ public class PostsPullService extends IntentService {
                     dropOps.add(ContentProviderOperation.newDelete(SchemaPosts.CONTENT_URI).build());
                     dropOps.add(ContentProviderOperation.newDelete(SchemaPostDetails.CONTENT_URI).build());
                     dropOps.add(ContentProviderOperation.newDelete(SchemaComments.CONTENT_URI).build());
+                    dropOps.add(ContentProviderOperation.newDelete(SchemaTags.CONTENT_URI).build());
 
                     ContentProviderResult[] result = getContentResolver().
                             applyBatch(AppConstants.API.CONTENT_AUTHORITY.getValue(), dropOps);

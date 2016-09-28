@@ -146,7 +146,7 @@ public class PostDetailActivity extends AppCompatActivity {
         setUpMetadata();
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        mViewAdapter = new PostDetailsRVAdapter(getApplicationContext(), mergeCursor);
+        mViewAdapter = new PostDetailsRVAdapter(PostDetailActivity.this, mergeCursor);
         mViewAdapter.setHasStableIds(true);
         // recycler view setup
         mRV.setHasFixedSize(true);
@@ -311,11 +311,11 @@ public class PostDetailActivity extends AppCompatActivity {
         }
 
         // open share dialog?
-        try{
-            if(getIntent().getExtras().getBoolean(AppConstants.K.DO_SHARE.name(), false)){
+        try {
+            if (getIntent().getExtras().getBoolean(AppConstants.K.DO_SHARE.name(), false)) {
                 onOptionsItemSelected(mMenu.findItem(R.id.menuitem_post_share_id));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             // muted
         }
 
@@ -328,24 +328,25 @@ public class PostDetailActivity extends AppCompatActivity {
             return;
         }
 
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mPostDetails.getUrl());
-        shareIntent.setType("text/plain");
-        IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(PostDetailActivity.this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
-            @Override
-            public void onIntentPicked(Intent intent) {
-                mBottomsheet.dismissSheet();
-                startActivity(intent);
-            }
-        });
-//        intentPickerSheet.setFilter(new IntentPickerSheetView.Filter() {
-//            @Override
-//            public boolean include(IntentPickerSheetView.ActivityInfo info) {
-//                return !info.componentName.getPackageName().startsWith("com.android");
-//            }
-//        });
-        mBottomsheet.showWithSheetView(intentPickerSheet);
+        try {
+
+            final Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mPostDetails.getUrl());
+            shareIntent.setType("text/plain");
+            IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(PostDetailActivity.this, shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
+                @Override
+                public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
+                    if(mBottomsheet.isSheetShowing()){
+                        mBottomsheet.dismissSheet();
+                    }
+                    startActivity(activityInfo.getConcreteIntent(shareIntent));
+                }
+            });
+            mBottomsheet.showWithSheetView(intentPickerSheet);
+        } catch (Exception e) {
+            // muted
+        }
     }
 
     public void handleMenuSelection(MenuItem item) {
@@ -389,7 +390,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
             });
         }
-
         mBottomsheet.showWithSheetView(menu);
     }
 

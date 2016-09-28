@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // sms
-                Intent shareIntent = new Intent();
+                final Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
                 shareIntent.putExtra(Intent.EXTRA_TITLE, subject);
@@ -315,11 +315,11 @@ public class MainActivity extends AppCompatActivity {
                 shareIntent.setType("text/plain");
                 IntentPickerSheetView sheetView = new IntentPickerSheetView(activity, shareIntent, StringUtils.EMPTY, new IntentPickerSheetView.OnIntentPickedListener() {
                     @Override
-                    public void onIntentPicked(Intent intent) {
+                    public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
                         if(bs.isSheetShowing()){
                             bs.dismissSheet();
                         }
-                        activity.startActivity(intent);
+                        activity.startActivity(activityInfo.getConcreteIntent(shareIntent));
                     }
                 });
                 layout.removeAllViews();

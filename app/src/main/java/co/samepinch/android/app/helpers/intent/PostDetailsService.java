@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -196,6 +195,7 @@ public class PostDetailsService extends IntentService {
                     .withValue(SchemaComments.COLUMN_UPVOTE_COUNT, comments.getUpvoteCount())
                     .withValue(SchemaComments.COLUMN_UPVOTED, comments.getUpvoted())
                     .withValue(SchemaComments.COLUMN_PERMISSIONS, comments.getPermissionsForDB())
+                    .withValue(SchemaComments.COLUMN_URL, comments.getUrl())
                     .withValue(SchemaComments.COLUMN_POST_DETAILS, details.getUid());
 
             //grab commenter info

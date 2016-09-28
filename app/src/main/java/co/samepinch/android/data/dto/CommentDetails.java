@@ -27,6 +27,9 @@ public class CommentDetails {
     @SerializedName("createdAtDB")
     Date createdAt;
 
+    @SerializedName("url")
+    String url;
+
     Commenter commenter;
 
     public void setCreatedAt(Date createdAt) {
@@ -118,5 +121,14 @@ public class CommentDetails {
 
     public void setCommenter(Commenter commenter) {
         this.commenter = commenter;
+    }
+
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
