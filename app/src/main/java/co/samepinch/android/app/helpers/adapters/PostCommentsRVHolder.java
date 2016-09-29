@@ -3,6 +3,7 @@ package co.samepinch.android.app.helpers.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,11 @@ import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +31,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import co.samepinch.android.app.ActivityFragment;
 import co.samepinch.android.app.LoginActivity;
-import co.samepinch.android.app.PostDetailActivity;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.app.helpers.AppConstants;
-import co.samepinch.android.app.helpers.TimeUtils;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.app.helpers.intent.CommentUpdateService;
 import co.samepinch.android.app.helpers.module.DaggerStorageComponent;
@@ -39,6 +43,9 @@ import co.samepinch.android.app.helpers.pubsubs.Events;
 import co.samepinch.android.data.dto.CommentDetails;
 import co.samepinch.android.data.dto.Commenter;
 import co.samepinch.android.data.dto.User;
+import co.samepinch.android.rest.ReqGeneric;
+import co.samepinch.android.rest.Resp;
+import co.samepinch.android.rest.RestClient;
 
 /**
  * Created by imaginationcoder on 7/27/15.
@@ -187,27 +194,10 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
         shareView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (context instanceof PostDetailActivity) {
-                    if (bs.isSheetShowing()) {
-                        bs.dismissSheet();
-                    }
-//                    bs.dismissSheet();
-
-                    final Intent shareIntent = new Intent();
-                    shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, commentDetails.getUrl());
-                    shareIntent.setType("text/plain");
-                    IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(mView.getContext(), shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
-                        @Override
-                        public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
-                            if (bs.isSheetShowing()) {
-                                bs.dismissSheet();
-                            }
-                            context.startActivity(activityInfo.getConcreteIntent(shareIntent));
-                        }
-                    });
-                    bs.showWithSheetView(intentPickerSheet);
+                if (bs.isSheetShowing()) {
+                    bs.dismissSheet();
                 }
+                new CommentShareTask().execute(commentDetails.getUid());
             }
         });
         layout.addView(shareView);
@@ -293,6 +283,59 @@ public class PostCommentsRVHolder extends PostDetailsRVHolder {
                 Intent intent = new Intent(view.getContext(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
+            }
+        }
+    }
+
+    private class CommentShareTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                ReqGeneric<Map<String, String>> req = new ReqGeneric<>();
+                // set base args
+                req.setToken(Utils.getNonBlankAppToken());
+                req.setCmd("shareUrl");
+                Map<String, String> body = new HashMap<>();
+                body.put("commentId", params[0]);
+                req.setBody(body);
+
+                //headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(RestClient.INSTANCE.jsonMediaType());
+                HttpEntity<ReqGeneric<Map<String, String>>> payloadEntity = new HttpEntity<>(req, headers);
+                ResponseEntity<Resp> resp = RestClient.INSTANCE.handle().exchange(AppConstants.API.POSTS.getValue(), HttpMethod.POST, payloadEntity, Resp.class);
+                return (String) resp.getBody().getBody().get("url");
+            } catch (Exception e) {
+                // muted
+            }
+            return "http://samepinch.co";
+        }
+
+        @Override
+        protected void onPostExecute(String commentUrl) {
+            try {
+                if (StringUtils.isBlank(commentUrl)) {
+                    return;
+                }
+
+                final BottomSheetLayout bs = (BottomSheetLayout) mView.getRootView().findViewById(R.id.bottomsheet);
+                final Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, commentUrl);
+                shareIntent.setType("text/plain");
+                IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(mView.getContext(), shareIntent, "Share with...", new IntentPickerSheetView.OnIntentPickedListener() {
+                    @Override
+                    public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo) {
+                        if (bs.isSheetShowing()) {
+                            bs.dismissSheet();
+                        }
+                        context.startActivity(activityInfo.getConcreteIntent(shareIntent));
+                    }
+                });
+                bs.showWithSheetView(intentPickerSheet);
+            } catch (Exception e) {
+                // mutred
             }
         }
     }

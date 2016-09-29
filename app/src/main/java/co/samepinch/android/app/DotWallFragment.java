@@ -356,7 +356,7 @@ public class DotWallFragment extends Fragment {
             return;
         }
 //        String pinchHandle = String.format(mActivity.getApplicationContext().getString(R.string.pinch_handle), user.getPinchHandle());
-        mCollapsingToolbarLayout.setTitle(StringUtils.join(user.getFname(), user.getLname(), StringUtils.SPACE));
+        mCollapsingToolbarLayout.setTitle(StringUtils.join(new String[]{user.getFname(), user.getLname()}, StringUtils.SPACE));
 
         String fName = user.getFname();
         String lName = user.getLname();
