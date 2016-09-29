@@ -454,8 +454,8 @@ public class MainActivityIn extends AppCompatActivity {
                         Bundle args = new Bundle();
                         switch (menuItem.getItemId()) {
                             case R.id.nav_wall:
-                                mViewPager.getAdapter().notifyDataSetChanged();
-                                mViewPager.setCurrentItem(0);
+//                                mViewPager.getAdapter().notifyDataSetChanged();
+//                                mViewPager.setCurrentItem(0);
                                 break;
                             case R.id.nav_post:
                                 args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_CREATE_POST.name());
