@@ -392,6 +392,19 @@ public class MainActivityIn extends AppCompatActivity {
 
             nv.mDotImage.setRoundingParams(roundingParams);
             nv.mDotImage.populateImageViewWithAdjustedAspect(user.getPhoto(), postprocessor);
+            nv.mBackdrop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle args = new Bundle();
+                    // target
+                    args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_DOTEDIT.name());
+
+                    // intent
+                    Intent intent = new Intent(getApplicationContext(), ActivityFragment.class);
+                    intent.putExtras(args);
+                    startActivityForResult(intent, AppConstants.KV.REQUEST_EDIT_DOT.getIntValue());
+                }
+            });
         }
 
         nv.mDotName.setText(StringUtils.join(new String[]{fName, lName}, " "));
