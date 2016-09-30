@@ -3,17 +3,10 @@ package co.samepinch.android.app.helpers.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.support.v7.graphics.Palette;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.facebook.imagepipeline.request.BasePostprocessor;
-import com.facebook.imagepipeline.request.Postprocessor;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,7 +17,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.SPApplication;
-import co.samepinch.android.app.helpers.ImageUtils;
 import co.samepinch.android.app.helpers.Utils;
 import co.samepinch.android.app.helpers.widget.SIMView;
 import co.samepinch.android.data.dto.PostDetails;
@@ -66,7 +58,9 @@ public class PostContentRVHolder extends PostDetailsRVHolder {
                 rightContent = StringUtils.substringAfter(rightContent, imgK).replaceAll("::", "");
                 if (StringUtils.isNotBlank(leftContent)) {
                     TextView tView = (TextView) inflater.inflate(R.layout.post_textview, null);
-                    tView.setText(leftContent);
+//                     tView.setText(leftContent);
+                    Utils.markSoftTagsWithinText(mView.getContext(), tView, leftContent);
+                    // LEFT TEXT VIEW
                     addToView(tView);
                 }
 
@@ -77,15 +71,16 @@ public class PostContentRVHolder extends PostDetailsRVHolder {
                 imgView.setLayoutParams(imageWHParams);
                 imgView.setAspectRatio(1.33f);
                 imgView.populateImageViewWithAdjustedAspect(imgUrl);
-
-
+                // IMAGE
                 addToView(imgView);
             }
 
 
             if (StringUtils.isNotBlank(rightContent)) {
                 TextView tView = (TextView) inflater.inflate(R.layout.post_textview, null);
-                tView.setText(rightContent);
+//                tView.setText(rightContent);
+                // RIGHT TEXT VIEW
+                Utils.markSoftTagsWithinText(mView.getContext(), tView, rightContent);
                 addToView(tView);
             }
 
