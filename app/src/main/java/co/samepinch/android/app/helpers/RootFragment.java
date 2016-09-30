@@ -12,6 +12,7 @@ import co.samepinch.android.app.CommentFragment;
 import co.samepinch.android.app.DotWallFragment;
 import co.samepinch.android.app.NotifsFragment;
 import co.samepinch.android.app.R;
+import co.samepinch.android.app.SoftTagWallFragment;
 import co.samepinch.android.app.TagWallFragment;
 
 import static co.samepinch.android.app.helpers.AppConstants.K;
@@ -45,6 +46,9 @@ public class RootFragment extends Fragment {
         switch (K.valueOf(targetFragment)) {
             case FRAGMENT_TAGWALL:
                 fragment = new TagWallFragment();
+                break;
+            case FRAGMENT_SOFTTAGWALL:
+                fragment = new SoftTagWallFragment();
                 break;
             case FRAGMENT_DOTWALL:
                 fragment = new DotWallFragment();

@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
@@ -50,10 +51,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -89,6 +92,8 @@ import static co.samepinch.android.app.helpers.AppConstants.KV.SCOPE;
  */
 public class Utils {
     private static final Pattern IMG_PATTERN = Pattern.compile("::(.*?)(::)");
+    private static final Pattern SOFT_TAG_PATTERN = Pattern.compile("#\\S+");
+
     private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
     private static String uniqueID = null;
     private static volatile List<CountryVO> countryList;
@@ -534,11 +539,9 @@ public class Utils {
         return imgVals;
     }
 
-    @SuppressWarnings("deprecation")
     public static void markTags(final Context context, TextView view, String[] tags) {
-
         final Paint tagPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        tagPaint.setColor(context.getResources().getColor(R.color.light_blue_500));
+        tagPaint.setColor(ContextCompat.getColor(context, R.color.light_blue_500));
         tagPaint.setTextSize(view.getTextSize());
         tagPaint.setLinearText(false);
         tagPaint.setSubpixelText(false);
@@ -579,6 +582,60 @@ public class Utils {
         view.setText(spanTxt, TextView.BufferType.SPANNABLE);
     }
 
+    public static void markSoftTagsWithinText(final Context context, final TextView view, String content) {
+        if (StringUtils.isBlank(content)) {
+            return;
+        }
+
+        final Paint tagPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        tagPaint.setColor(ContextCompat.getColor(context, R.color.blue_200));
+        tagPaint.setTextSize(view.getTextSize());
+        tagPaint.setStrokeCap(Paint.Cap.ROUND);
+        tagPaint.setLinearText(false);
+        tagPaint.setSubpixelText(false);
+
+        // scan for soft tags
+        Set<String> softTags = new HashSet<>();
+        Matcher m = SOFT_TAG_PATTERN.matcher(content);
+        while (m.find()) {
+            softTags.add(m.group());
+        }
+
+        SpannableStringBuilder spanTxt = new SpannableStringBuilder();
+        for (final String c : content.split("\\s+")) {
+            spanTxt.append(c);
+            if (softTags.contains(c)) {
+                spanTxt.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        // TARGET
+                        Bundle args = new Bundle();
+                        args.putString(AppConstants.K.TARGET_FRAGMENT.name(), AppConstants.K.FRAGMENT_SOFTTAGWALL.name());
+                        // data
+                        args.putString(AppConstants.K.KEY_TAG.name(), c);
+
+                        // intent
+                        Intent intent = new Intent(context, ActivityFragment.class);
+                        intent.putExtras(args);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        context.startActivity(intent);
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.set(tagPaint);
+                    }
+                }, spanTxt.length() - c.length(), spanTxt.length(), 0);
+            }
+            spanTxt.append(StringUtils.SPACE);
+        }
+
+        view.setMovementMethod(LinkMovementMethod.getInstance());
+        view.setText(spanTxt, TextView.BufferType.SPANNABLE);
+    }
+
     public static String getUniqueImageFilename() {
         return Long.toString(System.currentTimeMillis());
     }
@@ -595,6 +652,36 @@ public class Utils {
         }
         return resp;
     }
+
+
+    public static boolean updateAuthUserToPref(User updatedUser ) {
+        try {
+            // grab current user
+            String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
+
+            Gson gson = new Gson();
+            User user = gson.fromJson(userStr, User.class);
+            user.setFname(updatedUser.getFname());
+            user.setLname(updatedUser.getLname());
+            user.setSummary(updatedUser.getSummary());
+            user.setBlog(updatedUser.getBlog());
+            user.setBadges(updatedUser.getBadges());
+            user.setPhoto(updatedUser.getPhoto());
+            user.setImageKey(updatedUser.getImageKey());
+            user.setPostsCount(updatedUser.getPostsCount());
+            user.setFollowersCount(updatedUser.getFollowersCount());
+            user.setPhno(updatedUser.getPhno());
+            user.setVerified(updatedUser.getVerified());
+
+            // update into preference
+            Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), gson.toJson(user));
+            return Boolean.TRUE;
+        } catch (Exception e) {
+            // muted;
+        }
+        return Boolean.FALSE;
+    }
+
 
     public static void dismissSilently(ProgressDialog dialog) {
         try {

@@ -42,6 +42,7 @@ import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_FRESH
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_KEY;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_LAST_MODIFIED;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POSTS_FAV;
+import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POSTS_SEARCH;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POSTS_TAG;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POSTS_WALL;
 import static co.samepinch.android.app.helpers.AppConstants.APP_INTENT.KEY_POST_COUNT;
@@ -57,6 +58,52 @@ public class PostsPullService extends IntentService {
 
     public PostsPullService() {
         super("PostsPullService");
+    }
+
+    private static void appendDOTOps(User postOwner, User anonyOwner, ArrayList<ContentProviderOperation> ops) {
+        if (postOwner == null) {
+            ops.add(ContentProviderOperation.newInsert(SchemaDots.CONTENT_URI)
+                    .withValue(SchemaDots.COLUMN_UID, anonyOwner.getUid())
+                    .withValue(SchemaDots.COLUMN_FNAME, anonyOwner.getFname())
+                    .withValue(SchemaDots.COLUMN_LNAME, anonyOwner.getLname())
+                    .withValue(SchemaDots.COLUMN_PREF_NAME, anonyOwner.getPrefName())
+                    .withValue(SchemaDots.COLUMN_PINCH_HANDLE, anonyOwner.getPinchHandle())
+                    .withValue(SchemaDots.COLUMN_PHOTO_URL, anonyOwner.getPhoto()).build());
+        } else {
+            ops.add(ContentProviderOperation.newInsert(SchemaDots.CONTENT_URI)
+                    .withValue(SchemaDots.COLUMN_UID, postOwner.getUid())
+                    .withValue(SchemaDots.COLUMN_FNAME, postOwner.getFname())
+                    .withValue(SchemaDots.COLUMN_LNAME, postOwner.getLname())
+                    .withValue(SchemaDots.COLUMN_PREF_NAME, postOwner.getPrefName())
+                    .withValue(SchemaDots.COLUMN_PINCH_HANDLE, postOwner.getPinchHandle())
+                    .withValue(SchemaDots.COLUMN_PHOTO_URL, postOwner.getPhoto()).build());
+        }
+    }
+
+    private static void appendPostOps(Bundle iArgs, Post post, User postOwner, User anonyOwner, ArrayList<ContentProviderOperation> ops) {
+        ContentProviderOperation.Builder bldr = ContentProviderOperation.newInsert(SchemaPosts.CONTENT_URI);
+        bldr.withValue(SchemaPosts.COLUMN_UID, post.getUid())
+                .withValue(SchemaPosts.COLUMN_WALL_CONTENT, post.getWallContent())
+                .withValue(SchemaPosts.COLUMN_WALL_IMAGES, post.getWallImagesForDB())
+                .withValue(SchemaPosts.COLUMN_COMMENT_COUNT, post.getCommentCount())
+                .withValue(SchemaPosts.COLUMN_UPVOTE_COUNT, post.getUpvoteCount())
+                .withValue(SchemaPosts.COLUMN_VIEWS, post.getViews())
+                .withValue(SchemaPosts.COLUMN_ANONYMOUS, post.getAnonymous())
+                .withValue(SchemaPosts.COLUMN_CREATED_AT, Utils.stringToDate(post.getCreatedAtStr()).getTime())
+                .withValue(SchemaPosts.COLUMN_COMMENTERS, post.getCommentersForDB())
+                .withValue(SchemaPosts.COLUMN_OWNER, postOwner != null ? postOwner.getUid() : anonyOwner.getUid())
+                .withValue(SchemaPosts.COLUMN_TAGS, post.getTagsForDB());
+        String srcBy = iArgs.getString(KEY_BY.getValue(), EMPTY);
+        if (StringUtils.isBlank(srcBy) || StringUtils.equals(srcBy, KEY_POSTS_WALL.getValue())) {
+            bldr.withValue(SchemaPosts.COLUMN_SRC_WALL, true);
+        } else if (StringUtils.equals(srcBy, KEY_POSTS_FAV.getValue())) {
+            bldr.withValue(SchemaPosts.COLUMN_SRC_FAV, true);
+        } else if (StringUtils.equals(srcBy, KEY_POSTS_TAG.getValue())) {
+            bldr.withValue(SchemaPosts.COLUMN_SRC_TAG, true);
+        } else if (StringUtils.equals(srcBy, KEY_POSTS_SEARCH.getValue())) {
+            bldr.withValue(SchemaPosts.COLUMN_SRC_SEARCH, iArgs.getString(KEY_KEY.getValue(), EMPTY));
+        }
+        ops.add(bldr.build());
     }
 
     @Override
@@ -128,7 +175,6 @@ public class PostsPullService extends IntentService {
         BusProvider.INSTANCE.getBus().post(new Events.PostsRefreshedEvent(metaData));
     }
 
-
     private ArrayList<ContentProviderOperation> parseResponse(Bundle iArgs, RespPosts respData) {
         List<Post> postsToInsert = respData.getBody().getPosts();
         if (postsToInsert == null) {
@@ -150,49 +196,5 @@ public class PostsPullService extends IntentService {
         }
         return ops;
 
-    }
-
-    private static void appendDOTOps(User postOwner, User anonyOwner, ArrayList<ContentProviderOperation> ops) {
-        if (postOwner == null) {
-            ops.add(ContentProviderOperation.newInsert(SchemaDots.CONTENT_URI)
-                    .withValue(SchemaDots.COLUMN_UID, anonyOwner.getUid())
-                    .withValue(SchemaDots.COLUMN_FNAME, anonyOwner.getFname())
-                    .withValue(SchemaDots.COLUMN_LNAME, anonyOwner.getLname())
-                    .withValue(SchemaDots.COLUMN_PREF_NAME, anonyOwner.getPrefName())
-                    .withValue(SchemaDots.COLUMN_PINCH_HANDLE, anonyOwner.getPinchHandle())
-                    .withValue(SchemaDots.COLUMN_PHOTO_URL, anonyOwner.getPhoto()).build());
-        } else {
-            ops.add(ContentProviderOperation.newInsert(SchemaDots.CONTENT_URI)
-                    .withValue(SchemaDots.COLUMN_UID, postOwner.getUid())
-                    .withValue(SchemaDots.COLUMN_FNAME, postOwner.getFname())
-                    .withValue(SchemaDots.COLUMN_LNAME, postOwner.getLname())
-                    .withValue(SchemaDots.COLUMN_PREF_NAME, postOwner.getPrefName())
-                    .withValue(SchemaDots.COLUMN_PINCH_HANDLE, postOwner.getPinchHandle())
-                    .withValue(SchemaDots.COLUMN_PHOTO_URL, postOwner.getPhoto()).build());
-        }
-    }
-
-    private static void appendPostOps(Bundle iArgs, Post post, User postOwner, User anonyOwner, ArrayList<ContentProviderOperation> ops) {
-        ContentProviderOperation.Builder bldr = ContentProviderOperation.newInsert(SchemaPosts.CONTENT_URI);
-        bldr.withValue(SchemaPosts.COLUMN_UID, post.getUid())
-                .withValue(SchemaPosts.COLUMN_WALL_CONTENT, post.getWallContent())
-                .withValue(SchemaPosts.COLUMN_WALL_IMAGES, post.getWallImagesForDB())
-                .withValue(SchemaPosts.COLUMN_COMMENT_COUNT, post.getCommentCount())
-                .withValue(SchemaPosts.COLUMN_UPVOTE_COUNT, post.getUpvoteCount())
-                .withValue(SchemaPosts.COLUMN_VIEWS, post.getViews())
-                .withValue(SchemaPosts.COLUMN_ANONYMOUS, post.getAnonymous())
-                .withValue(SchemaPosts.COLUMN_CREATED_AT, Utils.stringToDate(post.getCreatedAtStr()).getTime())
-                .withValue(SchemaPosts.COLUMN_COMMENTERS, post.getCommentersForDB())
-                .withValue(SchemaPosts.COLUMN_OWNER, postOwner != null ? postOwner.getUid() : anonyOwner.getUid())
-                .withValue(SchemaPosts.COLUMN_TAGS, post.getTagsForDB());
-        String srcBy = iArgs.getString(KEY_BY.getValue(), EMPTY);
-        if (StringUtils.isBlank(srcBy) || StringUtils.equals(srcBy, KEY_POSTS_WALL.getValue())) {
-            bldr.withValue(SchemaPosts.COLUMN_SRC_WALL, true);
-        } else if (StringUtils.equals(srcBy, KEY_POSTS_FAV.getValue())) {
-            bldr.withValue(SchemaPosts.COLUMN_SRC_FAV, true);
-        } else if (StringUtils.equals(srcBy, KEY_POSTS_TAG.getValue())) {
-            bldr.withValue(SchemaPosts.COLUMN_SRC_TAG, true);
-        }
-        ops.add(bldr.build());
     }
 }

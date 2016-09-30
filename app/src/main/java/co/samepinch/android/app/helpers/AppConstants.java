@@ -152,6 +152,7 @@ public class AppConstants {
         APP_EXTRAS,
         TARGET_FRAGMENT,
         FRAGMENT_TAGWALL,
+        FRAGMENT_SOFTTAGWALL,
         FRAGMENT_DOTWALL,
         FRAGMENT_COMMENT,
         FRAGMENT_CHOOSE_HANDLE,

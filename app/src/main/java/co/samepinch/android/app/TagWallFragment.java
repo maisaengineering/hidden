@@ -90,8 +90,6 @@ public class TagWallFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == AppConstants.KV.REQUEST_EDIT_TAG.getIntValue()) {
             if (resultCode == Activity.RESULT_OK) {
                 callForRemoteTagData();

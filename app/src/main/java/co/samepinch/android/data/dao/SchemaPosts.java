@@ -45,7 +45,7 @@ public interface SchemaPosts extends BaseColumns {
             + COLUMN_OWNER + " TEXT NOT NULL, "
             + COLUMN_SRC_WALL + " INTEGER DEFAULT 0, "
             + COLUMN_SRC_TAG + " INTEGER DEFAULT 0, "
-            + COLUMN_SRC_SEARCH + " INTEGER DEFAULT 0, "
+            + COLUMN_SRC_SEARCH + " TEXT, "
             + COLUMN_SRC_FAV + " INTEGER DEFAULT 0, "
             + "FOREIGN KEY(dot_uid) REFERENCES dots(uid)"
             + ")";

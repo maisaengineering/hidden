@@ -191,7 +191,7 @@ public class MainActivityIn extends AppCompatActivity {
                     Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             if (!this.isFinishing()) {
-                finish();
+                this.finish();
             }
         }
     }
@@ -621,26 +621,10 @@ public class MainActivityIn extends AppCompatActivity {
                         cursor = getContentResolver().query(SchemaDots.CONTENT_URI, null, SchemaDots.COLUMN_UID + "=?", new String[]{mUser.getUid()}, null);
                         if (cursor.moveToFirst()) {
                             User updatedUser = Utils.cursorToUserEntity(cursor);
-
-                            Gson gson = new Gson();
-                            // update stored user info
-                            String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
-                            User user = gson.fromJson(userStr, User.class);
-                            user.setFname(updatedUser.getFname());
-                            user.setLname(updatedUser.getLname());
-                            user.setSummary(updatedUser.getSummary());
-                            user.setBlog(updatedUser.getBlog());
-                            user.setBadges(updatedUser.getBadges());
-                            user.setPhoto(updatedUser.getPhoto());
-                            user.setImageKey(updatedUser.getImageKey());
-                            user.setPostsCount(updatedUser.getPostsCount());
-                            user.setFollowersCount(updatedUser.getFollowersCount());
-                            user.setPhno(updatedUser.getPhno());
-                            user.setVerified(updatedUser.getVerified());
-
-                            Utils.PreferencesManager.getInstance().setValue(AppConstants.API.PREF_AUTH_USER.getValue(), gson.toJson(user));
-                            invalidateOptionsMenu();
-                            setupDrawerContent(user, false);
+                            if(Utils.updateAuthUserToPref(updatedUser)){
+                                invalidateOptionsMenu();
+                                setupDrawerContent(updatedUser, false);
+                            }
                         }
                     } catch (Exception e) {
                         //e.printStackTrace();

@@ -1,6 +1,7 @@
 package co.samepinch.android.app.helpers;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
+
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -31,6 +34,8 @@ import butterknife.OnClick;
 import co.samepinch.android.app.LoginActivity;
 import co.samepinch.android.app.R;
 import co.samepinch.android.app.SPApplication;
+import co.samepinch.android.app.helpers.intent.DotDetailsService;
+import co.samepinch.android.data.dto.User;
 import co.samepinch.android.rest.ReqGeneric;
 import co.samepinch.android.rest.Resp;
 import co.samepinch.android.rest.RestClient;
@@ -129,11 +134,11 @@ public class PhonePINVerifyFragment extends Fragment {
 
         // update holding activity graphic
         if (getActivity() instanceof LoginActivity) {
-            try{
+            try {
                 ((LoginActivity) getActivity()).changeIcon(getResources().getDrawable(R.drawable.ic_phone_black_100dp));
                 ((LoginActivity) getActivity()).changeHint(getResources().getString(R.string.pin_verify_hint));
-            }catch(Exception e){
-             // muted
+            } catch (Exception e) {
+                // muted
             }
         }
     }
@@ -213,6 +218,20 @@ public class PhonePINVerifyFragment extends Fragment {
                 }, 2000);
             } else {
                 Toast.makeText(getContext(), SPApplication.getContext().getText(R.string.phoneverify_seccess), Toast.LENGTH_SHORT).show();
+                try {
+                    // call to refresh user
+                    Bundle iArgs = new Bundle();
+                    String userStr = Utils.PreferencesManager.getInstance().getValue(AppConstants.API.PREF_AUTH_USER.getValue());
+                    Gson gson = new Gson();
+                    User user = gson.fromJson(userStr, User.class);
+                    iArgs.putString(AppConstants.K.DOT.name(), user.getUid());
+                    Intent intent =
+                            new Intent(getActivity(), DotDetailsService.class);
+                    intent.putExtras(iArgs);
+                    getActivity().startService(intent);
+                } catch (Exception e) {
+                    // muted
+                }
             }
         }
     }
