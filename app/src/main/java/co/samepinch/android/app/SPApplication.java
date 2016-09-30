@@ -16,7 +16,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
  * Created by cbenjaram on 8/6/15.
  */
 public class SPApplication extends MultiDexApplication {
-    private static Context mContext;
+    private static volatile Context mContext;
+
+    public static Context getContext() {
+        return mContext;
+    }
 
     @Override
     public void onCreate() {
@@ -26,6 +30,10 @@ public class SPApplication extends MultiDexApplication {
 
         // others
         Utils.PreferencesManager.initializeInstance(mContext);
+
+        // fresco stuff
+//        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(mContext).setWebpSupportEnabled()
+
         Fresco.initialize(mContext);
 
         // parse hash
@@ -37,9 +45,5 @@ public class SPApplication extends MultiDexApplication {
                         .setFontAttrId(R.attr.fontPath)
                         .build()
         );
-    }
-
-    public static Context getContext() {
-        return mContext;
     }
 }

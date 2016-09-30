@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp">
+    android:paddingRight="7dp">
 
     <LinearLayout
         android:id="@+id/phoneenter_layout"
@@ -34,33 +34,13 @@
             android:textColorHint="@color/grey_900" />
     </LinearLayout>
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/phoneenter_layout"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentEnd="true">-->
-        <!--<TextView-->
-            <!--android:id="@+id/btn_resend"-->
-            <!--style="@style/SP_TXT_BTN_2"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/phoneverify_btn_resend"/>-->
-        <!--<TextView-->
-            <!--android:id="@+id/btn_next"-->
-            <!--style="@style/SP_TXT_BTN_2"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/phoneverify_btn_verify"-->
-            <!--android:transitionName="btn_next"/>-->
-    <!--</LinearLayout>-->
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/phoneenter_layout"
         android:orientation="horizontal"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true">
         <TextView
@@ -69,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login_btn_next"
+            android:gravity="right"
             android:transitionName="btn_next"/>
     </LinearLayout>
 </RelativeLayout>

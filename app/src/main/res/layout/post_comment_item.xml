@@ -94,7 +94,7 @@
                 android:layout_toEndOf="@+id/avatar"
                 android:layout_toRightOf="@+id/avatar"
                 android:paddingTop="5dp"
-                android:text="a comment asdasda adasdsa adasdasd adasdasd asdasdasd adasdsad adasds"
+                android:text="@string/empty"
                 android:textColor="@color/grey_900"
                 android:textIsSelectable="true" />
         </RelativeLayout>
