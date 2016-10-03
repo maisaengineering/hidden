@@ -3,7 +3,6 @@ package co.samepinch.android.app.helpers;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.DialogInterface;
@@ -21,6 +20,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -58,8 +58,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.samepinch.android.app.R;
+import co.samepinch.android.app.SPApplication;
 import co.samepinch.android.app.helpers.adapters.TagsRVAdapter;
 import co.samepinch.android.app.helpers.intent.MultiMediaUploadService;
 import co.samepinch.android.app.helpers.intent.PostDetailsService;
@@ -135,7 +138,13 @@ public class PostEditFragment extends Fragment implements PopupMenu.OnMenuItemCl
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == AppConstants.KV.REQUEST_CHOOSE_PICTURE.getIntValue()) {
-                outputFileUri = (intent == null ? true : MediaStore.ACTION_IMAGE_CAPTURE.equals(intent.getAction())) ? outputFileUri : (intent == null ? null : intent.getData());
+                if (StringUtils.isNotBlank(mCurrentPhotoPath)) {
+                    outputFileUri = Uri.parse(mCurrentPhotoPath);
+                    mCurrentPhotoPath = null;
+                } else {
+                    outputFileUri = intent.getData();
+                }
+
                 Intent editorIntent = new Intent(getActivity(), FeatherActivity.class);
                 editorIntent.setData(outputFileUri);
 
@@ -588,14 +597,7 @@ public class PostEditFragment extends Fragment implements PopupMenu.OnMenuItemCl
         final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         final PackageManager packageManager = getActivity().getPackageManager();
         final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for (ResolveInfo res : listCam) {
-            final String packageName = res.activityInfo.packageName;
-            final Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            cameraIntents.add(intent);
-        }
+        cameraIntents.add(createTakePictureIntent());
 
         // Filesystem.
         final Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -607,6 +609,50 @@ public class PostEditFragment extends Fragment implements PopupMenu.OnMenuItemCl
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
         startActivityForResult(chooserIntent, AppConstants.KV.REQUEST_CHOOSE_PICTURE.getIntValue());
     }
+
+    String mCurrentPhotoPath = null;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = SPApplication.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
+    private Intent createTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(SPApplication.getContext(),
+                        "co.samepinch.android.app.fp",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                return takePictureIntent;
+//                startActivityForResult(takePictureIntent, AppConstants.KV.REQUEST_CHOOSE_PICTURE.getIntValue());
+            }
+        }
+
+        return null;
+    }
+
+
 
     private static final class LocalHandler extends Handler {
         private final WeakReference<PostEditFragment> mActivity;

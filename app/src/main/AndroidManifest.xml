@@ -5,12 +5,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
     <permission
         android:name="co.samepinch.android.app.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
@@ -27,7 +31,8 @@
             android:name=".helpers.RootActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:noHistory="true" android:screenOrientation="portrait">
+            android:noHistory="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,31 +41,51 @@
             </intent-filter>
         </activity>
         <!--<activity-->
-            <!--android:name="com.facebook.FacebookActivity"-->
-            <!--android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"-->
-            <!--android:label="@string/app_name"-->
-            <!--android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
+        <!--android:name="com.facebook.FacebookActivity"-->
+        <!--android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"-->
+        <!--android:label="@string/app_name"-->
+        <!--android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
         <!-- <provider android:authorities="com.facebook.app.FacebookContentProvider1234" -->
         <!-- android:name="com.facebook.FacebookContentProvider" -->
         <!-- android:exported="true" /> -->
-        <activity android:name=".PostDetailActivity" android:screenOrientation="portrait" />
-        <activity android:name=".ActivityFragment" android:screenOrientation="portrait"/>
-        <activity android:name=".LoginActivity" android:screenOrientation="portrait" />
-        <activity android:name=".LogoutActivity" android:screenOrientation="portrait" />
-        <activity android:name=".SignupActivity" android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity" android:screenOrientation="portrait" />
-        <activity android:name=".MainActivityIn" android:screenOrientation="portrait" />
-        <activity android:name=".helpers.NotifsActivityLauncher" android:screenOrientation="portrait" />
+        <activity
+            android:name=".PostDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ActivityFragment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LogoutActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SignupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivityIn"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".helpers.NotifsActivityLauncher"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".EnterPhoneActivity"
-            android:theme="@style/Theme.SPJustDialog" android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.SPJustDialog" />
         <!-- PUSH NOTIFICATIONS ACTIVITY -->
-        <activity android:name=".helpers.PushNotificationActivityLauncher" android:screenOrientation="portrait" />
+        <activity
+            android:name=".helpers.PushNotificationActivityLauncher"
+            android:screenOrientation="portrait" />
 
         <!-- DEEP LINKING ACTIVITY -->
         <activity
             android:name=".helpers.Web2AppActivityLauncher"
-            android:label="@string/app_name" android:screenOrientation="portrait">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -153,8 +178,9 @@
             android:finishOnTaskLaunch="true"
             android:hardwareAccelerated="true"
             android:process=":standalone"
+            android:screenOrientation="unspecified"
             android:theme="@style/AviaryTheme.Dark"
-            android:uiOptions="splitActionBarWhenNarrow" android:screenOrientation="portrait"/>
+            android:uiOptions="splitActionBarWhenNarrow" />
 
         <!-- CDS Content Service -->
         <service
@@ -163,7 +189,7 @@
             android:process=":aviarycds">
             <intent-filter>
                 <action android:name="aviary.intent.action.CDS_DOWNLOAD_START" />
-                <action android:name="aviary.intent.action.CDS_RESTORE_USER_ITEMS" />
+                <action android:name="aviary.intent.action.CDS_RESTORE_USER_ITEMS" />∂
             </intent-filter>
         </service>
 
@@ -213,6 +239,17 @@
             </intent-filter>
         </receiver>
         <!-- PARSE SETTINGS :: END -->
+
+        <!-- camera stuff -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="co.samepinch.android.app.fp"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
     </application>
 
 </manifest>
